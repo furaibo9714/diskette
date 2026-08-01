@@ -3,17 +3,18 @@ package com.michaldrabik.repository.shows.ratings
 import com.michaldrabik.common.ConfigVariant
 import com.michaldrabik.common.extensions.nowUtcMillis
 import com.michaldrabik.data_local.LocalDataSource
-import com.michaldrabik.data_remote.RemoteDataSource
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.MEDIA_TYPE_TV
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.SOURCE_TMDB
+import com.michaldrabik.repository.floppy.FloppyConnectionManager
 import com.michaldrabik.repository.mappers.Mappers
 import com.michaldrabik.ui_model.Ratings
 import com.michaldrabik.ui_model.Show
-import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShowsExternalRatingsRepository @Inject constructor(
-  private val remoteSource: RemoteDataSource,
+  private val connectionManager: FloppyConnectionManager,
   private val localSource: LocalDataSource,
   private val mappers: Mappers,
 ) {
@@ -26,10 +27,12 @@ class ShowsExternalRatingsRepository @Inject constructor(
       }
     }
 
-    val remoteRatings = remoteSource.omdb
-      .fetchOmdbData(show.ids.imdb.id)
-      .let { mappers.ratings.fromNetwork(it) }
-      .copy(trakt = Ratings.Value(String.format(Locale.ENGLISH, "%.1f", show.rating), false))
+    if (!connectionManager.isConfigured() || show.ids.tmdb.id <= 0) {
+      return Ratings()
+    }
+
+    val mediaDetail = connectionManager.service().getMediaDetail(MEDIA_TYPE_TV, SOURCE_TMDB, show.ids.tmdb.id.toString())
+    val remoteRatings = mappers.ratings.fromNetwork(mediaDetail)
 
     val dbRatings = mappers.ratings.toShowDatabase(show.ids.trakt, remoteRatings)
     localSource.showRatings.upsert(dbRatings)

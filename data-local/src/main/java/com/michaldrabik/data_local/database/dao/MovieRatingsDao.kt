@@ -18,11 +18,7 @@ interface MovieRatingsDao :
       update(
         listOf(
           local.copy(
-            trakt = entity.trakt,
-            imdb = entity.imdb,
-            metascore = entity.metascore,
-            rottenTomatoes = entity.rottenTomatoes,
-            rottenTomatoesUrl = entity.rottenTomatoesUrl,
+            tmdb = entity.tmdb,
             updatedAt = entity.updatedAt,
           ),
         ),

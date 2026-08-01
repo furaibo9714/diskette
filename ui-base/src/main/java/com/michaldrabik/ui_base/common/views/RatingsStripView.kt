@@ -24,10 +24,7 @@ class RatingsStripView : LinearLayout {
 
   private val binding = ViewRatingsStripBinding.inflate(LayoutInflater.from(context), this)
 
-  var onTraktClick: ((Ratings) -> Unit)? = null
-  var onImdbClick: ((Ratings) -> Unit)? = null
-  var onMetaClick: ((Ratings) -> Unit)? = null
-  var onRottenClick: ((Ratings) -> Unit)? = null
+  var onTmdbClick: ((Ratings) -> Unit)? = null
 
   private val colorPrimary by lazy { context.colorFromAttr(android.R.attr.textColorPrimary) }
   private val colorSecondary by lazy { context.colorFromAttr(android.R.attr.textColorSecondary) }
@@ -44,44 +41,14 @@ class RatingsStripView : LinearLayout {
     this.ratings = ratings
     with(binding) {
       bindValue(
-        ratingsValue = ratings.trakt,
-        layoutView = viewRatingsStripTrakt,
-        valueView = viewRatingsStripTraktValue,
-        progressView = viewRatingsStripTraktProgress,
-        linkView = viewRatingsStripTraktLinkIcon,
+        ratingsValue = ratings.tmdb,
+        layoutView = viewRatingsStripTmdb,
+        valueView = viewRatingsStripTmdbValue,
+        progressView = viewRatingsStripTmdbProgress,
+        linkView = viewRatingsStripTmdbLinkIcon,
         isHidden = ratings.isHidden,
         isTapToReveal = ratings.isTapToReveal,
-        callback = onTraktClick,
-      )
-      bindValue(
-        ratingsValue = ratings.imdb,
-        layoutView = viewRatingsStripImdb,
-        valueView = viewRatingsStripImdbValue,
-        progressView = viewRatingsStripImdbProgress,
-        linkView = viewRatingsStripImdbLinkIcon,
-        isHidden = ratings.isHidden,
-        isTapToReveal = ratings.isTapToReveal,
-        callback = onImdbClick,
-      )
-      bindValue(
-        ratingsValue = ratings.metascore,
-        layoutView = viewRatingsStripMeta,
-        valueView = viewRatingsStripMetaValue,
-        progressView = viewRatingsStripMetaProgress,
-        linkView = viewRatingsStripMetaLinkIcon,
-        isHidden = ratings.isHidden,
-        isTapToReveal = ratings.isTapToReveal,
-        callback = onMetaClick,
-      )
-      bindValue(
-        ratingsValue = ratings.rottenTomatoes,
-        layoutView = viewRatingsStripRotten,
-        valueView = viewRatingsStripRottenValue,
-        progressView = viewRatingsStripRottenProgress,
-        linkView = viewRatingsStripRottenLinkIcon,
-        isHidden = ratings.isHidden,
-        isTapToReveal = ratings.isTapToReveal,
-        callback = onRottenClick,
+        callback = onTmdbClick,
       )
     }
   }

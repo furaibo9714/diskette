@@ -4,13 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.michaldrabik.ui_base.BaseFragment
-import com.michaldrabik.ui_base.common.AppCountry
 import com.michaldrabik.ui_base.utilities.events.MessageEvent
 import com.michaldrabik.ui_base.utilities.extensions.launchAndRepeatStarted
-import com.michaldrabik.ui_base.utilities.extensions.openImdbUrl
 import com.michaldrabik.ui_base.utilities.extensions.openWebUrl
 import com.michaldrabik.ui_base.utilities.viewBinding
-import com.michaldrabik.ui_model.IdImdb
 import com.michaldrabik.ui_movie.MovieDetailsViewModel
 import com.michaldrabik.ui_movie.R
 import com.michaldrabik.ui_movie.databinding.FragmentMovieDetailsRatingsBinding
@@ -48,17 +45,7 @@ class MovieDetailsRatingsFragment :
           }
           movieDetailsRatings.bind(ratings)
           movie?.let {
-            movieDetailsRatings.onTraktClick = { openMovieLink(MovieLink.TRAKT, movie.traktId.toString()) }
-            movieDetailsRatings.onImdbClick = { openMovieLink(MovieLink.IMDB, movie.ids.imdb.id) }
-            movieDetailsRatings.onMetaClick = { openMovieLink(MovieLink.METACRITIC, movie.title) }
-            movieDetailsRatings.onRottenClick = {
-              val url = it.rottenTomatoesUrl
-              if (!url.isNullOrBlank()) {
-                openWebUrl(url) ?: openMovieLink(MovieLink.ROTTEN, "${movie.title} ${movie.year}")
-              } else {
-                openMovieLink(MovieLink.ROTTEN, "${movie.title} ${movie.year}")
-              }
-            }
+            movieDetailsRatings.onTmdbClick = { openMovieLink(MovieLink.TMDB, movie.ids.tmdb.id.toString()) }
           }
         }
       }
@@ -68,13 +55,8 @@ class MovieDetailsRatingsFragment :
   private fun openMovieLink(
     link: MovieLink,
     id: String,
-    country: AppCountry = AppCountry.UNITED_STATES,
   ) {
-    if (link == MovieLink.IMDB) {
-      openImdbUrl(IdImdb(id)) ?: showSnack(MessageEvent.Info(R.string.errorCouldNotFindApp))
-    } else {
-      openWebUrl(link.getUri(id, country)) ?: showSnack(MessageEvent.Info(R.string.errorCouldNotFindApp))
-    }
+    openWebUrl(link.getUri(id)) ?: showSnack(MessageEvent.Info(R.string.errorCouldNotFindApp))
   }
 
   override fun setupBackPressed() = Unit

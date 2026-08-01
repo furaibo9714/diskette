@@ -58,3 +58,15 @@ data class FloppyStatusUpdateRequest(
 data class FloppyInfo(
   @Json(name = "version") val version: String,
 )
+
+/**
+ * Full media detail lookup - unlike [FloppyMedia] (the tracked-list item shape), this works for
+ * any (media_type, source, media_id) regardless of whether the user is tracking it, since Floppy
+ * proxies the underlying provider's metadata. Only the rating fields Showly needs are declared;
+ * Moshi ignores the large amount of unrelated metadata Floppy returns per item.
+ */
+@JsonClass(generateAdapter = true)
+data class FloppyMediaDetail(
+  @Json(name = "score") val score: Double?,
+  @Json(name = "score_count") val scoreCount: Int?,
+)

@@ -5,7 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-const val DATABASE_VERSION = 42
+const val DATABASE_VERSION = 43
 const val DATABASE_NAME = "SHOWLY2_DB_2"
 
 class Migrations(
@@ -797,6 +797,38 @@ class Migrations(
     }
   }
 
+  private val migration43 = object : Migration(42, 43) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+      with(database) {
+        // Ratings strip simplified to a single Floppy-sourced TMDB score; imdb/metascore/rotten_tomatoes
+        // (OMDB-sourced) and trakt (superseded by tmdb) are dropped. Pure cache tables, safe to recreate.
+        execSQL("DROP TABLE IF EXISTS movies_ratings")
+        execSQL(
+          "CREATE TABLE IF NOT EXISTS `movies_ratings` (" +
+            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            "`id_trakt` INTEGER NOT NULL, " +
+            "`tmdb` TEXT, " +
+            "`created_at` INTEGER NOT NULL, " +
+            "`updated_at` INTEGER NOT NULL, " +
+            "FOREIGN KEY(`id_trakt`) REFERENCES `movies`(`id_trakt`) ON DELETE CASCADE)",
+        )
+        execSQL("CREATE UNIQUE INDEX index_movies_ratings_id_trakt ON movies_ratings(id_trakt)")
+
+        execSQL("DROP TABLE IF EXISTS shows_ratings")
+        execSQL(
+          "CREATE TABLE IF NOT EXISTS `shows_ratings` (" +
+            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            "`id_trakt` INTEGER NOT NULL, " +
+            "`tmdb` TEXT, " +
+            "`created_at` INTEGER NOT NULL, " +
+            "`updated_at` INTEGER NOT NULL, " +
+            "FOREIGN KEY(`id_trakt`) REFERENCES `shows`(`id_trakt`) ON DELETE CASCADE)",
+        )
+        execSQL("CREATE UNIQUE INDEX index_shows_ratings_id_trakt ON shows_ratings(id_trakt)")
+      }
+    }
+  }
+
   fun getAll() =
     listOf(
       migration2,
@@ -840,5 +872,6 @@ class Migrations(
       migration40,
       migration41,
       migration42,
+      migration43,
     )
 }

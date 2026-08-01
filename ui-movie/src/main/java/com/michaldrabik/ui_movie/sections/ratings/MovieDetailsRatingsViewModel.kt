@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,19 +35,14 @@ class MovieDetailsRatingsViewModel @Inject constructor(
     viewModelScope.launch {
       movieState.value = movie
 
-      val traktRatings = Ratings(
-        trakt = Ratings.Value(String.format(Locale.ENGLISH, "%.1f", movie.rating), false),
-        imdb = Ratings.Value(null, true),
-        metascore = Ratings.Value(null, true),
-        rottenTomatoes = Ratings.Value(null, true),
-      )
+      val loadingRatings = Ratings(tmdb = Ratings.Value(null, true))
 
       try {
-        ratingsState.value = ratingsSpoilersCase.hideSpoilerRatings(movie, traktRatings)
+        ratingsState.value = ratingsSpoilersCase.hideSpoilerRatings(movie, loadingRatings)
         val ratings = ratingsCase.loadExternalRatings(movie)
         ratingsState.value = ratingsSpoilersCase.hideSpoilerRatings(movie, ratings)
       } catch (error: Throwable) {
-        ratingsState.value = ratingsSpoilersCase.hideSpoilerRatings(movie, traktRatings)
+        ratingsState.value = ratingsSpoilersCase.hideSpoilerRatings(movie, loadingRatings)
         rethrowCancellation(error)
       }
     }

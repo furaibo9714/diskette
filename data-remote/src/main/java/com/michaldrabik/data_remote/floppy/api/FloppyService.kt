@@ -2,6 +2,7 @@ package com.michaldrabik.data_remote.floppy.api
 
 import com.michaldrabik.data_remote.floppy.model.FloppyInfo
 import com.michaldrabik.data_remote.floppy.model.FloppyMedia
+import com.michaldrabik.data_remote.floppy.model.FloppyMediaDetail
 import com.michaldrabik.data_remote.floppy.model.FloppyMediaListResponse
 import com.michaldrabik.data_remote.floppy.model.FloppyStatusUpdateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyTrackRequest
@@ -27,6 +28,13 @@ interface FloppyService {
     @Query("limit") limit: Int,
     @Query("offset") offset: Int,
   ): FloppyMediaListResponse
+
+  @GET("api/v1/media/{mediaType}/{source}/{mediaId}/")
+  suspend fun getMediaDetail(
+    @Path("mediaType") mediaType: String,
+    @Path("source") source: String,
+    @Path("mediaId") mediaId: String,
+  ): FloppyMediaDetail
 
   @POST("api/v1/media/{mediaType}/")
   suspend fun trackMedia(
