@@ -72,6 +72,7 @@ data class FloppyInfo(
  */
 @JsonClass(generateAdapter = true)
 data class FloppyMediaDetail(
+  @Json(name = "id") val id: Long?,
   @Json(name = "score") val score: Double?,
   @Json(name = "score_count") val scoreCount: Int?,
 )
@@ -91,3 +92,15 @@ data class FloppyList(
 /** Serializes to `{}` - some PUT endpoints (e.g. adding a media item to a list) require a body but have nothing to say. */
 @JsonClass(generateAdapter = true)
 class FloppyEmptyRequest
+
+/**
+ * `itemId` is Floppy's internal `Item` row id (the same [FloppyMediaDetail.id]) - not the
+ * (media_type, source, media_id) triplet every other Floppy call in this codebase uses. Confirmed
+ * by reading Floppy's actual source (`DiscoverHiddenView.post`); its own OpenAPI schema documents
+ * no request body for this endpoint at all.
+ */
+@JsonClass(generateAdapter = true)
+data class FloppyDiscoverHiddenRequest(
+  @Json(name = "item_id") val itemId: Long,
+  @Json(name = "action") val action: String,
+)

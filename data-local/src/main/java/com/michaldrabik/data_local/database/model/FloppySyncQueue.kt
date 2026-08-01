@@ -138,6 +138,20 @@ data class FloppySyncQueue(
       createdAt: Long,
     ) = FloppySyncQueue(0, "", "", "", null, null, Type.LIST_DELETE.slug, Operation.REMOVE.slug, createdAt, listId = listId)
 
+    fun createShowHidden(
+      source: String,
+      mediaId: String,
+      operation: Operation,
+      createdAt: Long,
+    ) = FloppySyncQueue(0, MEDIA_TYPE_TV, source, mediaId, null, null, Type.SHOW_HIDDEN.slug, operation.slug, createdAt)
+
+    fun createMovieHidden(
+      source: String,
+      mediaId: String,
+      operation: Operation,
+      createdAt: Long,
+    ) = FloppySyncQueue(0, MEDIA_TYPE_MOVIE, source, mediaId, null, null, Type.MOVIE_HIDDEN.slug, operation.slug, createdAt)
+
     const val MEDIA_TYPE_TV = "tv"
     const val MEDIA_TYPE_MOVIE = "movie"
     const val SOURCE_TMDB = "tmdb"
@@ -158,6 +172,8 @@ data class FloppySyncQueue(
     LIST_ITEM_SHOW("list_item_show"),
     LIST_ITEM_MOVIE("list_item_movie"),
     LIST_DELETE("list_delete"),
+    SHOW_HIDDEN("show_hidden"),
+    MOVIE_HIDDEN("movie_hidden"),
   }
 
   enum class Operation(

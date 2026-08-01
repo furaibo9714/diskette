@@ -1,5 +1,6 @@
 package com.michaldrabik.data_remote.floppy.api
 
+import com.michaldrabik.data_remote.floppy.model.FloppyDiscoverHiddenRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyEmptyRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyInfo
 import com.michaldrabik.data_remote.floppy.model.FloppyList
@@ -134,6 +135,11 @@ interface FloppyService {
     @Path("source") source: String,
     @Path("mediaId") mediaId: String,
     @Path("listId") listId: Long,
+  )
+
+  @POST("api/v1/discover/hidden/")
+  suspend fun toggleDiscoverHidden(
+    @Body body: FloppyDiscoverHiddenRequest,
   )
 
   companion object {

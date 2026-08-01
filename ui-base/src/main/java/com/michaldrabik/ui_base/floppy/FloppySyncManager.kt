@@ -162,6 +162,22 @@ class FloppySyncManager @Inject constructor(
     enqueue(FloppySyncQueue.createListDelete(listFloppyId, nowUtcMillis()))
   }
 
+  suspend fun scheduleShowHidden(
+    ids: Ids,
+    operation: Operation,
+  ) {
+    val (source, mediaId) = resolveSourceAndMediaId(ids) ?: return
+    enqueue(FloppySyncQueue.createShowHidden(source, mediaId, operation, nowUtcMillis()))
+  }
+
+  suspend fun scheduleMovieHidden(
+    ids: Ids,
+    operation: Operation,
+  ) {
+    val (source, mediaId) = resolveSourceAndMediaId(ids) ?: return
+    enqueue(FloppySyncQueue.createMovieHidden(source, mediaId, operation, nowUtcMillis()))
+  }
+
   /**
    * Convenience overloads for call sites that only have an [IdTrakt] on hand (context-menu
    * sheets, widgets, progress-tab quick actions) rather than the full [Ids] a details screen
@@ -201,6 +217,22 @@ class FloppySyncManager @Inject constructor(
   ) {
     val ids = resolveShowIds(showId) ?: return
     scheduleEpisodeWatched(ids, seasonNumber, episodeNumber, operation)
+  }
+
+  suspend fun scheduleShowHidden(
+    showId: IdTrakt,
+    operation: Operation,
+  ) {
+    val ids = resolveShowIds(showId) ?: return
+    scheduleShowHidden(ids, operation)
+  }
+
+  suspend fun scheduleMovieHidden(
+    movieId: IdTrakt,
+    operation: Operation,
+  ) {
+    val ids = resolveMovieIds(movieId) ?: return
+    scheduleMovieHidden(ids, operation)
   }
 
   suspend fun scheduleShowRating(

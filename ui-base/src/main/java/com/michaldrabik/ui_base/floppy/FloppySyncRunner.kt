@@ -7,6 +7,7 @@ import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.MEDI
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Type
 import com.michaldrabik.data_remote.floppy.api.FloppyService
+import com.michaldrabik.data_remote.floppy.model.FloppyDiscoverHiddenRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyEmptyRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyScoreUpdateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyStatusUpdateRequest
@@ -66,7 +67,32 @@ class FloppySyncRunner @Inject constructor(
       Type.LIST_ITEM_SHOW.slug -> pushListItem(service, MEDIA_TYPE_TV, item, isAdd)
       Type.LIST_ITEM_MOVIE.slug -> pushListItem(service, MEDIA_TYPE_MOVIE, item, isAdd)
       Type.LIST_DELETE.slug -> pushListDelete(service, item)
+      Type.SHOW_HIDDEN.slug -> pushHidden(service, MEDIA_TYPE_TV, item, isAdd)
+      Type.MOVIE_HIDDEN.slug -> pushHidden(service, MEDIA_TYPE_MOVIE, item, isAdd)
     }
+  }
+
+  /**
+   * Hiding/unhiding is `POST /api/v1/discover/hidden/` with `{"item_id": <int>, "action": "hide"|"unhide"}`
+   * - `item_id` is Floppy's own internal `Item` row id (same value as [getMediaDetail]'s `id`), not
+   * the (media_type, source, media_id) triplet every other call here uses. Confirmed by reading
+   * Floppy's source (`DiscoverHiddenView.post`) - its OpenAPI schema documents no request body at
+   * all for this endpoint. Untracked/uncataloged items resolve to a `null` id (same "not tracked
+   * yet" situation as [pushListItem]/[pushMediaRating]) - track first and re-resolve.
+   */
+  private suspend fun pushHidden(
+    service: FloppyService,
+    mediaType: String,
+    item: FloppySyncQueue,
+    isAdd: Boolean,
+  ) {
+    var itemId = service.getMediaDetail(mediaType, item.source, item.mediaId).id
+    if (itemId == null) {
+      service.trackMedia(mediaType, FloppyTrackRequest(item.source, item.mediaId))
+      itemId = service.getMediaDetail(mediaType, item.source, item.mediaId).id ?: return
+    }
+    val action = if (isAdd) "hide" else "unhide"
+    service.toggleDiscoverHidden(FloppyDiscoverHiddenRequest(itemId, action))
   }
 
   /**
