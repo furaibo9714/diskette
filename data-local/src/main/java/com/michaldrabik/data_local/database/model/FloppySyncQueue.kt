@@ -15,6 +15,7 @@ data class FloppySyncQueue(
   @ColumnInfo(name = "type") val type: String,
   @ColumnInfo(name = "operation") val operation: String,
   @ColumnInfo(name = "created_at") val createdAt: Long,
+  @ColumnInfo(name = "value") val value: String? = null,
 ) {
 
   companion object {
@@ -58,6 +59,63 @@ data class FloppySyncQueue(
       createdAt,
     )
 
+    fun createShowRating(
+      source: String,
+      mediaId: String,
+      operation: Operation,
+      score: Int?,
+      createdAt: Long,
+    ) = FloppySyncQueue(0, MEDIA_TYPE_TV, source, mediaId, null, null, Type.SHOW_RATING.slug, operation.slug, createdAt, score?.toString())
+
+    fun createMovieRating(
+      source: String,
+      mediaId: String,
+      operation: Operation,
+      score: Int?,
+      createdAt: Long,
+    ) = FloppySyncQueue(0, MEDIA_TYPE_MOVIE, source, mediaId, null, null, Type.MOVIE_RATING.slug, operation.slug, createdAt, score?.toString())
+
+    fun createSeasonRating(
+      source: String,
+      showMediaId: String,
+      seasonNumber: Int,
+      operation: Operation,
+      score: Int?,
+      createdAt: Long,
+    ) = FloppySyncQueue(
+      0,
+      MEDIA_TYPE_TV,
+      source,
+      showMediaId,
+      seasonNumber,
+      null,
+      Type.SEASON_RATING.slug,
+      operation.slug,
+      createdAt,
+      score?.toString(),
+    )
+
+    fun createEpisodeRating(
+      source: String,
+      showMediaId: String,
+      seasonNumber: Int,
+      episodeNumber: Int,
+      operation: Operation,
+      score: Int?,
+      createdAt: Long,
+    ) = FloppySyncQueue(
+      0,
+      MEDIA_TYPE_TV,
+      source,
+      showMediaId,
+      seasonNumber,
+      episodeNumber,
+      Type.EPISODE_RATING.slug,
+      operation.slug,
+      createdAt,
+      score?.toString(),
+    )
+
     const val MEDIA_TYPE_TV = "tv"
     const val MEDIA_TYPE_MOVIE = "movie"
     const val SOURCE_TMDB = "tmdb"
@@ -71,6 +129,10 @@ data class FloppySyncQueue(
     MOVIE_WATCHLIST("movie_watchlist"),
     MOVIE_WATCHED("movie_watched"),
     EPISODE_WATCHED("episode_watched"),
+    SHOW_RATING("show_rating"),
+    MOVIE_RATING("movie_rating"),
+    SEASON_RATING("season_rating"),
+    EPISODE_RATING("episode_rating"),
   }
 
   enum class Operation(

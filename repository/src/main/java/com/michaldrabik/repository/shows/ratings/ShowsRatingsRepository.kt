@@ -1,8 +1,6 @@
 package com.michaldrabik.repository.shows.ratings
 
-import com.michaldrabik.common.extensions.dateIsoStringFromMillis
 import com.michaldrabik.common.extensions.nowUtc
-import com.michaldrabik.common.extensions.toMillis
 import com.michaldrabik.common.extensions.toUtcZone
 import com.michaldrabik.data_local.LocalDataSource
 import com.michaldrabik.data_local.database.model.Rating
@@ -171,16 +169,8 @@ class ShowsRatingsRepository @Inject constructor(
   suspend fun addRating(
     show: Show,
     rating: Int,
-    withSync: Boolean,
   ) {
     val ratedAt = nowUtc()
-    if (withSync) {
-      remoteSource.postRating(
-        mappers.show.toNetwork(show),
-        rating,
-        dateIsoStringFromMillis(ratedAt.toMillis()),
-      )
-    }
     val entity = mappers.userRatings.toDatabaseShow(show, rating, ratedAt)
     localSource.ratings.replace(entity)
   }
@@ -188,16 +178,8 @@ class ShowsRatingsRepository @Inject constructor(
   suspend fun addRating(
     episode: Episode,
     rating: Int,
-    withSync: Boolean,
   ) {
     val ratedAt = nowUtc()
-    if (withSync) {
-      remoteSource.postRating(
-        mappers.episode.toNetwork(episode),
-        rating,
-        dateIsoStringFromMillis(ratedAt.toMillis()),
-      )
-    }
     val entity = mappers.userRatings.toDatabaseEpisode(episode, rating, ratedAt)
     localSource.ratings.replace(entity)
   }
@@ -205,53 +187,21 @@ class ShowsRatingsRepository @Inject constructor(
   suspend fun addRating(
     season: Season,
     rating: Int,
-    withSync: Boolean,
   ) {
     val ratedAt = nowUtc()
-    if (withSync) {
-      remoteSource.postRating(
-        mappers.season.toNetwork(season),
-        rating,
-        dateIsoStringFromMillis(ratedAt.toMillis()),
-      )
-    }
     val entity = mappers.userRatings.toDatabaseSeason(season, rating, ratedAt)
     localSource.ratings.replace(entity)
   }
 
-  suspend fun deleteRating(
-    show: Show,
-    withSync: Boolean,
-  ) {
-    if (withSync) {
-      remoteSource.deleteRating(
-        mappers.show.toNetwork(show),
-      )
-    }
+  suspend fun deleteRating(show: Show) {
     localSource.ratings.deleteByType(show.traktId, TYPE_SHOW)
   }
 
-  suspend fun deleteRating(
-    episode: Episode,
-    withSync: Boolean,
-  ) {
-    if (withSync) {
-      remoteSource.deleteRating(
-        mappers.episode.toNetwork(episode),
-      )
-    }
+  suspend fun deleteRating(episode: Episode) {
     localSource.ratings.deleteByType(episode.ids.trakt.id, TYPE_EPISODE)
   }
 
-  suspend fun deleteRating(
-    season: Season,
-    withSync: Boolean,
-  ) {
-    if (withSync) {
-      remoteSource.deleteRating(
-        mappers.season.toNetwork(season),
-      )
-    }
+  suspend fun deleteRating(season: Season) {
     localSource.ratings.deleteByType(season.ids.trakt.id, TYPE_SEASON)
   }
 }

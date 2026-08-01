@@ -1,8 +1,6 @@
 package com.michaldrabik.repository.movies.ratings
 
-import com.michaldrabik.common.extensions.dateIsoStringFromMillis
 import com.michaldrabik.common.extensions.nowUtc
-import com.michaldrabik.common.extensions.toMillis
 import com.michaldrabik.common.extensions.toUtcZone
 import com.michaldrabik.data_local.LocalDataSource
 import com.michaldrabik.data_local.database.model.Rating
@@ -70,29 +68,13 @@ class MoviesRatingsRepository @Inject constructor(
   suspend fun addRating(
     movie: Movie,
     rating: Int,
-    withSync: Boolean,
   ) {
     val ratedAt = nowUtc()
-    if (withSync) {
-      remoteSource.postRating(
-        mappers.movie.toNetwork(movie),
-        rating,
-        dateIsoStringFromMillis(ratedAt.toMillis()),
-      )
-    }
     val entity = mappers.userRatings.toDatabaseMovie(movie, rating, ratedAt)
     localSource.ratings.replace(entity)
   }
 
-  suspend fun deleteRating(
-    movie: Movie,
-    withSync: Boolean,
-  ) {
-    if (withSync) {
-      remoteSource.deleteRating(
-        mappers.movie.toNetwork(movie),
-      )
-    }
+  suspend fun deleteRating(movie: Movie) {
     localSource.ratings.deleteByType(movie.traktId, TYPE_MOVIE)
   }
 }

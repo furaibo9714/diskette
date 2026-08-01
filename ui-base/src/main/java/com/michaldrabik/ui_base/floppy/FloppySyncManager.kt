@@ -65,6 +65,45 @@ class FloppySyncManager @Inject constructor(
     enqueue(FloppySyncQueue.createEpisodeWatched(source, mediaId, seasonNumber, episodeNumber, operation, nowUtcMillis()))
   }
 
+  suspend fun scheduleShowRating(
+    ids: Ids,
+    score: Int?,
+  ) {
+    val (source, mediaId) = resolveSourceAndMediaId(ids) ?: return
+    val operation = if (score != null) Operation.ADD else Operation.REMOVE
+    enqueue(FloppySyncQueue.createShowRating(source, mediaId, operation, score, nowUtcMillis()))
+  }
+
+  suspend fun scheduleMovieRating(
+    ids: Ids,
+    score: Int?,
+  ) {
+    val (source, mediaId) = resolveSourceAndMediaId(ids) ?: return
+    val operation = if (score != null) Operation.ADD else Operation.REMOVE
+    enqueue(FloppySyncQueue.createMovieRating(source, mediaId, operation, score, nowUtcMillis()))
+  }
+
+  suspend fun scheduleSeasonRating(
+    showIds: Ids,
+    seasonNumber: Int,
+    score: Int?,
+  ) {
+    val (source, mediaId) = resolveSourceAndMediaId(showIds) ?: return
+    val operation = if (score != null) Operation.ADD else Operation.REMOVE
+    enqueue(FloppySyncQueue.createSeasonRating(source, mediaId, seasonNumber, operation, score, nowUtcMillis()))
+  }
+
+  suspend fun scheduleEpisodeRating(
+    showIds: Ids,
+    seasonNumber: Int,
+    episodeNumber: Int,
+    score: Int?,
+  ) {
+    val (source, mediaId) = resolveSourceAndMediaId(showIds) ?: return
+    val operation = if (score != null) Operation.ADD else Operation.REMOVE
+    enqueue(FloppySyncQueue.createEpisodeRating(source, mediaId, seasonNumber, episodeNumber, operation, score, nowUtcMillis()))
+  }
+
   /**
    * Convenience overloads for call sites that only have an [IdTrakt] on hand (context-menu
    * sheets, widgets, progress-tab quick actions) rather than the full [Ids] a details screen
@@ -104,6 +143,52 @@ class FloppySyncManager @Inject constructor(
   ) {
     val ids = resolveShowIds(showId) ?: return
     scheduleEpisodeWatched(ids, seasonNumber, episodeNumber, operation)
+  }
+
+  suspend fun scheduleShowRating(
+    showId: IdTrakt,
+    score: Int?,
+  ) {
+    val ids = resolveShowIds(showId) ?: return
+    scheduleShowRating(ids, score)
+  }
+
+  suspend fun scheduleMovieRating(
+    movieId: IdTrakt,
+    score: Int?,
+  ) {
+    val ids = resolveMovieIds(movieId) ?: return
+    scheduleMovieRating(ids, score)
+  }
+
+  /**
+   * [seasonId] is the season's own id_trakt (what local rating storage keys off), not the parent
+   * show's - resolved to the show via the local `Season.idShowTrakt` column since Floppy addresses
+   * seasons through the show's media id, not a season-level one.
+   */
+  suspend fun scheduleSeasonRating(
+    seasonId: IdTrakt,
+    seasonNumber: Int,
+    score: Int?,
+  ) {
+    val season = localSource.seasons.getById(seasonId.id) ?: return
+    val showIds = resolveShowIds(IdTrakt(season.idShowTrakt)) ?: return
+    scheduleSeasonRating(showIds, seasonNumber, score)
+  }
+
+  /**
+   * [episodeId] is the episode's own id_trakt, resolved to the parent show the same way as
+   * [scheduleSeasonRating] above.
+   */
+  suspend fun scheduleEpisodeRating(
+    episodeId: IdTrakt,
+    seasonNumber: Int,
+    episodeNumber: Int,
+    score: Int?,
+  ) {
+    val episode = localSource.episodes.getAll(listOf(episodeId.id)).firstOrNull() ?: return
+    val showIds = resolveShowIds(IdTrakt(episode.idShowTrakt)) ?: return
+    scheduleEpisodeRating(showIds, seasonNumber, episodeNumber, score)
   }
 
   private suspend fun resolveShowIds(showId: IdTrakt): Ids? {

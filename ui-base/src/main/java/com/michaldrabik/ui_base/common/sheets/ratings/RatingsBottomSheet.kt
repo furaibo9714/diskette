@@ -84,7 +84,14 @@ class RatingsBottomSheet : BaseBottomSheetFragment(R.layout.view_rate_sheet) {
         episodeNumber = options.episodeNumber,
       )
     }
-    binding.viewRateSheetRemoveButton.onClick { viewModel.removeRating(id, type) }
+    binding.viewRateSheetRemoveButton.onClick {
+      viewModel.removeRating(
+        id = id,
+        type = type,
+        seasonNumber = options.seasonNumber,
+        episodeNumber = options.episodeNumber,
+      )
+    }
   }
 
   private fun render(uiState: RatingsUiState) {

@@ -4,6 +4,7 @@ import com.michaldrabik.data_remote.floppy.model.FloppyInfo
 import com.michaldrabik.data_remote.floppy.model.FloppyMedia
 import com.michaldrabik.data_remote.floppy.model.FloppyMediaDetail
 import com.michaldrabik.data_remote.floppy.model.FloppyMediaListResponse
+import com.michaldrabik.data_remote.floppy.model.FloppyScoreUpdateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyStatusUpdateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyTrackRequest
 import retrofit2.http.Body
@@ -55,7 +56,32 @@ interface FloppyService {
     @Path("source") source: String,
     @Path("mediaId") mediaId: String,
     @Body body: FloppyStatusUpdateRequest,
-  ): FloppyMedia
+  )
+
+  @PATCH("api/v1/media/{mediaType}/{source}/{mediaId}/")
+  suspend fun updateMediaScore(
+    @Path("mediaType") mediaType: String,
+    @Path("source") source: String,
+    @Path("mediaId") mediaId: String,
+    @Body body: FloppyScoreUpdateRequest,
+  )
+
+  @PATCH("api/v1/media/tv/{source}/{mediaId}/{seasonNumber}/")
+  suspend fun updateSeasonScore(
+    @Path("source") source: String,
+    @Path("mediaId") mediaId: String,
+    @Path("seasonNumber") seasonNumber: Int,
+    @Body body: FloppyScoreUpdateRequest,
+  )
+
+  @PATCH("api/v1/media/tv/{source}/{mediaId}/{seasonNumber}/episodes/{episodeNumber}/score/")
+  suspend fun updateEpisodeScore(
+    @Path("source") source: String,
+    @Path("mediaId") mediaId: String,
+    @Path("seasonNumber") seasonNumber: Int,
+    @Path("episodeNumber") episodeNumber: Int,
+    @Body body: FloppyScoreUpdateRequest,
+  )
 
   @POST("api/v1/media/tv/{source}/{mediaId}/{seasonNumber}/episodes/{episodeNumber}/watch/")
   suspend fun watchEpisode(

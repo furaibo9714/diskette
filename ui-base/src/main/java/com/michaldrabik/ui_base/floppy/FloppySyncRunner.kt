@@ -7,6 +7,7 @@ import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.MEDI
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Type
 import com.michaldrabik.data_remote.floppy.api.FloppyService
+import com.michaldrabik.data_remote.floppy.model.FloppyScoreUpdateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyStatusUpdateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyTrackRequest
 import com.michaldrabik.repository.floppy.FloppyConnectionManager
@@ -57,7 +58,49 @@ class FloppySyncRunner @Inject constructor(
       Type.MOVIE_WATCHLIST.slug -> pushWatchlist(service, MEDIA_TYPE_MOVIE, item, isAdd)
       Type.MOVIE_WATCHED.slug -> pushMovieWatched(service, item, isAdd)
       Type.EPISODE_WATCHED.slug -> pushEpisodeWatched(service, item, isAdd)
+      Type.SHOW_RATING.slug -> pushMediaRating(service, MEDIA_TYPE_TV, item, isAdd)
+      Type.MOVIE_RATING.slug -> pushMediaRating(service, MEDIA_TYPE_MOVIE, item, isAdd)
+      Type.SEASON_RATING.slug -> pushSeasonRating(service, item, isAdd)
+      Type.EPISODE_RATING.slug -> pushEpisodeRating(service, item, isAdd)
     }
+  }
+
+  /**
+   * Show/movie ratings live on the same PATCH endpoint used for watched status, but unlike that
+   * endpoint's `status` field, its `score` field rejects `null` on this Floppy version even though
+   * the schema marks it nullable (confirmed empirically) - so clearing a rating here is a no-op on
+   * Floppy's side; only the local rating is removed.
+   * TODO: Revisit if a future Floppy version fixes this.
+   */
+  private suspend fun pushMediaRating(
+    service: FloppyService,
+    mediaType: String,
+    item: FloppySyncQueue,
+    isAdd: Boolean,
+  ) {
+    if (!isAdd) return
+    service.updateMediaScore(mediaType, item.source, item.mediaId, FloppyScoreUpdateRequest(item.value))
+  }
+
+  private suspend fun pushSeasonRating(
+    service: FloppyService,
+    item: FloppySyncQueue,
+    isAdd: Boolean,
+  ) {
+    if (!isAdd) return
+    val seasonNumber = item.seasonNumber ?: return
+    service.updateSeasonScore(item.source, item.mediaId, seasonNumber, FloppyScoreUpdateRequest(item.value))
+  }
+
+  private suspend fun pushEpisodeRating(
+    service: FloppyService,
+    item: FloppySyncQueue,
+    isAdd: Boolean,
+  ) {
+    val seasonNumber = item.seasonNumber ?: return
+    val episodeNumber = item.episodeNumber ?: return
+    val score = if (isAdd) item.value else null
+    service.updateEpisodeScore(item.source, item.mediaId, seasonNumber, episodeNumber, FloppyScoreUpdateRequest(score))
   }
 
   private suspend fun pushWatchlist(

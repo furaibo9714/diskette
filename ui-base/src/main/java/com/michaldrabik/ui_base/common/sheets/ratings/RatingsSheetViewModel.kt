@@ -84,6 +84,8 @@ class RatingsSheetViewModel @Inject constructor(
   fun removeRating(
     id: IdTrakt,
     type: Type,
+    seasonNumber: Int?,
+    episodeNumber: Int?,
   ) {
     viewModelScope.launch {
       try {
@@ -91,8 +93,8 @@ class RatingsSheetViewModel @Inject constructor(
         when (type) {
           Type.SHOW -> showRatingsCase.deleteRating(id)
           Type.MOVIE -> movieRatingsCase.deleteRating(id)
-          Type.EPISODE -> episodeRatingsCase.deleteRating(id)
-          Type.SEASON -> seasonRatingsCase.deleteRating(id)
+          Type.EPISODE -> episodeRatingsCase.deleteRating(id, seasonNumber ?: -1, episodeNumber ?: -1)
+          Type.SEASON -> seasonRatingsCase.deleteRating(id, seasonNumber ?: -1)
         }
         eventChannel.send(FinishUiEvent(operation = Operation.REMOVE))
       } catch (error: Throwable) {

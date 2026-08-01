@@ -1,10 +1,8 @@
 package com.michaldrabik.ui_base.common.sheets.ratings.cases
 
 import com.michaldrabik.common.dispatchers.CoroutineDispatchers
-import com.michaldrabik.common.errors.ErrorHelper
-import com.michaldrabik.common.errors.ShowlyError
 import com.michaldrabik.repository.RatingsRepository
-import com.michaldrabik.repository.UserTraktManager
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Ids
 import com.michaldrabik.ui_model.Show
@@ -16,8 +14,8 @@ import javax.inject.Inject
 @ViewModelScoped
 class RatingsShowCase @Inject constructor(
   private val dispatchers: CoroutineDispatchers,
-  private val userTraktManager: UserTraktManager,
   private val ratingsRepository: RatingsRepository,
+  private val floppySyncManager: FloppySyncManager,
 ) {
 
   companion object {
@@ -27,13 +25,8 @@ class RatingsShowCase @Inject constructor(
   suspend fun loadRating(idTrakt: IdTrakt): TraktRating =
     withContext(dispatchers.IO) {
       val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
-      try {
-        val rating = ratingsRepository.shows.loadRatings(listOf(show))
-        rating.firstOrNull() ?: TraktRating.EMPTY
-      } catch (error: Throwable) {
-        handleError(error)
-        TraktRating.EMPTY
-      }
+      val rating = ratingsRepository.shows.loadRatings(listOf(show))
+      rating.firstOrNull() ?: TraktRating.EMPTY
     }
 
   suspend fun saveRating(
@@ -42,36 +35,15 @@ class RatingsShowCase @Inject constructor(
   ) = withContext(dispatchers.IO) {
     check(rating in RATING_VALID_RANGE)
 
-    try {
-      val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
-      ratingsRepository.shows.addRating(
-        show = show,
-        rating = rating,
-        withSync = userTraktManager.isAuthorized(),
-      )
-    } catch (error: Throwable) {
-      handleError(error)
-    }
+    val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
+    ratingsRepository.shows.addRating(show = show, rating = rating)
+    floppySyncManager.scheduleShowRating(idTrakt, rating)
   }
 
   suspend fun deleteRating(idTrakt: IdTrakt) =
     withContext(dispatchers.IO) {
       val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
-      try {
-        ratingsRepository.shows.deleteRating(
-          show = show,
-          withSync = userTraktManager.isAuthorized(),
-        )
-      } catch (error: Throwable) {
-        handleError(error)
-      }
+      ratingsRepository.shows.deleteRating(show = show)
+      floppySyncManager.scheduleShowRating(idTrakt, null)
     }
-
-  private suspend fun handleError(error: Throwable) {
-    val showlyError = ErrorHelper.parse(error)
-    if (showlyError is ShowlyError.UnauthorizedError) {
-      userTraktManager.revokeToken()
-    }
-    throw error
-  }
 }

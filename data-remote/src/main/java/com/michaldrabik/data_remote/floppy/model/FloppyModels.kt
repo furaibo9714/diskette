@@ -55,6 +55,11 @@ data class FloppyStatusUpdateRequest(
 )
 
 @JsonClass(generateAdapter = true)
+data class FloppyScoreUpdateRequest(
+  @Json(name = "score") val score: String?,
+)
+
+@JsonClass(generateAdapter = true)
 data class FloppyInfo(
   @Json(name = "version") val version: String,
 )

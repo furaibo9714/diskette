@@ -5,7 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-const val DATABASE_VERSION = 43
+const val DATABASE_VERSION = 44
 const val DATABASE_NAME = "SHOWLY2_DB_2"
 
 class Migrations(
@@ -829,6 +829,14 @@ class Migrations(
     }
   }
 
+  private val migration44 = object : Migration(43, 44) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+      with(database) {
+        execSQL("ALTER TABLE floppy_sync_queue ADD COLUMN value TEXT")
+      }
+    }
+  }
+
   fun getAll() =
     listOf(
       migration2,
@@ -873,5 +881,6 @@ class Migrations(
       migration41,
       migration42,
       migration43,
+      migration44,
     )
 }
