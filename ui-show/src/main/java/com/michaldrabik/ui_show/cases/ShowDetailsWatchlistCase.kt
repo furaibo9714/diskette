@@ -1,8 +1,10 @@
 package com.michaldrabik.ui_show.cases
 
 import com.michaldrabik.common.dispatchers.CoroutineDispatchers
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.PinnedItemsRepository
 import com.michaldrabik.repository.shows.ShowsRepository
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.notifications.AnnouncementManager
 import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.Show
@@ -16,6 +18,7 @@ class ShowDetailsWatchlistCase @Inject constructor(
   private val showsRepository: ShowsRepository,
   private val pinnedItemsRepository: PinnedItemsRepository,
   private val quickSyncManager: QuickSyncManager,
+  private val floppySyncManager: FloppySyncManager,
   private val announcementManager: AnnouncementManager,
 ) {
 
@@ -30,6 +33,7 @@ class ShowDetailsWatchlistCase @Inject constructor(
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
       quickSyncManager.scheduleShowsWatchlist(listOf(show.traktId))
+      floppySyncManager.scheduleShowWatchlist(show.ids.tmdb.id, Operation.ADD)
     }
 
   suspend fun removeFromWatchlist(show: Show) =
@@ -38,5 +42,6 @@ class ShowDetailsWatchlistCase @Inject constructor(
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
       quickSyncManager.clearWatchlistShows(listOf(show.traktId))
+      floppySyncManager.scheduleShowWatchlist(show.ids.tmdb.id, Operation.REMOVE)
     }
 }

@@ -37,6 +37,7 @@ import com.michaldrabik.data_local.database.dao.ShowStreamingsDao
 import com.michaldrabik.data_local.database.dao.ShowTranslationsDao
 import com.michaldrabik.data_local.database.dao.ShowsDao
 import com.michaldrabik.data_local.database.dao.TraktSyncLogDao
+import com.michaldrabik.data_local.database.dao.FloppySyncQueueDao
 import com.michaldrabik.data_local.database.dao.TraktSyncQueueDao
 import com.michaldrabik.data_local.database.dao.TranslationsMoviesSyncLogDao
 import com.michaldrabik.data_local.database.dao.TranslationsSyncLogDao
@@ -82,6 +83,7 @@ import com.michaldrabik.data_local.database.model.TraktSyncLog
 import com.michaldrabik.data_local.database.model.TraktSyncQueue
 import com.michaldrabik.data_local.database.model.TranslationsMoviesSyncLog
 import com.michaldrabik.data_local.database.model.TranslationsSyncLog
+import com.michaldrabik.data_local.database.model.FloppySyncQueue
 import com.michaldrabik.data_local.database.model.User
 import com.michaldrabik.data_local.database.model.WatchlistMovie
 import com.michaldrabik.data_local.database.model.WatchlistShow
@@ -130,6 +132,7 @@ import com.michaldrabik.data_local.database.model.WatchlistShow
     MovieStreaming::class,
     MovieCollection::class,
     MovieCollectionItem::class,
+    FloppySyncQueue::class,
   ],
   exportSchema = false,
 )
@@ -216,4 +219,6 @@ abstract class AppDatabase : RoomDatabase() {
   abstract fun customListsDao(): CustomListsDao
 
   abstract fun customListsItemsDao(): CustomListsItemsDao
+
+  abstract fun floppySyncQueueDao(): FloppySyncQueueDao
 }

@@ -9,6 +9,7 @@ import com.michaldrabik.data_local.sources.DiscoverShowsLocalDataSource
 import com.michaldrabik.data_local.sources.EpisodeTranslationsLocalDataSource
 import com.michaldrabik.data_local.sources.EpisodesLocalDataSource
 import com.michaldrabik.data_local.sources.EpisodesSyncLogLocalDataSource
+import com.michaldrabik.data_local.sources.FloppySyncQueueLocalDataSource
 import com.michaldrabik.data_local.sources.MovieImagesLocalDataSource
 import com.michaldrabik.data_local.sources.MovieRatingsLocalDataSource
 import com.michaldrabik.data_local.sources.MovieStreamingsLocalDataSource
@@ -57,6 +58,7 @@ interface LocalDataSource {
   val episodes: EpisodesLocalDataSource
   val episodesSyncLog: EpisodesSyncLogLocalDataSource
   val episodesTranslations: EpisodeTranslationsLocalDataSource
+  val floppySyncQueue: FloppySyncQueueLocalDataSource
   val movieImages: MovieImagesLocalDataSource
   val movieRatings: MovieRatingsLocalDataSource
   val movieStreamings: MovieStreamingsLocalDataSource
@@ -100,6 +102,7 @@ internal class MainLocalDataSource @Inject constructor(
   override val episodes: EpisodesLocalDataSource,
   override val episodesSyncLog: EpisodesSyncLogLocalDataSource,
   override val episodesTranslations: EpisodeTranslationsLocalDataSource,
+  override val floppySyncQueue: FloppySyncQueueLocalDataSource,
   override val movieImages: MovieImagesLocalDataSource,
   override val movieRatings: MovieRatingsLocalDataSource,
   override val movieStreamings: MovieStreamingsLocalDataSource,

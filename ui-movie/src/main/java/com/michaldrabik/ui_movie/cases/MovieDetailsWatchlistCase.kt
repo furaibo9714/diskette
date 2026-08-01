@@ -1,8 +1,10 @@
 package com.michaldrabik.ui_movie.cases
 
 import com.michaldrabik.common.dispatchers.CoroutineDispatchers
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.PinnedItemsRepository
 import com.michaldrabik.repository.movies.MoviesRepository
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.notifications.AnnouncementManager
 import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.Movie
@@ -16,6 +18,7 @@ class MovieDetailsWatchlistCase @Inject constructor(
   private val moviesRepository: MoviesRepository,
   private val pinnedItemsRepository: PinnedItemsRepository,
   private val quickSyncManager: QuickSyncManager,
+  private val floppySyncManager: FloppySyncManager,
   private val announcementManager: AnnouncementManager,
 ) {
 
@@ -29,6 +32,7 @@ class MovieDetailsWatchlistCase @Inject constructor(
       moviesRepository.watchlistMovies.insert(movie.ids.trakt)
       pinnedItemsRepository.removePinnedItem(movie)
       quickSyncManager.scheduleMoviesWatchlist(listOf(movie.traktId))
+      floppySyncManager.scheduleMovieWatchlist(movie.ids.tmdb.id, Operation.ADD)
       announcementManager.refreshMoviesAnnouncements()
     }
   }
@@ -38,6 +42,7 @@ class MovieDetailsWatchlistCase @Inject constructor(
       moviesRepository.watchlistMovies.delete(movie.ids.trakt)
       pinnedItemsRepository.removePinnedItem(movie)
       quickSyncManager.clearWatchlistMovies(listOf(movie.traktId))
+      floppySyncManager.scheduleMovieWatchlist(movie.ids.tmdb.id, Operation.REMOVE)
     }
   }
 }

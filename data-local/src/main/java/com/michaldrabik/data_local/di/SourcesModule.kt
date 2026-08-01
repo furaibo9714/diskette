@@ -33,6 +33,7 @@ import com.michaldrabik.data_local.sources.SettingsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowImagesLocalDataSource
 import com.michaldrabik.data_local.sources.ShowRatingsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowStreamingsLocalDataSource
+import com.michaldrabik.data_local.sources.FloppySyncQueueLocalDataSource
 import com.michaldrabik.data_local.sources.ShowTranslationsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowsLocalDataSource
 import com.michaldrabik.data_local.sources.TraktSyncLogLocalDataSource
@@ -199,6 +200,11 @@ class SourcesModule {
   @Singleton
   internal fun providesTraktSyncQueue(database: AppDatabase): TraktSyncQueueLocalDataSource =
     database.traktSyncQueueDao()
+
+  @Provides
+  @Singleton
+  internal fun providesFloppySyncQueue(database: AppDatabase): FloppySyncQueueLocalDataSource =
+    database.floppySyncQueueDao()
 
   @Provides
   @Singleton

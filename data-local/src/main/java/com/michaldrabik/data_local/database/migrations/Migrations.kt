@@ -5,7 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-const val DATABASE_VERSION = 41
+const val DATABASE_VERSION = 42
 const val DATABASE_NAME = "SHOWLY2_DB_2"
 
 class Migrations(
@@ -778,6 +778,25 @@ class Migrations(
     }
   }
 
+  private val migration42 = object : Migration(41, 42) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+      with(database) {
+        execSQL(
+          "CREATE TABLE IF NOT EXISTS `floppy_sync_queue` (" +
+            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            "`media_type` TEXT NOT NULL, " +
+            "`source` TEXT NOT NULL, " +
+            "`media_id` TEXT NOT NULL, " +
+            "`season_number` INTEGER, " +
+            "`episode_number` INTEGER, " +
+            "`type` TEXT NOT NULL, " +
+            "`operation` TEXT NOT NULL, " +
+            "`created_at` INTEGER NOT NULL)",
+        )
+      }
+    }
+  }
+
   fun getAll() =
     listOf(
       migration2,
@@ -820,5 +839,6 @@ class Migrations(
       migration39,
       migration40,
       migration41,
+      migration42,
     )
 }

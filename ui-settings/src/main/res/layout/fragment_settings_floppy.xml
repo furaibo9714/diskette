@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  tools:theme="@style/AppTheme"
+  >
+
+  <TextView
+    android:id="@+id/floppyCategoryTitle"
+    style="@style/Settings.Category"
+    android:layout_marginTop="@dimen/spaceNormal"
+    android:text="@string/textSettingsTrakt"
+    />
+
+  <LinearLayout
+    android:id="@+id/floppyConnectSection"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/spaceNormal"
+    android:paddingTop="@dimen/spaceSmall"
+    android:paddingEnd="@dimen/spaceNormal"
+    android:paddingBottom="@dimen/spaceSmall"
+    >
+
+    <com.google.android.material.textfield.TextInputLayout
+      style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="@string/textFloppyUrlHint"
+      >
+
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/floppyUrlInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionNext"
+        android:inputType="textUri"
+        />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+      style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/spaceSmall"
+      android:hint="@string/textFloppyApiKeyHint"
+      >
+
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/floppyApiKeyInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
+        android:inputType="textPassword"
+        />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <FrameLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end"
+      android:layout_marginTop="@dimen/spaceSmall"
+      >
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/floppyTestConnectionButton"
+        style="@style/RoundMaterialButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textFloppyTestConnection"
+        />
+
+      <ProgressBar
+        android:id="@+id/floppyTestProgress"
+        style="@style/ProgressBar.Accent"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
+
+    </FrameLayout>
+
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/floppyConfiguredSection"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible"
+    >
+
+    <TextView
+      android:id="@+id/floppyConnectedSummary"
+      style="@style/Settings.Summary"
+      android:layout_width="match_parent"
+      android:layout_marginStart="@dimen/spaceNormal"
+      android:layout_marginEnd="@dimen/spaceNormal"
+      tools:text="Connected to http://192.168.1.10:8000"
+      />
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/floppyDisconnectButton"
+      style="@style/RoundMaterialButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end"
+      android:layout_marginTop="@dimen/spaceSmall"
+      android:layout_marginEnd="@dimen/spaceNormal"
+      android:layout_marginBottom="@dimen/spaceSmall"
+      android:text="@string/textFloppyDisconnect"
+      />
+
+  </LinearLayout>
+
+</LinearLayout>

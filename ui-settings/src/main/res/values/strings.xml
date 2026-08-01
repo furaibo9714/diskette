@@ -6,7 +6,15 @@
   <string name="textTurnOff">Turn Off</string>
 
   <string name="textSettings">Settings</string>
-  <string name="textSettingsTrakt">Trakt.tv</string>
+  <string name="textSettingsTrakt">Floppy</string>
+  <string name="textFloppyUrlHint">Server URL</string>
+  <string name="textFloppyApiKeyHint">API Key</string>
+  <string name="textFloppyTestConnection">Test &amp; Connect</string>
+  <string name="textFloppyConnectedTo">Connected to %1$s</string>
+  <string name="textFloppyConnectionSuccess">Connection successful.</string>
+  <string name="textFloppyConnectionError">Could not connect. Check the URL and API key.</string>
+  <string name="textFloppyDisconnect">Disconnect</string>
+  <string name="textFloppyDisconnectMessage">\nAre you sure you want to disconnect?\n</string>
   <string name="textSettingsTraktAuthorizeTitle">Trakt.tv Authorization</string>
   <string name="textSettingsTraktAuthorizeSummarySignIn">Click to sign in into your Trakt.tv account.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOut">Signed in. Click to sign out.</string>
