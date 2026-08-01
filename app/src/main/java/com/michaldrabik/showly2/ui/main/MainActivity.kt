@@ -149,6 +149,7 @@ class MainActivity :
     viewModel.initialize()
     viewModel.refreshTraktSyncSchedule()
     viewModel.refreshBackupExportSchedule()
+    viewModel.backfillFloppyLists()
   }
 
   private fun setupView() {

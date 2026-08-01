@@ -186,7 +186,7 @@ class QuickSyncListsRunner @Inject constructor(
         .postCreateList(localList.name, localList.description)
         .run { mappers.customList.fromNetwork(this) }
 
-      listsRepository.updateList(localList.id, result.idTrakt, result.idSlug, result.name, result.description)
+      listsRepository.updateList(localList.id, result.idTrakt, null, result.idSlug, result.name, result.description)
 
       val localItems = listsRepository.loadListItemsForId(localList.id)
       if (localItems.isNotEmpty()) {
@@ -196,7 +196,7 @@ class QuickSyncListsRunner @Inject constructor(
         remoteSource.postAddListItems(result.idTrakt!!, showsIds, moviesIds)
       }
 
-      return listsRepository.updateList(localList.id, result.idTrakt, result.idSlug, result.name, result.description)
+      return listsRepository.updateList(localList.id, result.idTrakt, null, result.idSlug, result.name, result.description)
     } catch (error: Throwable) {
       when (ErrorHelper.parse(error)) {
         ShowlyError.AccountLimitsError -> {

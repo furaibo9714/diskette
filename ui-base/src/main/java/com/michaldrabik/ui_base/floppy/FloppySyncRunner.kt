@@ -7,6 +7,7 @@ import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.MEDI
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Type
 import com.michaldrabik.data_remote.floppy.api.FloppyService
+import com.michaldrabik.data_remote.floppy.model.FloppyEmptyRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyScoreUpdateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyStatusUpdateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyTrackRequest
@@ -62,7 +63,43 @@ class FloppySyncRunner @Inject constructor(
       Type.MOVIE_RATING.slug -> pushMediaRating(service, MEDIA_TYPE_MOVIE, item, isAdd)
       Type.SEASON_RATING.slug -> pushSeasonRating(service, item, isAdd)
       Type.EPISODE_RATING.slug -> pushEpisodeRating(service, item, isAdd)
+      Type.LIST_ITEM_SHOW.slug -> pushListItem(service, MEDIA_TYPE_TV, item, isAdd)
+      Type.LIST_ITEM_MOVIE.slug -> pushListItem(service, MEDIA_TYPE_MOVIE, item, isAdd)
+      Type.LIST_DELETE.slug -> pushListDelete(service, item)
     }
+  }
+
+  /**
+   * Adding an item to a list requires Floppy to already know about it - PUT returns
+   * `404 "Media not found"` for anything it's never tracked or otherwise cataloged (confirmed
+   * empirically; a plain metadata GET isn't enough to register it either) - so, same as
+   * [pushMovieWatched], track it first on a 404 and retry.
+   */
+  private suspend fun pushListItem(
+    service: FloppyService,
+    mediaType: String,
+    item: FloppySyncQueue,
+    isAdd: Boolean,
+  ) {
+    val listId = item.listId ?: return
+    if (isAdd) {
+      try {
+        service.addToList(mediaType, item.source, item.mediaId, listId, FloppyEmptyRequest())
+      } catch (error: Throwable) {
+        service.trackMedia(mediaType, FloppyTrackRequest(item.source, item.mediaId))
+        service.addToList(mediaType, item.source, item.mediaId, listId, FloppyEmptyRequest())
+      }
+    } else {
+      service.removeFromList(mediaType, item.source, item.mediaId, listId)
+    }
+  }
+
+  private suspend fun pushListDelete(
+    service: FloppyService,
+    item: FloppySyncQueue,
+  ) {
+    val listId = item.listId ?: return
+    service.deleteList(listId)
   }
 
   /**
@@ -71,6 +108,9 @@ class FloppySyncRunner @Inject constructor(
    * the schema marks it nullable (confirmed empirically) - so clearing a rating here is a no-op on
    * Floppy's side; only the local rating is removed.
    * TODO: Revisit if a future Floppy version fixes this.
+   *
+   * Same "not tracked yet" 404 as [pushListItem]/[pushMovieWatched] applies here too - track first
+   * and retry on failure.
    */
   private suspend fun pushMediaRating(
     service: FloppyService,
@@ -79,7 +119,12 @@ class FloppySyncRunner @Inject constructor(
     isAdd: Boolean,
   ) {
     if (!isAdd) return
-    service.updateMediaScore(mediaType, item.source, item.mediaId, FloppyScoreUpdateRequest(item.value))
+    try {
+      service.updateMediaScore(mediaType, item.source, item.mediaId, FloppyScoreUpdateRequest(item.value))
+    } catch (error: Throwable) {
+      service.trackMedia(mediaType, FloppyTrackRequest(item.source, item.mediaId))
+      service.updateMediaScore(mediaType, item.source, item.mediaId, FloppyScoreUpdateRequest(item.value))
+    }
   }
 
   private suspend fun pushSeasonRating(

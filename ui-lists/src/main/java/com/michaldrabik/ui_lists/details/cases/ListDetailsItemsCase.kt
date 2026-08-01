@@ -16,7 +16,7 @@ import com.michaldrabik.repository.mappers.Mappers
 import com.michaldrabik.repository.movies.MoviesRepository
 import com.michaldrabik.repository.settings.SettingsRepository
 import com.michaldrabik.repository.shows.ShowsRepository
-import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_lists.details.helpers.ListDetailsSorter
 import com.michaldrabik.ui_lists.details.recycler.ListDetailsItem
 import com.michaldrabik.ui_model.CustomList
@@ -52,7 +52,7 @@ class ListDetailsItemsCase @Inject constructor(
   private val translationsRepository: TranslationsRepository,
   private val ratingsRepository: RatingsRepository,
   private val settingsRepository: SettingsRepository,
-  private val quickSyncManager: QuickSyncManager,
+  private val floppySyncManager: FloppySyncManager,
   private val sorter: ListDetailsSorter,
 ) {
 
@@ -264,10 +264,8 @@ class ListDetailsItemsCase @Inject constructor(
     itemTraktId: IdTrakt,
     itemType: Mode,
   ) = withContext(dispatchers.IO) {
+    val list = listsRepository.loadById(listId)
     listsRepository.removeFromList(listId, itemTraktId, itemType.type)
-    val isQuickRemoveEnabled = settingsRepository.load().traktQuickRemoveEnabled
-    if (isQuickRemoveEnabled) {
-      quickSyncManager.scheduleRemoveFromList(itemTraktId.id, listId, itemType)
-    }
+    floppySyncManager.scheduleListItemRemove(itemTraktId, itemType, list.idFloppy)
   }
 }

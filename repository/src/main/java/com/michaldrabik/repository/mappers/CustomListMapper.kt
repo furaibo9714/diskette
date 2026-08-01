@@ -20,6 +20,7 @@ class CustomListMapper @Inject constructor() {
     CustomList(
       id = 0,
       idTrakt = list.ids.trakt,
+      idFloppy = null,
       idSlug = list.ids.slug,
       name = list.name,
       description = list.description,
@@ -42,6 +43,7 @@ class CustomListMapper @Inject constructor() {
     CustomList(
       id = list.id,
       idTrakt = list.idTrakt,
+      idFloppy = list.idFloppy,
       idSlug = list.idSlug,
       name = list.name,
       description = list.description,
@@ -67,6 +69,7 @@ class CustomListMapper @Inject constructor() {
     CustomListDb(
       id = list.id,
       idTrakt = list.idTrakt,
+      idFloppy = list.idFloppy,
       idSlug = list.idSlug,
       name = list.name,
       description = list.description,

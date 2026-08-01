@@ -75,3 +75,19 @@ data class FloppyMediaDetail(
   @Json(name = "score") val score: Double?,
   @Json(name = "score_count") val scoreCount: Int?,
 )
+
+@JsonClass(generateAdapter = true)
+data class FloppyListCreateRequest(
+  @Json(name = "name") val name: String,
+  @Json(name = "description") val description: String?,
+)
+
+/** Only the field Showly needs (the assigned list id) - Moshi ignores the rest. */
+@JsonClass(generateAdapter = true)
+data class FloppyList(
+  @Json(name = "id") val id: Long,
+)
+
+/** Serializes to `{}` - some PUT endpoints (e.g. adding a media item to a list) require a body but have nothing to say. */
+@JsonClass(generateAdapter = true)
+class FloppyEmptyRequest

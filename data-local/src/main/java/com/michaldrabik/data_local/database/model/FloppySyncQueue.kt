@@ -16,6 +16,7 @@ data class FloppySyncQueue(
   @ColumnInfo(name = "operation") val operation: String,
   @ColumnInfo(name = "created_at") val createdAt: Long,
   @ColumnInfo(name = "value") val value: String? = null,
+  @ColumnInfo(name = "list_id") val listId: Long? = null,
 ) {
 
   companion object {
@@ -116,6 +117,27 @@ data class FloppySyncQueue(
       score?.toString(),
     )
 
+    fun createListItemShow(
+      source: String,
+      mediaId: String,
+      listId: Long,
+      operation: Operation,
+      createdAt: Long,
+    ) = FloppySyncQueue(0, MEDIA_TYPE_TV, source, mediaId, null, null, Type.LIST_ITEM_SHOW.slug, operation.slug, createdAt, listId = listId)
+
+    fun createListItemMovie(
+      source: String,
+      mediaId: String,
+      listId: Long,
+      operation: Operation,
+      createdAt: Long,
+    ) = FloppySyncQueue(0, MEDIA_TYPE_MOVIE, source, mediaId, null, null, Type.LIST_ITEM_MOVIE.slug, operation.slug, createdAt, listId = listId)
+
+    fun createListDelete(
+      listId: Long,
+      createdAt: Long,
+    ) = FloppySyncQueue(0, "", "", "", null, null, Type.LIST_DELETE.slug, Operation.REMOVE.slug, createdAt, listId = listId)
+
     const val MEDIA_TYPE_TV = "tv"
     const val MEDIA_TYPE_MOVIE = "movie"
     const val SOURCE_TMDB = "tmdb"
@@ -133,6 +155,9 @@ data class FloppySyncQueue(
     MOVIE_RATING("movie_rating"),
     SEASON_RATING("season_rating"),
     EPISODE_RATING("episode_rating"),
+    LIST_ITEM_SHOW("list_item_show"),
+    LIST_ITEM_MOVIE("list_item_movie"),
+    LIST_DELETE("list_delete"),
   }
 
   enum class Operation(

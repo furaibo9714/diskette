@@ -12,7 +12,6 @@ data class ListDetailsUiState(
   val deleteEvent: Event<Boolean>? = null,
   val isFiltersVisible: Boolean = false,
   val isManageMode: Boolean = false,
-  val isQuickRemoveEnabled: Boolean = false,
   val isLoading: Boolean = false,
   val viewMode: ListViewMode = ListViewMode.LIST_NORMAL,
 )

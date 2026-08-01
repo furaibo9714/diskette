@@ -53,7 +53,6 @@ class ListDetailsViewModel @Inject constructor(
   private val listItemsState = MutableStateFlow<List<ListDetailsItem>?>(null)
   private val listDeleteState = MutableStateFlow<Event<Boolean>?>(null)
   private val manageModeState = MutableStateFlow(false)
-  private val quickRemoveState = MutableStateFlow(false)
   private val scrollState = MutableStateFlow<Event<Boolean>?>(null)
   private val loadingState = MutableStateFlow(false)
   private val filtersVisibleState = MutableStateFlow(false)
@@ -68,7 +67,6 @@ class ListDetailsViewModel @Inject constructor(
       listItemsState.value = listItems
       manageModeState.value = false
       filtersVisibleState.value = totalCount > 0
-      quickRemoveState.value = mainCase.isQuickRemoveEnabled(list)
 
       val tip = Tip.LIST_ITEM_SWIPE_DELETE
       if (listItems.isNotEmpty() && !tipsCase.isTipShown(tip)) {
@@ -184,16 +182,11 @@ class ListDetailsViewModel @Inject constructor(
     }
   }
 
-  fun deleteList(
-    listId: Long,
-    removeFromTrakt: Boolean,
-  ) {
+  fun deleteList(listId: Long) {
     viewModelScope.launch {
       try {
-        if (removeFromTrakt) {
-          loadingState.value = true
-        }
-        mainCase.deleteList(listId, removeFromTrakt)
+        loadingState.value = true
+        mainCase.deleteList(listId)
         loadingState.value = false
         listDeleteState.value = Event(true)
       } catch (error: Throwable) {
@@ -231,23 +224,21 @@ class ListDetailsViewModel @Inject constructor(
     listDetailsState,
     listItemsState,
     manageModeState,
-    quickRemoveState,
     loadingState,
     listDeleteState,
     scrollState,
     filtersVisibleState,
     viewModeState,
-  ) { s1, s2, s3, s4, s5, s6, s7, s8, s9 ->
+  ) { s1, s2, s3, s4, s5, s6, s7, s8 ->
     ListDetailsUiState(
       listDetails = s1,
       listItems = s2,
       isManageMode = s3,
-      isQuickRemoveEnabled = s4,
-      isLoading = s5,
-      deleteEvent = s6,
-      resetScroll = s7,
-      isFiltersVisible = s8,
-      viewMode = s9,
+      isLoading = s4,
+      deleteEvent = s5,
+      resetScroll = s6,
+      isFiltersVisible = s7,
+      viewMode = s8,
     )
   }.stateIn(
     scope = viewModelScope,

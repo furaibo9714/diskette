@@ -10,6 +10,7 @@ import java.time.ZonedDateTime
 data class CustomList(
   val id: Long,
   val idTrakt: Long?,
+  val idFloppy: Long?,
   val idSlug: String,
   val name: String,
   val description: String?,
@@ -33,6 +34,7 @@ data class CustomList(
       CustomList(
         id = 0,
         idTrakt = null,
+        idFloppy = null,
         idSlug = "",
         name = "",
         description = null,

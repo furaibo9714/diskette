@@ -1,6 +1,9 @@
 package com.michaldrabik.data_remote.floppy.api
 
+import com.michaldrabik.data_remote.floppy.model.FloppyEmptyRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyInfo
+import com.michaldrabik.data_remote.floppy.model.FloppyList
+import com.michaldrabik.data_remote.floppy.model.FloppyListCreateRequest
 import com.michaldrabik.data_remote.floppy.model.FloppyMedia
 import com.michaldrabik.data_remote.floppy.model.FloppyMediaDetail
 import com.michaldrabik.data_remote.floppy.model.FloppyMediaListResponse
@@ -12,6 +15,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -97,6 +101,39 @@ interface FloppyService {
     @Path("mediaId") mediaId: String,
     @Path("seasonNumber") seasonNumber: Int,
     @Path("episodeNumber") episodeNumber: Int,
+  )
+
+  @POST("api/v1/lists/")
+  suspend fun createList(
+    @Body body: FloppyListCreateRequest,
+  ): FloppyList
+
+  @PATCH("api/v1/lists/{listId}/")
+  suspend fun updateList(
+    @Path("listId") listId: Long,
+    @Body body: FloppyListCreateRequest,
+  ): FloppyList
+
+  @DELETE("api/v1/lists/{listId}/")
+  suspend fun deleteList(
+    @Path("listId") listId: Long,
+  )
+
+  @PUT("api/v1/media/{mediaType}/{source}/{mediaId}/lists/{listId}/")
+  suspend fun addToList(
+    @Path("mediaType") mediaType: String,
+    @Path("source") source: String,
+    @Path("mediaId") mediaId: String,
+    @Path("listId") listId: Long,
+    @Body body: FloppyEmptyRequest,
+  )
+
+  @DELETE("api/v1/media/{mediaType}/{source}/{mediaId}/lists/{listId}/")
+  suspend fun removeFromList(
+    @Path("mediaType") mediaType: String,
+    @Path("source") source: String,
+    @Path("mediaId") mediaId: String,
+    @Path("listId") listId: Long,
   )
 
   companion object {

@@ -1,6 +1,7 @@
 package com.michaldrabik.ui_base.floppy
 
 import androidx.work.WorkManager
+import com.michaldrabik.common.Mode
 import com.michaldrabik.common.extensions.nowUtcMillis
 import com.michaldrabik.data_local.LocalDataSource
 import com.michaldrabik.data_local.database.model.FloppySyncQueue
@@ -102,6 +103,63 @@ class FloppySyncManager @Inject constructor(
     val (source, mediaId) = resolveSourceAndMediaId(showIds) ?: return
     val operation = if (score != null) Operation.ADD else Operation.REMOVE
     enqueue(FloppySyncQueue.createEpisodeRating(source, mediaId, seasonNumber, episodeNumber, operation, score, nowUtcMillis()))
+  }
+
+  suspend fun scheduleListItemAdd(
+    ids: Ids,
+    mode: Mode,
+    listFloppyId: Long?,
+  ) {
+    if (listFloppyId == null) return
+    val (source, mediaId) = resolveSourceAndMediaId(ids) ?: return
+    val item = when (mode) {
+      Mode.SHOWS -> FloppySyncQueue.createListItemShow(source, mediaId, listFloppyId, Operation.ADD, nowUtcMillis())
+      Mode.MOVIES -> FloppySyncQueue.createListItemMovie(source, mediaId, listFloppyId, Operation.ADD, nowUtcMillis())
+    }
+    enqueue(item)
+  }
+
+  suspend fun scheduleListItemRemove(
+    ids: Ids,
+    mode: Mode,
+    listFloppyId: Long?,
+  ) {
+    if (listFloppyId == null) return
+    val (source, mediaId) = resolveSourceAndMediaId(ids) ?: return
+    val item = when (mode) {
+      Mode.SHOWS -> FloppySyncQueue.createListItemShow(source, mediaId, listFloppyId, Operation.REMOVE, nowUtcMillis())
+      Mode.MOVIES -> FloppySyncQueue.createListItemMovie(source, mediaId, listFloppyId, Operation.REMOVE, nowUtcMillis())
+    }
+    enqueue(item)
+  }
+
+  suspend fun scheduleListItemAdd(
+    itemId: IdTrakt,
+    mode: Mode,
+    listFloppyId: Long?,
+  ) {
+    val ids = when (mode) {
+      Mode.SHOWS -> resolveShowIds(itemId)
+      Mode.MOVIES -> resolveMovieIds(itemId)
+    } ?: return
+    scheduleListItemAdd(ids, mode, listFloppyId)
+  }
+
+  suspend fun scheduleListItemRemove(
+    itemId: IdTrakt,
+    mode: Mode,
+    listFloppyId: Long?,
+  ) {
+    val ids = when (mode) {
+      Mode.SHOWS -> resolveShowIds(itemId)
+      Mode.MOVIES -> resolveMovieIds(itemId)
+    } ?: return
+    scheduleListItemRemove(ids, mode, listFloppyId)
+  }
+
+  suspend fun scheduleListDelete(listFloppyId: Long?) {
+    if (listFloppyId == null || !connectionManager.isConfigured()) return
+    enqueue(FloppySyncQueue.createListDelete(listFloppyId, nowUtcMillis()))
   }
 
   /**

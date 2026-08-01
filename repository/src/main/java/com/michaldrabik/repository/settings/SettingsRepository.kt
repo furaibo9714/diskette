@@ -58,6 +58,7 @@ class SettingsRepository @Inject constructor(
     private const val PROGRESS_NEXT_EPISODE_TYPE = "PROGRESS_NEXT_EPISODE_TYPE"
     private const val PROGRESS_DATE_SELECTION_TYPE = "PROGRESS_DATE_SELECTION_TYPE"
     private const val LOCALE_INITIALISED = "LOCALE_INITIALISED"
+    private const val FLOPPY_LISTS_BACKFILLED = "FLOPPY_LISTS_BACKFILLED"
   }
 
   suspend fun isInitialized() =
@@ -105,6 +106,7 @@ class SettingsRepository @Inject constructor(
     ProgressDateSelectionType::class.java,
   )
   var isLocaleInitialised by BooleanPreference(preferences, LOCALE_INITIALISED, false)
+  var isFloppyListsBackfilled by BooleanPreference(preferences, FLOPPY_LISTS_BACKFILLED, false)
 
   var mode: Mode
     get() {

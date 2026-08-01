@@ -3,7 +3,7 @@ package com.michaldrabik.ui_lists.manage.cases
 import com.michaldrabik.common.Mode
 import com.michaldrabik.common.dispatchers.CoroutineDispatchers
 import com.michaldrabik.repository.ListsRepository
-import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_lists.manage.recycler.ManageListsItem
 import com.michaldrabik.ui_model.IdTrakt
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class ManageListsCase @Inject constructor(
   private val dispatchers: CoroutineDispatchers,
   private val listsRepository: ListsRepository,
-  private val quickSyncManager: QuickSyncManager,
+  private val floppySyncManager: FloppySyncManager,
 ) {
 
   suspend fun loadLists(
@@ -39,7 +39,7 @@ class ManageListsCase @Inject constructor(
     listItem: ManageListsItem,
   ) = withContext(dispatchers.IO) {
     listsRepository.addToList(listItem.list.id, itemId, itemType)
-    quickSyncManager.scheduleAddToList(itemId.id, listItem.list.id, Mode.fromType(itemType))
+    floppySyncManager.scheduleListItemAdd(itemId, Mode.fromType(itemType), listItem.list.idFloppy)
   }
 
   suspend fun removeFromList(
@@ -48,6 +48,6 @@ class ManageListsCase @Inject constructor(
     listItem: ManageListsItem,
   ) = withContext(dispatchers.IO) {
     listsRepository.removeFromList(listItem.list.id, itemId, itemType)
-    quickSyncManager.scheduleRemoveFromList(itemId.id, listItem.list.id, Mode.fromType(itemType))
+    floppySyncManager.scheduleListItemRemove(itemId, Mode.fromType(itemType), listItem.list.idFloppy)
   }
 }

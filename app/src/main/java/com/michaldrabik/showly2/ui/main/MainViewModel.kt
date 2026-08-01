@@ -10,6 +10,7 @@ import com.michaldrabik.repository.settings.SettingsRepository
 import com.michaldrabik.showly2.ui.main.cases.MainAnnouncementsCase
 import com.michaldrabik.showly2.ui.main.cases.MainBackupCase
 import com.michaldrabik.showly2.ui.main.cases.MainClearingCase
+import com.michaldrabik.showly2.ui.main.cases.MainFloppyListsBackfillCase
 import com.michaldrabik.showly2.ui.main.cases.MainInitialsCase
 import com.michaldrabik.showly2.ui.main.cases.MainModesCase
 import com.michaldrabik.showly2.ui.main.cases.MainTipsCase
@@ -39,6 +40,7 @@ class MainViewModel @Inject constructor(
   private val initCase: MainInitialsCase,
   private val tipsCase: MainTipsCase,
   private val traktCase: MainTraktCase,
+  private val floppyListsBackfillCase: MainFloppyListsBackfillCase,
   private val backupCase: MainBackupCase,
   private val clearingCase: MainClearingCase,
   private val announcementsCase: MainAnnouncementsCase,
@@ -116,6 +118,12 @@ class MainViewModel @Inject constructor(
   fun refreshBackupExportSchedule() {
     backupCase.run {
       refreshBackupExportSchedule()
+    }
+  }
+
+  fun backfillFloppyLists() {
+    viewModelScope.launch {
+      floppyListsBackfillCase.backfillListsIfNeeded()
     }
   }
 
