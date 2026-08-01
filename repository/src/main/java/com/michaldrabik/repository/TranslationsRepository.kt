@@ -67,7 +67,7 @@ class TranslationsRepository @Inject constructor(
 
     val remoteTranslation = try {
       remoteSource.trakt
-        .fetchShowTranslations(show.traktId, language)
+        .fetchShowTranslations(show.traktId, language, show.ids.tmdb.id)
         .firstOrNull { chineseLanguagePredicate(it) && frenchLanguagePredicate(it) }
     } catch (error: Throwable) {
       null
@@ -108,7 +108,7 @@ class TranslationsRepository @Inject constructor(
 
     val remoteTranslation = try {
       remoteSource.trakt
-        .fetchMovieTranslations(movie.traktId, language)
+        .fetchMovieTranslations(movie.traktId, language, movie.ids.tmdb.id)
         .firstOrNull { chineseLanguagePredicate(it) && frenchLanguagePredicate(it) }
     } catch (error: Throwable) {
       null

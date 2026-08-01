@@ -32,7 +32,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import com.michaldrabik.data_local.database.model.Person as PersonDb
-import com.michaldrabik.data_remote.trakt.model.Ids as IdsRemote
 
 class PeopleRepositoryTest : BaseMockTest() {
 
@@ -181,39 +180,15 @@ class PeopleRepositoryTest : BaseMockTest() {
     }
 
   @Test
-  fun `Should return empty credits if Trakt ID is not found for given TMDB ID`() =
-    runBlocking {
-      val person = mockk<Person>(relaxed = true)
-      val personDb = mockk<PersonDb>(relaxed = true) {
-        coEvery { idTrakt } returns null
-      }
-      val ids = mockk<IdsRemote>(relaxed = true) {
-        coEvery { trakt } returns null
-      }
-      coEvery { peopleDao.getById(any()) } returns personDb
-      coEvery { traktApi.fetchPersonIds(any(), any()) } returns ids
-
-      val result = SUT.loadCredits(person)
-
-      assertThat(result).isEmpty()
-      coVerify { peopleDao.getById(any()) }
-      coVerify(exactly = 0) { peopleDao.updateTraktId(any(), any()) }
-    }
-
-  @Test
   fun `Should return locally cached credits if Trakt ID is found and cache is valid`() =
     runBlocking {
       val person = mockk<Person>(relaxed = true)
       val personDb = mockk<PersonDb>(relaxed = true) {
         coEvery { idTrakt } returns 1
       }
-      val ids = mockk<IdsRemote>(relaxed = true) {
-        coEvery { trakt } returns 1
-      }
       val show = mockk<Show>(relaxed = true)
       val movie = mockk<Movie>(relaxed = true)
       coEvery { peopleDao.getById(any()) } returns personDb
-      coEvery { traktApi.fetchPersonIds(any(), any()) } returns ids
       coEvery { peopleCreditsDao.getTimestampForPerson(any()) } returns nowUtcMillis() - 100
       coEvery { peopleCreditsDao.getAllShowsForPerson(any()) } returns listOf(show)
       coEvery { peopleCreditsDao.getAllMoviesForPerson(any()) } returns listOf(movie)
@@ -225,8 +200,8 @@ class PeopleRepositoryTest : BaseMockTest() {
       assertThat(result[1].movie).isNotNull()
       coVerify { peopleDao.getById(any()) }
       coVerify(exactly = 0) { peopleDao.updateTraktId(any(), any()) }
-      coVerify(exactly = 0) { traktApi.fetchPersonShowsCredits(any(), any()) }
-      coVerify(exactly = 0) { traktApi.fetchPersonMoviesCredits(any(), any()) }
+      coVerify(exactly = 0) { traktApi.fetchPersonShowsCredits(any(), any(), any()) }
+      coVerify(exactly = 0) { traktApi.fetchPersonMoviesCredits(any(), any(), any()) }
     }
 
   @Test
@@ -236,15 +211,11 @@ class PeopleRepositoryTest : BaseMockTest() {
       val personDb = mockk<PersonDb>(relaxed = true) {
         coEvery { idTrakt } returns 1
       }
-      val ids = mockk<IdsRemote>(relaxed = true) {
-        coEvery { trakt } returns 1
-      }
       val creditsShows = mockk<PersonCredit>(relaxed = true)
       val creditsMovies = mockk<PersonCredit>(relaxed = true)
       coEvery { peopleDao.getById(any()) } returns personDb
-      coEvery { traktApi.fetchPersonIds(any(), any()) } returns ids
-      coEvery { traktApi.fetchPersonShowsCredits(any(), any()) } returns listOf(creditsShows)
-      coEvery { traktApi.fetchPersonMoviesCredits(any(), any()) } returns listOf(creditsMovies)
+      coEvery { traktApi.fetchPersonShowsCredits(any(), any(), any()) } returns listOf(creditsShows)
+      coEvery { traktApi.fetchPersonMoviesCredits(any(), any(), any()) } returns listOf(creditsMovies)
 
       val result = SUT.loadCredits(person)
 

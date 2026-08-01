@@ -3,12 +3,23 @@ package com.michaldrabik.data_remote.tmdb.api
 import com.michaldrabik.data_remote.tmdb.model.TmdbImages
 import com.michaldrabik.data_remote.tmdb.model.TmdbPeople
 import com.michaldrabik.data_remote.tmdb.model.TmdbPerson
+import com.michaldrabik.data_remote.tmdb.model.TmdbPersonCreditsResponse
 import com.michaldrabik.data_remote.tmdb.model.TmdbStreamings
 import com.michaldrabik.data_remote.tmdb.model.TmdbTranslationResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface TmdbService {
+
+  @GET("person/{tmdbId}/tv_credits")
+  suspend fun fetchPersonTvCredits(
+    @Path("tmdbId") tmdbId: Long,
+  ): TmdbPersonCreditsResponse
+
+  @GET("person/{tmdbId}/movie_credits")
+  suspend fun fetchPersonMovieCredits(
+    @Path("tmdbId") tmdbId: Long,
+  ): TmdbPersonCreditsResponse
 
   @GET("tv/{tmdbId}/images")
   suspend fun fetchShowImages(

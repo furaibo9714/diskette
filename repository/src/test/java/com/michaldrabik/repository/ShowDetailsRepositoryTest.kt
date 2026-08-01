@@ -51,7 +51,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
 
       assertThat(show.ids.trakt).isEqualTo(IdTrakt(1))
       coVerify(exactly = 1) { showsDao.getById(any<Long>()) }
-      coVerify(exactly = 0) { traktApi.fetchShow(any<Long>()) }
+      coVerify(exactly = 0) { traktApi.fetchShow(any<Long>(), any()) }
     }
   }
 
@@ -63,7 +63,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
       }
       coEvery { showsDao.getById(any<Long>()) } returns null
       coEvery { showsDao.upsert(any()) } just Runs
-      coEvery { traktApi.fetchShow(any<Long>()) } returns showRemote
+      coEvery { traktApi.fetchShow(any<Long>(), any()) } returns showRemote
 
       val show = SUT.load(IdTrakt(1), true)
 
@@ -71,7 +71,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
 
       coVerifySequence {
         showsDao.getById(any<Long>())
-        traktApi.fetchShow(any<Long>())
+        traktApi.fetchShow(any<Long>(), any())
         showsDao.upsert(any())
       }
     }
@@ -85,7 +85,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
       }
       coEvery { showsDao.getById(any<Long>()) } returns null
       coEvery { showsDao.upsert(any()) } just Runs
-      coEvery { traktApi.fetchShow(any<Long>()) } returns showRemote
+      coEvery { traktApi.fetchShow(any<Long>(), any()) } returns showRemote
 
       val show = SUT.load(IdTrakt(1), false)
 
@@ -93,7 +93,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
 
       coVerifySequence {
         showsDao.getById(any<Long>())
-        traktApi.fetchShow(any<Long>())
+        traktApi.fetchShow(any<Long>(), any())
         showsDao.upsert(any())
       }
     }
@@ -111,7 +111,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
       }
       coEvery { showsDao.getById(any<Long>()) } returns showDb
       coEvery { showsDao.upsert(any()) } just Runs
-      coEvery { traktApi.fetchShow(any<Long>()) } returns showRemote
+      coEvery { traktApi.fetchShow(any<Long>(), any()) } returns showRemote
 
       val show = SUT.load(IdTrakt(1), false)
 
@@ -119,7 +119,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
 
       coVerifySequence {
         showsDao.getById(any<Long>())
-        traktApi.fetchShow(any<Long>())
+        traktApi.fetchShow(any<Long>(), any())
         showsDao.upsert(any())
       }
     }

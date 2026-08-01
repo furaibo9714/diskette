@@ -49,7 +49,7 @@ class ShowDetailsLoadSeasonsCase @Inject constructor(
         }
 
         val remoteSeasons = remoteSource.trakt
-          .fetchSeasons(show.traktId)
+          .fetchSeasons(show.traktId, show.ids.tmdb.id)
           .map { mappers.season.fromNetwork(it) }
           .filter { it.episodes.isNotEmpty() }
           .filter { if (!showSpecialSeasons) !it.isSpecial() else true }

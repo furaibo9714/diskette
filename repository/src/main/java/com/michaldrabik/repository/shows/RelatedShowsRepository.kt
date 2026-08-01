@@ -34,7 +34,7 @@ class RelatedShowsRepository @Inject constructor(
     }
 
     val remoteShows = remoteSource.trakt
-      .fetchRelatedShows(show.traktId, min(hiddenCount, 10))
+      .fetchRelatedShows(show.traktId, min(hiddenCount, 10), show.ids.tmdb.id)
       .map { mappers.show.fromNetwork(it) }
 
     cacheRelatedShows(remoteShows, show.ids.trakt)

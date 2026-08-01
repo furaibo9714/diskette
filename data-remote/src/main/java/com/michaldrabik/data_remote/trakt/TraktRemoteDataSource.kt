@@ -29,7 +29,10 @@ interface TraktRemoteDataSource {
 
   // Shows
 
-  suspend fun fetchShow(traktId: Long): Show
+  suspend fun fetchShow(
+    traktId: Long,
+    tmdbId: Long? = null,
+  ): Show
 
   suspend fun fetchShow(traktSlug: String): Show
 
@@ -54,16 +57,21 @@ interface TraktRemoteDataSource {
   suspend fun fetchRelatedShows(
     traktId: Long,
     addToLimit: Int,
+    tmdbId: Long? = null,
   ): List<Show>
 
   suspend fun fetchShowTranslations(
     traktId: Long,
     code: String,
+    tmdbId: Long? = null,
   ): List<Translation>
 
   suspend fun fetchNextEpisode(traktId: Long): Episode?
 
-  suspend fun fetchSeasons(traktId: Long): List<Season>
+  suspend fun fetchSeasons(
+    traktId: Long,
+    tmdbId: Long? = null,
+  ): List<Season>
 
   suspend fun fetchShowComments(
     traktId: Long,
@@ -84,7 +92,10 @@ interface TraktRemoteDataSource {
 
   // Movies
 
-  suspend fun fetchMovie(traktId: Long): Movie
+  suspend fun fetchMovie(
+    traktId: Long,
+    tmdbId: Long? = null,
+  ): Movie
 
   suspend fun fetchMovie(traktSlug: String): Movie
 
@@ -106,6 +117,7 @@ interface TraktRemoteDataSource {
   suspend fun fetchRelatedMovies(
     traktId: Long,
     addToLimit: Int,
+    tmdbId: Long? = null,
   ): List<Movie>
 
   suspend fun fetchMovieComments(
@@ -116,6 +128,7 @@ interface TraktRemoteDataSource {
   suspend fun fetchMovieTranslations(
     traktId: Long,
     code: String,
+    tmdbId: Long? = null,
   ): List<Translation>
 
   suspend fun fetchMovieCollections(traktId: Long): List<MovieCollection>
@@ -132,11 +145,13 @@ interface TraktRemoteDataSource {
   suspend fun fetchPersonShowsCredits(
     traktId: Long,
     type: TmdbPerson.Type,
+    tmdbId: Long? = null,
   ): List<PersonCredit>
 
   suspend fun fetchPersonMoviesCredits(
     traktId: Long,
     type: TmdbPerson.Type,
+    tmdbId: Long? = null,
   ): List<PersonCredit>
 
   // Search

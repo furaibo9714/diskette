@@ -3,6 +3,7 @@ package com.michaldrabik.data_remote.di.module
 import com.michaldrabik.data_remote.BuildConfig
 import com.michaldrabik.data_remote.omdb.OmdbInterceptor
 import com.michaldrabik.data_remote.tmdb.TmdbInterceptor
+import com.michaldrabik.data_remote.tmdb.interceptors.TmdbRetryInterceptor
 import com.michaldrabik.data_remote.trakt.interceptors.TraktAuthenticator
 import com.michaldrabik.data_remote.trakt.interceptors.TraktAuthorizationInterceptor
 import com.michaldrabik.data_remote.trakt.interceptors.TraktHeadersInterceptor
@@ -69,8 +70,10 @@ object OkHttpModule {
   fun providesTmdbOkHttp(
     httpLoggingInterceptor: HttpLoggingInterceptor,
     tmdbInterceptor: TmdbInterceptor,
+    tmdbRetryInterceptor: TmdbRetryInterceptor,
   ) = createBaseOkHttpClient()
     .addInterceptor(tmdbInterceptor)
+    .addInterceptor(tmdbRetryInterceptor)
     .addInterceptor(httpLoggingInterceptor)
     .build()
 

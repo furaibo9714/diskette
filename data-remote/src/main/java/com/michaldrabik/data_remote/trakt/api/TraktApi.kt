@@ -34,11 +34,17 @@ internal class TraktApi(
   private val peopleService: TraktPeopleService,
 ) : TraktRemoteDataSource {
 
-  override suspend fun fetchShow(traktId: Long) = showsService.fetchShow(traktId)
+  override suspend fun fetchShow(
+    traktId: Long,
+    tmdbId: Long?,
+  ) = showsService.fetchShow(traktId)
 
   override suspend fun fetchShow(traktSlug: String) = showsService.fetchShow(traktSlug)
 
-  override suspend fun fetchMovie(traktId: Long) = moviesService.fetchMovie(traktId)
+  override suspend fun fetchMovie(
+    traktId: Long,
+    tmdbId: Long?,
+  ) = moviesService.fetchMovie(traktId)
 
   override suspend fun fetchMovie(traktSlug: String) = moviesService.fetchMovie(traktSlug)
 
@@ -78,11 +84,13 @@ internal class TraktApi(
   override suspend fun fetchRelatedShows(
     traktId: Long,
     addToLimit: Int,
+    tmdbId: Long?,
   ) = showsService.fetchRelatedShows(traktId, Config.TRAKT_RELATED_SHOWS_LIMIT + addToLimit)
 
   override suspend fun fetchRelatedMovies(
     traktId: Long,
     addToLimit: Int,
+    tmdbId: Long?,
   ) = moviesService.fetchRelatedMovies(traktId, Config.TRAKT_RELATED_MOVIES_LIMIT + addToLimit)
 
   override suspend fun fetchNextEpisode(traktId: Long): Episode? {
@@ -114,6 +122,7 @@ internal class TraktApi(
   override suspend fun fetchPersonShowsCredits(
     traktId: Long,
     type: TmdbPerson.Type,
+    tmdbId: Long?,
   ): List<PersonCredit> {
     val result = peopleService.fetchPersonCredits(traktId = traktId, "shows")
     val cast = result.cast ?: emptyList()
@@ -127,6 +136,7 @@ internal class TraktApi(
   override suspend fun fetchPersonMoviesCredits(
     traktId: Long,
     type: TmdbPerson.Type,
+    tmdbId: Long?,
   ): List<PersonCredit> {
     val result = peopleService.fetchPersonCredits(traktId = traktId, "movies")
     val cast = result.cast ?: emptyList()
@@ -142,10 +152,12 @@ internal class TraktApi(
     id: String,
   ) = searchService.fetchSearchId(idType, id)
 
-  override suspend fun fetchSeasons(traktId: Long) =
-    showsService
-      .fetchSeasons(traktId)
-      .sortedByDescending { it.number }
+  override suspend fun fetchSeasons(
+    traktId: Long,
+    tmdbId: Long?,
+  ) = showsService
+    .fetchSeasons(traktId)
+    .sortedByDescending { it.number }
 
   override suspend fun fetchShowComments(
     traktId: Long,
@@ -163,11 +175,13 @@ internal class TraktApi(
   override suspend fun fetchShowTranslations(
     traktId: Long,
     code: String,
+    tmdbId: Long?,
   ) = showsService.fetchShowTranslations(traktId, code)
 
   override suspend fun fetchMovieTranslations(
     traktId: Long,
     code: String,
+    tmdbId: Long?,
   ) = moviesService.fetchMovieTranslations(traktId, code)
 
   override suspend fun fetchSeasonTranslations(

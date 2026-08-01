@@ -70,13 +70,10 @@ class PeopleRepository @Inject constructor(
       val localPerson = localSource.people.getById(idTmdb)
       idTrakt = localPerson?.idTrakt
       if (idTrakt == null) {
-        val ids = remoteSource.trakt.fetchPersonIds("tmdb", idTmdb.toString())
-        ids?.trakt?.let {
-          idTrakt = it
-          localSource.people.updateTraktId(it, idTmdb)
-        }
+        // TMDB credits endpoints take the tmdb id directly - no id-resolution network call needed.
+        idTrakt = idTmdb
+        localSource.people.updateTraktId(idTmdb, idTmdb)
       }
-      if (idTrakt == null) return@coroutineScope emptyList()
 
       // Return locally cached data if available
       val timestamp = localSource.peopleCredits.getTimestampForPerson(idTrakt!!)
@@ -110,8 +107,8 @@ class PeopleRepository @Inject constructor(
 
       // Return remote fetched data if available and cache it locally
       val type = if (person.department == Department.ACTING) Type.CAST else Type.CREW
-      val showsCreditsAsync = async { remoteSource.trakt.fetchPersonShowsCredits(idTrakt!!, type) }
-      val moviesCreditsAsync = async { remoteSource.trakt.fetchPersonMoviesCredits(idTrakt!!, type) }
+      val showsCreditsAsync = async { remoteSource.trakt.fetchPersonShowsCredits(idTrakt!!, type, idTmdb) }
+      val moviesCreditsAsync = async { remoteSource.trakt.fetchPersonMoviesCredits(idTrakt!!, type, idTmdb) }
       val remoteCredits = awaitAll(showsCreditsAsync, moviesCreditsAsync)
         .flatten()
         .map {

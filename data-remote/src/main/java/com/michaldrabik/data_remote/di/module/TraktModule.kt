@@ -1,9 +1,14 @@
 package com.michaldrabik.data_remote.di.module
 
 import android.content.SharedPreferences
+import com.michaldrabik.data_remote.tmdb.api.TmdbMoviesService
+import com.michaldrabik.data_remote.tmdb.api.TmdbSearchService
+import com.michaldrabik.data_remote.tmdb.api.TmdbService
+import com.michaldrabik.data_remote.tmdb.api.TmdbShowsService
 import com.michaldrabik.data_remote.token.TokenProvider
 import com.michaldrabik.data_remote.token.TraktTokenProvider
 import com.michaldrabik.data_remote.trakt.AuthorizedTraktRemoteDataSource
+import com.michaldrabik.data_remote.trakt.TmdbBackedTraktRemoteDataSource
 import com.michaldrabik.data_remote.trakt.TraktRemoteDataSource
 import com.michaldrabik.data_remote.trakt.api.AuthorizedTraktApi
 import com.michaldrabik.data_remote.trakt.api.TraktApi
@@ -33,8 +38,9 @@ object TraktModule {
   @Singleton
   fun providesTraktApi(
     @Named("retrofitTrakt") retrofit: Retrofit,
-  ): TraktRemoteDataSource =
-    TraktApi(
+    @Named("retrofitTmdb") tmdbRetrofit: Retrofit,
+  ): TraktRemoteDataSource {
+    val traktApi = TraktApi(
       showsService = retrofit.create(TraktShowsService::class.java),
       moviesService = retrofit.create(TraktMoviesService::class.java),
       authService = retrofit.create(TraktAuthService::class.java),
@@ -42,6 +48,14 @@ object TraktModule {
       searchService = retrofit.create(TraktSearchService::class.java),
       peopleService = retrofit.create(TraktPeopleService::class.java),
     )
+    return TmdbBackedTraktRemoteDataSource(
+      legacyTrakt = traktApi,
+      tmdbSearch = tmdbRetrofit.create(TmdbSearchService::class.java),
+      tmdbShows = tmdbRetrofit.create(TmdbShowsService::class.java),
+      tmdbMovies = tmdbRetrofit.create(TmdbMoviesService::class.java),
+      tmdbPeople = tmdbRetrofit.create(TmdbService::class.java),
+    )
+  }
 
   @Provides
   @Singleton
