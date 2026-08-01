@@ -2,12 +2,9 @@ package com.michaldrabik.ui_show.episodes.cases
 
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.EpisodesManager
-import com.michaldrabik.repository.UserTraktManager
-import com.michaldrabik.repository.settings.SettingsRepository
 import com.michaldrabik.repository.shows.ShowsRepository
 import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_model.EpisodeBundle
-import com.michaldrabik.ui_show.sections.seasons.helpers.SeasonsCache
 import dagger.hilt.android.scopes.ViewModelScoped
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -17,54 +14,27 @@ class EpisodesSetEpisodeWatchedCase @Inject constructor(
   private val showsRepository: ShowsRepository,
   private val episodesManager: EpisodesManager,
   private val floppySyncManager: FloppySyncManager,
-  private val userTraktManager: UserTraktManager,
-  private val seasonsCache: SeasonsCache,
-  private val settingsRepository: SettingsRepository,
 ) {
 
   suspend fun setEpisodeWatched(
     episodeBundle: EpisodeBundle,
     isChecked: Boolean,
     customDate: ZonedDateTime?,
-  ): Result {
+  ) {
     val (episode, _, show) = episodeBundle
-
-    val isMyShows = showsRepository.myShows.exists(show.ids.trakt)
-    val isWatchlist = showsRepository.watchlistShows.exists(show.ids.trakt)
-    val isHidden = showsRepository.hiddenShows.exists(show.ids.trakt)
-    val isCollection = isMyShows || isWatchlist || isHidden
 
     when {
       isChecked -> {
+        val isMyShows = showsRepository.myShows.exists(show.ids.trakt)
         episodesManager.setEpisodeWatched(episodeBundle, customDate)
         if (isMyShows) {
           floppySyncManager.scheduleEpisodeWatched(show.ids, episode.season, episode.number, Operation.ADD)
         }
-        return Result.SUCCESS
       }
       else -> {
         episodesManager.setEpisodeUnwatched(episodeBundle)
         floppySyncManager.scheduleEpisodeWatched(show.ids, episode.season, episode.number, Operation.REMOVE)
-
-        val traktQuickRemoveEnabled = settingsRepository.load().traktQuickRemoveEnabled
-        val isSeasonLocal = seasonsCache.areSeasonsLocal(show.ids.trakt)
-
-        val showRemoveTrakt = userTraktManager.isAuthorized() &&
-          traktQuickRemoveEnabled &&
-          !isSeasonLocal &&
-          isCollection
-
-        if (showRemoveTrakt) {
-          return Result.REMOVE_FROM_TRAKT
-        }
-
-        return Result.SUCCESS
       }
     }
-  }
-
-  enum class Result {
-    SUCCESS,
-    REMOVE_FROM_TRAKT,
   }
 }

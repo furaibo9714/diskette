@@ -10,7 +10,6 @@ import com.michaldrabik.ui_base.events.ReloadData
 import com.michaldrabik.ui_base.events.FloppySyncError
 import com.michaldrabik.ui_base.events.FloppySyncProgress
 import com.michaldrabik.ui_base.events.FloppySyncSuccess
-import com.michaldrabik.ui_base.events.TraktSyncAuthError
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import com.michaldrabik.ui_base.utilities.extensions.findReplace
@@ -135,7 +134,6 @@ class WatchlistViewModel @Inject constructor(
       is FloppySyncSuccess -> loadShows()
       is FloppySyncError -> loadShows()
       is FloppySyncProgress -> loadShows()
-      is TraktSyncAuthError -> loadShows()
       is ReloadData -> loadShows()
       else -> Unit
     }

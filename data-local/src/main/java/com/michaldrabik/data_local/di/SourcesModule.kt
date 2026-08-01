@@ -36,10 +36,8 @@ import com.michaldrabik.data_local.sources.ShowStreamingsLocalDataSource
 import com.michaldrabik.data_local.sources.FloppySyncQueueLocalDataSource
 import com.michaldrabik.data_local.sources.ShowTranslationsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowsLocalDataSource
-import com.michaldrabik.data_local.sources.TraktSyncQueueLocalDataSource
 import com.michaldrabik.data_local.sources.TranslationsMoviesSyncLogLocalDataSource
 import com.michaldrabik.data_local.sources.TranslationsShowsSyncLogLocalDataSource
-import com.michaldrabik.data_local.sources.UserLocalDataSource
 import com.michaldrabik.data_local.sources.WatchlistMoviesLocalDataSource
 import com.michaldrabik.data_local.sources.WatchlistShowsLocalDataSource
 import dagger.Module
@@ -193,11 +191,6 @@ class SourcesModule {
 
   @Provides
   @Singleton
-  internal fun providesTraktSyncQueue(database: AppDatabase): TraktSyncQueueLocalDataSource =
-    database.traktSyncQueueDao()
-
-  @Provides
-  @Singleton
   internal fun providesFloppySyncQueue(database: AppDatabase): FloppySyncQueueLocalDataSource =
     database.floppySyncQueueDao()
 
@@ -210,10 +203,6 @@ class SourcesModule {
   @Singleton
   internal fun providesTranslationsShows(database: AppDatabase): TranslationsShowsSyncLogLocalDataSource =
     database.translationsSyncLogDao()
-
-  @Provides
-  @Singleton
-  internal fun providesUser(database: AppDatabase): UserLocalDataSource = database.userDao()
 
   @Provides
   @Singleton

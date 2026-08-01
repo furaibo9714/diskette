@@ -33,10 +33,8 @@ import com.michaldrabik.data_local.sources.ShowRatingsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowStreamingsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowTranslationsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowsLocalDataSource
-import com.michaldrabik.data_local.sources.TraktSyncQueueLocalDataSource
 import com.michaldrabik.data_local.sources.TranslationsMoviesSyncLogLocalDataSource
 import com.michaldrabik.data_local.sources.TranslationsShowsSyncLogLocalDataSource
-import com.michaldrabik.data_local.sources.UserLocalDataSource
 import com.michaldrabik.data_local.sources.WatchlistMoviesLocalDataSource
 import com.michaldrabik.data_local.sources.WatchlistShowsLocalDataSource
 import javax.inject.Inject
@@ -81,10 +79,8 @@ interface LocalDataSource {
   val showStreamings: ShowStreamingsLocalDataSource
   val showTranslations: ShowTranslationsLocalDataSource
   val shows: ShowsLocalDataSource
-  val traktSyncQueue: TraktSyncQueueLocalDataSource
   val translationsMoviesSyncLog: TranslationsMoviesSyncLogLocalDataSource
   val translationsShowsSyncLog: TranslationsShowsSyncLogLocalDataSource
-  val user: UserLocalDataSource
   val watchlistMovies: WatchlistMoviesLocalDataSource
   val watchlistShows: WatchlistShowsLocalDataSource
 }
@@ -124,10 +120,8 @@ internal class MainLocalDataSource @Inject constructor(
   override val showStreamings: ShowStreamingsLocalDataSource,
   override val showTranslations: ShowTranslationsLocalDataSource,
   override val shows: ShowsLocalDataSource,
-  override val traktSyncQueue: TraktSyncQueueLocalDataSource,
   override val translationsMoviesSyncLog: TranslationsMoviesSyncLogLocalDataSource,
   override val translationsShowsSyncLog: TranslationsShowsSyncLogLocalDataSource,
-  override val user: UserLocalDataSource,
   override val watchlistMovies: WatchlistMoviesLocalDataSource,
   override val watchlistShows: WatchlistShowsLocalDataSource,
 ) : LocalDataSource

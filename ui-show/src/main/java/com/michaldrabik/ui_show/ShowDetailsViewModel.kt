@@ -6,11 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.michaldrabik.common.errors.ErrorHelper
 import com.michaldrabik.common.errors.ShowlyError.CoroutineCancellation
 import com.michaldrabik.common.errors.ShowlyError.ResourceNotFoundError
-import com.michaldrabik.repository.UserTraktManager
 import com.michaldrabik.repository.images.ShowImagesProvider
 import com.michaldrabik.repository.settings.SettingsRepository
 import com.michaldrabik.ui_base.Logger
-import com.michaldrabik.ui_base.common.sheets.remove_trakt.RemoveTraktBottomSheet
 import com.michaldrabik.ui_base.utilities.events.MessageEvent
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import com.michaldrabik.ui_base.utilities.extensions.combine
@@ -27,7 +25,6 @@ import com.michaldrabik.ui_model.SpoilersSettings
 import com.michaldrabik.ui_model.TraktRating
 import com.michaldrabik.ui_model.Translation
 import com.michaldrabik.ui_show.ShowDetailsEvent.Finish
-import com.michaldrabik.ui_show.ShowDetailsEvent.RemoveFromTrakt
 import com.michaldrabik.ui_show.ShowDetailsUiState.FollowedState
 import com.michaldrabik.ui_show.cases.ShowDetailsHiddenCase
 import com.michaldrabik.ui_show.cases.ShowDetailsListsCase
@@ -35,7 +32,6 @@ import com.michaldrabik.ui_show.cases.ShowDetailsMainCase
 import com.michaldrabik.ui_show.cases.ShowDetailsMyShowsCase
 import com.michaldrabik.ui_show.cases.ShowDetailsTranslationCase
 import com.michaldrabik.ui_show.cases.ShowDetailsWatchlistCase
-import com.michaldrabik.ui_show.helpers.ShowDetailsMeta
 import com.michaldrabik.ui_show.sections.ratings.cases.ShowDetailsRatingCase
 import com.michaldrabik.ui_show.sections.seasons.helpers.SeasonsCache
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -61,7 +57,6 @@ class ShowDetailsViewModel @Inject constructor(
   private val myShowsCase: ShowDetailsMyShowsCase,
   private val listsCase: ShowDetailsListsCase,
   private val settingsRepository: SettingsRepository,
-  private val userManager: UserTraktManager,
   private val seasonsCache: SeasonsCache,
   private val imagesProvider: ShowImagesProvider,
 ) : ViewModel(),
@@ -80,7 +75,6 @@ class ShowDetailsViewModel @Inject constructor(
   private val translationState = MutableStateFlow<Translation?>(null)
   private val listsCountState = MutableStateFlow(0)
   private val spoilersState = MutableStateFlow<SpoilersSettings?>(null)
-  private val metaState = MutableStateFlow<ShowDetailsMeta?>(null)
 
   val parentShowState = showState.asStateFlow()
   val parentFollowedState = followedState.asStateFlow()
@@ -93,7 +87,6 @@ class ShowDetailsViewModel @Inject constructor(
       try {
         show = mainCase.loadDetails(id)
 
-        val isSignedIn = userManager.isAuthorized()
         val isMyShow = async { myShowsCase.isMyShows(show) }
         val isWatchLater = async { watchlistCase.isWatchlist(show) }
         val isArchived = async { hiddenCase.isHidden(show) }
@@ -111,9 +104,6 @@ class ShowDetailsViewModel @Inject constructor(
         followedState.value = isFollowed
         ratingState.value = RatingState(rateLoading = false)
         spoilersState.value = settingsRepository.spoilers.getAll()
-        metaState.value = ShowDetailsMeta(
-          isSignedIn = isSignedIn,
-        )
 
         loadBackgroundImage(show)
         loadListsCount(show)
@@ -230,37 +220,10 @@ class ShowDetailsViewModel @Inject constructor(
         isMyShows -> myShowsCase.removeFromMyShows(show, removeLocalData = !areSeasonsLocal)
         isWatchlist -> watchlistCase.removeFromWatchlist(show)
         isArchived -> hiddenCase.removeFromHidden(show)
+        else -> error("Unexpected show state.")
       }
 
-      val traktQuickRemoveEnabled = settingsRepository.load().traktQuickRemoveEnabled
-      val showRemoveTrakt = userManager.isAuthorized() && traktQuickRemoveEnabled && !areSeasonsLocal
-
-      val state = FollowedState.idle()
-      val ids = listOf(show.ids.trakt)
-      val mode = RemoveTraktBottomSheet.Mode.SHOW
-      when {
-        isMyShows -> {
-          followedState.value = state
-          if (showRemoveTrakt) {
-            eventChannel.send(RemoveFromTrakt(R.id.actionShowDetailsFragmentToRemoveTraktProgress, mode, ids))
-          }
-        }
-        isWatchlist -> {
-          followedState.value = state
-          if (showRemoveTrakt) {
-            eventChannel.send(RemoveFromTrakt(R.id.actionShowDetailsFragmentToRemoveTraktWatchlist, mode, ids))
-          }
-        }
-        isArchived -> {
-          followedState.value = state
-          if (showRemoveTrakt) {
-            eventChannel.send(RemoveFromTrakt(R.id.actionShowDetailsFragmentToRemoveTraktHidden, mode, ids))
-          }
-        }
-        else -> {
-          error("Unexpected show state.")
-        }
-      }
+      followedState.value = FollowedState.idle()
     }
   }
 
@@ -306,9 +269,8 @@ class ShowDetailsViewModel @Inject constructor(
     ratingState,
     translationState,
     listsCountState,
-    metaState,
     spoilersState,
-  ) { s1, s2, s3, s4, s5, s6, s7, s8, s9 ->
+  ) { s1, s2, s3, s4, s5, s6, s7, s8 ->
     ShowDetailsUiState(
       show = s1,
       showLoading = s2,
@@ -317,8 +279,7 @@ class ShowDetailsViewModel @Inject constructor(
       ratingState = s5,
       translation = s6,
       listsCount = s7,
-      meta = s8,
-      spoilers = s9,
+      spoilers = s8,
     )
   }.stateIn(
     scope = viewModelScope,

@@ -19,7 +19,6 @@ object Config {
   const val PLAYSTORE_URL = "https://play.google.com/store/apps/details?id=com.michaldrabik.showly2"
   const val TWITTER_URL = "https://twitter.com/AppShowly/"
   const val INSTAGRAM_URL = "https://www.instagram.com/showlyapp/"
-  const val TRAKT_URL = "https://www.trakt.tv/"
   const val JUST_WATCH_URL = "https://www.justwatch.com/"
   const val TMDB_URL = "https://www.themoviedb.org/"
 

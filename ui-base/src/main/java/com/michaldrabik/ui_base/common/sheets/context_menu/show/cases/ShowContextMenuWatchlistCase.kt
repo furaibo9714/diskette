@@ -7,15 +7,12 @@ import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.data_local.utilities.TransactionsProvider
 import com.michaldrabik.repository.PinnedItemsRepository
 import com.michaldrabik.repository.shows.ShowsRepository
-import com.michaldrabik.ui_base.common.sheets.context_menu.events.RemoveTraktUiEvent
 import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.notifications.AnnouncementManager
 import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Ids
 import com.michaldrabik.ui_model.Show
 import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -36,10 +33,7 @@ class ShowContextMenuWatchlistCase @Inject constructor(
   ) = withContext(dispatchers.IO) {
     val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(traktId))
 
-    val (isMyShow, isHidden) = awaitAll(
-      async { showsRepository.myShows.exists(traktId) },
-      async { showsRepository.hiddenShows.exists(traktId) },
-    )
+    val isMyShow = showsRepository.myShows.exists(traktId)
 
     transactions.withTransaction {
       showsRepository.watchlistShows.insert(show.ids.trakt)
@@ -61,8 +55,6 @@ class ShowContextMenuWatchlistCase @Inject constructor(
     pinnedItemsRepository.removePinnedItem(show)
     announcementManager.refreshShowsAnnouncements()
     floppySyncManager.scheduleShowWatchlist(traktId, Operation.ADD)
-
-    RemoveTraktUiEvent(removeProgress = isMyShow, removeHidden = isHidden)
   }
 
   suspend fun removeFromWatchlist(traktId: IdTrakt) =

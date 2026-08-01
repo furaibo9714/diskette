@@ -5,7 +5,6 @@ import com.michaldrabik.ui_model.RatingState
 import com.michaldrabik.ui_model.Show
 import com.michaldrabik.ui_model.SpoilersSettings
 import com.michaldrabik.ui_model.Translation
-import com.michaldrabik.ui_show.helpers.ShowDetailsMeta
 
 data class ShowDetailsUiState(
   val show: Show? = null,
@@ -15,7 +14,6 @@ data class ShowDetailsUiState(
   val followedState: FollowedState? = null,
   val ratingState: RatingState? = null,
   val translation: Translation? = null,
-  val meta: ShowDetailsMeta? = null,
   val spoilers: SpoilersSettings? = null,
 ) {
 

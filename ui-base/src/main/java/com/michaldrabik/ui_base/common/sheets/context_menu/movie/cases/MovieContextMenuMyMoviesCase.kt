@@ -4,15 +4,12 @@ import com.michaldrabik.common.dispatchers.CoroutineDispatchers
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.PinnedItemsRepository
 import com.michaldrabik.repository.movies.MoviesRepository
-import com.michaldrabik.ui_base.common.sheets.context_menu.events.RemoveTraktUiEvent
 import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.notifications.AnnouncementManager
 import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Ids
 import com.michaldrabik.ui_model.Movie
 import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -32,17 +29,10 @@ class MovieContextMenuMyMoviesCase @Inject constructor(
   ) = withContext(dispatchers.IO) {
     val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(traktId))
 
-    val (isWatchlist, isHidden) = awaitAll(
-      async { moviesRepository.watchlistMovies.exists(traktId) },
-      async { moviesRepository.hiddenMovies.exists(traktId) },
-    )
-
     moviesRepository.myMovies.insert(traktId, customDate)
     pinnedItemsRepository.removePinnedItem(movie)
     announcementManager.refreshMoviesAnnouncements()
     floppySyncManager.scheduleMovieWatched(traktId, Operation.ADD)
-
-    RemoveTraktUiEvent(removeWatchlist = isWatchlist, removeHidden = isHidden)
   }
 
   suspend fun removeFromMyMovies(traktId: IdTrakt) =

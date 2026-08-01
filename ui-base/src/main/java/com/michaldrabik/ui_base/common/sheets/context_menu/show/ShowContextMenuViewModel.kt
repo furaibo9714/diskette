@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michaldrabik.repository.images.ShowImagesProvider
-import com.michaldrabik.repository.settings.SettingsRepository
 import com.michaldrabik.ui_base.R
 import com.michaldrabik.ui_base.common.sheets.context_menu.events.FinishUiEvent
-import com.michaldrabik.ui_base.common.sheets.context_menu.events.RemoveTraktUiEvent
 import com.michaldrabik.ui_base.common.sheets.context_menu.show.cases.ShowContextMenuHiddenCase
 import com.michaldrabik.ui_base.common.sheets.context_menu.show.cases.ShowContextMenuLoadItemCase
 import com.michaldrabik.ui_base.common.sheets.context_menu.show.cases.ShowContextMenuMyShowsCase
@@ -46,12 +44,10 @@ class ShowContextMenuViewModel @Inject constructor(
   private val onHoldCase: ShowContextMenuOnHoldCase,
   private val imagesProvider: ShowImagesProvider,
   private val networkProvider: NetworkStatusProvider,
-  private val settingsRepository: SettingsRepository,
 ) : ViewModel(),
   ChannelsDelegate by DefaultChannelsDelegate() {
 
   private var showId by notNull<IdTrakt>()
-  private var isQuickRemoveEnabled by notNull<Boolean>()
 
   private val loadingState = MutableStateFlow(false)
   private val loadingSecondaryState = MutableStateFlow(false)
@@ -60,7 +56,6 @@ class ShowContextMenuViewModel @Inject constructor(
   fun loadShow(idTrakt: IdTrakt) {
     viewModelScope.launch {
       showId = idTrakt
-      isQuickRemoveEnabled = settingsRepository.load().traktQuickRemoveEnabled
 
       try {
         loadingState.value = true
@@ -84,9 +79,9 @@ class ShowContextMenuViewModel @Inject constructor(
         loadingSecondaryState.value = true
       }
       try {
-        val result = myShowsCase.moveToMyShows(showId)
+        myShowsCase.moveToMyShows(showId)
         preloadImage()
-        checkQuickRemove(result)
+        finish()
       } catch (error: Throwable) {
         onError(error)
       } finally {
@@ -102,7 +97,7 @@ class ShowContextMenuViewModel @Inject constructor(
           traktId = showId,
           removeLocalData = networkProvider.isOnline(),
         )
-        checkQuickRemove(RemoveTraktUiEvent(removeProgress = true))
+        finish()
       } catch (error: Throwable) {
         onError(error)
       }
@@ -112,11 +107,11 @@ class ShowContextMenuViewModel @Inject constructor(
   fun moveToWatchlist() {
     viewModelScope.launch {
       try {
-        val result = watchlistCase.moveToWatchlist(
+        watchlistCase.moveToWatchlist(
           traktId = showId,
           removeLocalData = networkProvider.isOnline(),
         )
-        checkQuickRemove(result)
+        finish()
       } catch (error: Throwable) {
         onError(error)
       }
@@ -127,7 +122,7 @@ class ShowContextMenuViewModel @Inject constructor(
     viewModelScope.launch {
       try {
         watchlistCase.removeFromWatchlist(showId)
-        checkQuickRemove(RemoveTraktUiEvent(removeWatchlist = true))
+        finish()
       } catch (error: Throwable) {
         onError(error)
       }
@@ -137,11 +132,11 @@ class ShowContextMenuViewModel @Inject constructor(
   fun moveToHidden() {
     viewModelScope.launch {
       try {
-        val result = hiddenCase.moveToHidden(
+        hiddenCase.moveToHidden(
           traktId = showId,
           removeLocalData = networkProvider.isOnline(),
         )
-        checkQuickRemove(result)
+        finish()
       } catch (error: Throwable) {
         onError(error)
       }
@@ -152,7 +147,7 @@ class ShowContextMenuViewModel @Inject constructor(
     viewModelScope.launch {
       try {
         hiddenCase.removeFromHidden(showId)
-        checkQuickRemove(RemoveTraktUiEvent(removeHidden = true))
+        finish()
       } catch (error: Throwable) {
         onError(error)
       }
@@ -199,14 +194,10 @@ class ShowContextMenuViewModel @Inject constructor(
     }
   }
 
-  private suspend fun checkQuickRemove(event: RemoveTraktUiEvent) {
-    if (isQuickRemoveEnabled) {
-      loadingState.value = false
-      loadingSecondaryState.value = false
-      eventChannel.send(Event(event))
-    } else {
-      eventChannel.send(Event(FinishUiEvent(true)))
-    }
+  private suspend fun finish() {
+    loadingState.value = false
+    loadingSecondaryState.value = false
+    eventChannel.send(Event(FinishUiEvent(true)))
   }
 
   private suspend fun onError(error: Throwable) {

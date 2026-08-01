@@ -11,10 +11,10 @@ import com.michaldrabik.showly2.ui.main.cases.MainAnnouncementsCase
 import com.michaldrabik.showly2.ui.main.cases.MainBackupCase
 import com.michaldrabik.showly2.ui.main.cases.MainClearingCase
 import com.michaldrabik.showly2.ui.main.cases.MainFloppyListsBackfillCase
+import com.michaldrabik.showly2.ui.main.cases.MainFloppySyncCase
 import com.michaldrabik.showly2.ui.main.cases.MainInitialsCase
 import com.michaldrabik.showly2.ui.main.cases.MainModesCase
 import com.michaldrabik.showly2.ui.main.cases.MainTipsCase
-import com.michaldrabik.showly2.ui.main.cases.MainTraktCase
 import com.michaldrabik.showly2.ui.main.cases.deeplink.MainDeepLinksCase
 import com.michaldrabik.showly2.utilities.deeplink.DeepLinkBundle
 import com.michaldrabik.showly2.utilities.deeplink.DeepLinkSource
@@ -39,7 +39,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
   private val initCase: MainInitialsCase,
   private val tipsCase: MainTipsCase,
-  private val traktCase: MainTraktCase,
+  private val floppySyncCase: MainFloppySyncCase,
   private val floppyListsBackfillCase: MainFloppyListsBackfillCase,
   private val backupCase: MainBackupCase,
   private val clearingCase: MainClearingCase,
@@ -107,10 +107,7 @@ class MainViewModel @Inject constructor(
   }
 
   fun refreshFloppySync() {
-    traktCase.refreshFloppySync()
-    viewModelScope.launch {
-      traktCase.refreshTraktQuickSync()
-    }
+    floppySyncCase.refreshFloppySync()
   }
 
   fun refreshBackupExportSchedule() {
@@ -149,7 +146,6 @@ class MainViewModel @Inject constructor(
         val result = when (source) {
           is DeepLinkSource.ImdbSource -> linksCase.findById(source.id)
           is DeepLinkSource.TmdbSource -> linksCase.findById(source.id, source.type)
-          is DeepLinkSource.TraktSource -> linksCase.findById(source.id, source.type)
         }
         loadingState.value = false
         maskState.value = false

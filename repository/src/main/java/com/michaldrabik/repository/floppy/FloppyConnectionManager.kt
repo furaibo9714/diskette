@@ -7,9 +7,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Connection management (server URL/API key) for the user's Floppy instance. Analogous to
- * [com.michaldrabik.repository.UserTraktManager], but without OAuth - Floppy authenticates with a
- * static API key the user pastes in from their own instance's account settings.
+ * Connection management (server URL/API key) for the user's Floppy instance - Floppy authenticates
+ * with a static API key the user pastes in from their own instance's account settings, no OAuth.
  */
 @Singleton
 class FloppyConnectionManager @Inject constructor(

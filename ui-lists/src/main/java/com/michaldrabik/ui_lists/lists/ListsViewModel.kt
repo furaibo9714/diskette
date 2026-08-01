@@ -10,7 +10,6 @@ import com.michaldrabik.ui_base.events.EventsManager
 import com.michaldrabik.ui_base.events.FloppySyncError
 import com.michaldrabik.ui_base.events.FloppySyncProgress
 import com.michaldrabik.ui_base.events.FloppySyncSuccess
-import com.michaldrabik.ui_base.events.TraktSyncAuthError
 import com.michaldrabik.ui_base.floppy.FloppySyncWorker
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
@@ -116,7 +115,7 @@ class ListsViewModel @Inject constructor(
   }
 
   private fun onEvent(event: EventSync) {
-    if (event in arrayOf(FloppySyncError, TraktSyncAuthError, FloppySyncSuccess, FloppySyncProgress)) {
+    if (event in arrayOf(FloppySyncError, FloppySyncSuccess, FloppySyncProgress)) {
       loadItems(resetScroll = true)
     }
   }

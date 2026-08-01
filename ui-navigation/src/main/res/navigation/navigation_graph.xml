@@ -323,21 +323,6 @@
         app:launchSingleTop="true"
       />
     <action
-      android:id="@+id/actionShowDetailsFragmentToRemoveTraktHidden"
-      app:destination="@id/removeTraktHiddenDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionShowDetailsFragmentToRemoveTraktWatchlist"
-      app:destination="@id/removeTraktWatchlistDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionShowDetailsFragmentToRemoveTraktProgress"
-      app:destination="@id/removeTraktProgressDialog"
-      app:launchSingleTop="true"
-      />
-    <action
       android:id="@+id/actionShowDetailsFragmentToDateSelection"
       app:destination="@id/dateSelectionDialog"
       app:launchSingleTop="true"
@@ -384,11 +369,6 @@
     android:label="fragmentEpisodes"
     >
     <action
-      android:id="@+id/actionEpisodesFragmentToRemoveTraktProgress"
-      app:destination="@id/removeTraktProgressDialog"
-      app:launchSingleTop="true"
-      />
-    <action
       android:id="@+id/actionEpisodesFragmentToEpisodesDetails"
       app:destination="@id/episodeDetailsDialog"
       app:launchSingleTop="true"
@@ -428,21 +408,6 @@
     <action
       android:id="@+id/actionMovieDetailsFragmentToManageLists"
       app:destination="@id/manageListsDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionMovieDetailsFragmentToRemoveTraktWatchlist"
-      app:destination="@id/removeTraktWatchlistDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionMovieDetailsFragmentToRemoveTraktProgress"
-      app:destination="@id/removeTraktProgressDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionMovieDetailsFragmentToRemoveTraktHidden"
-      app:destination="@id/removeTraktHiddenDialog"
       app:launchSingleTop="true"
       />
     <action
@@ -891,24 +856,6 @@
   </dialog>
 
   <dialog
-    android:id="@+id/removeTraktHiddenDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.remove_trakt.remove_trakt_hidden.RemoveTraktHiddenBottomSheet"
-    android:label="dialogRemoveTraktHidden"
-    />
-
-  <dialog
-    android:id="@+id/removeTraktWatchlistDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.remove_trakt.remove_trakt_watchlist.RemoveTraktWatchlistBottomSheet"
-    android:label="dialogRemoveTraktWatchlist"
-    />
-
-  <dialog
-    android:id="@+id/removeTraktProgressDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.remove_trakt.remove_trakt_progress.RemoveTraktProgressBottomSheet"
-    android:label="dialogRemoveTraktProgress"
-    />
-
-  <dialog
     android:id="@+id/sortOrderDialog"
     android:name="com.michaldrabik.ui_base.common.sheets.sort_order.SortOrderBottomSheet"
     android:label="dialogSortOrder"
@@ -944,21 +891,6 @@
     android:label="dialogShowItemContext"
     >
     <action
-      android:id="@+id/actionShowItemContextDialogToRemoveTraktHidden"
-      app:destination="@id/removeTraktHiddenDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionShowItemContextDialogToRemoveTraktWatchlist"
-      app:destination="@id/removeTraktWatchlistDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionShowItemContextDialogToRemoveTraktProgress"
-      app:destination="@id/removeTraktProgressDialog"
-      app:launchSingleTop="true"
-      />
-    <action
       android:id="@+id/actionShowItemContextDialogToShowDetails"
       app:destination="@id/showDetailsFragment"
       app:launchSingleTop="true"
@@ -970,21 +902,6 @@
     android:name="com.michaldrabik.ui_base.common.sheets.context_menu.movie.MovieContextMenuBottomSheet"
     android:label="dialogMovieItemContext"
     >
-    <action
-      android:id="@+id/actionMovieItemContextDialogToRemoveTraktHidden"
-      app:destination="@id/removeTraktHiddenDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionMovieItemContextDialogToRemoveTraktWatchlist"
-      app:destination="@id/removeTraktWatchlistDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionMovieItemContextDialogToRemoveTraktProgress"
-      app:destination="@id/removeTraktProgressDialog"
-      app:launchSingleTop="true"
-      />
     <action
       android:id="@+id/actionMovieItemContextDialogToMovieDetails"
       app:destination="@id/movieDetailsFragment"

@@ -37,10 +37,8 @@ import com.michaldrabik.data_local.database.dao.ShowStreamingsDao
 import com.michaldrabik.data_local.database.dao.ShowTranslationsDao
 import com.michaldrabik.data_local.database.dao.ShowsDao
 import com.michaldrabik.data_local.database.dao.FloppySyncQueueDao
-import com.michaldrabik.data_local.database.dao.TraktSyncQueueDao
 import com.michaldrabik.data_local.database.dao.TranslationsMoviesSyncLogDao
 import com.michaldrabik.data_local.database.dao.TranslationsSyncLogDao
-import com.michaldrabik.data_local.database.dao.UserDao
 import com.michaldrabik.data_local.database.dao.WatchlistMoviesDao
 import com.michaldrabik.data_local.database.dao.WatchlistShowsDao
 import com.michaldrabik.data_local.database.migrations.DATABASE_VERSION
@@ -78,11 +76,9 @@ import com.michaldrabik.data_local.database.model.ShowImage
 import com.michaldrabik.data_local.database.model.ShowRatings
 import com.michaldrabik.data_local.database.model.ShowStreaming
 import com.michaldrabik.data_local.database.model.ShowTranslation
-import com.michaldrabik.data_local.database.model.TraktSyncQueue
 import com.michaldrabik.data_local.database.model.TranslationsMoviesSyncLog
 import com.michaldrabik.data_local.database.model.TranslationsSyncLog
 import com.michaldrabik.data_local.database.model.FloppySyncQueue
-import com.michaldrabik.data_local.database.model.User
 import com.michaldrabik.data_local.database.model.WatchlistMovie
 import com.michaldrabik.data_local.database.model.WatchlistShow
 
@@ -103,7 +99,6 @@ import com.michaldrabik.data_local.database.model.WatchlistShow
     RelatedMovie::class,
     ShowImage::class,
     MovieImage::class,
-    User::class,
     Season::class,
     Person::class,
     PersonShowMovie::class,
@@ -116,7 +111,6 @@ import com.michaldrabik.data_local.database.model.WatchlistShow
     MoviesSyncLog::class,
     TranslationsSyncLog::class,
     TranslationsMoviesSyncLog::class,
-    TraktSyncQueue::class,
     ShowTranslation::class,
     MovieTranslation::class,
     EpisodeTranslation::class,
@@ -163,8 +157,6 @@ abstract class AppDatabase : RoomDatabase() {
 
   abstract fun movieImagesDao(): MovieImagesDao
 
-  abstract fun userDao(): UserDao
-
   abstract fun recentSearchDao(): RecentSearchDao
 
   abstract fun episodesDao(): EpisodesDao
@@ -189,8 +181,6 @@ abstract class AppDatabase : RoomDatabase() {
   abstract fun translationsSyncLogDao(): TranslationsSyncLogDao
 
   abstract fun translationsMoviesSyncLogDao(): TranslationsMoviesSyncLogDao
-
-  abstract fun traktSyncQueueDao(): TraktSyncQueueDao
 
   abstract fun showTranslationsDao(): ShowTranslationsDao
 
