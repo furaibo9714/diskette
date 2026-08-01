@@ -10,7 +10,6 @@ import com.michaldrabik.repository.shows.ShowsRepository
 import com.michaldrabik.ui_base.common.sheets.context_menu.events.RemoveTraktUiEvent
 import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.notifications.AnnouncementManager
-import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Ids
 import com.michaldrabik.ui_model.Show
@@ -27,7 +26,6 @@ class ShowContextMenuWatchlistCase @Inject constructor(
   private val transactions: TransactionsProvider,
   private val showsRepository: ShowsRepository,
   private val pinnedItemsRepository: PinnedItemsRepository,
-  private val quickSyncManager: QuickSyncManager,
   private val floppySyncManager: FloppySyncManager,
   private val announcementManager: AnnouncementManager,
 ) {
@@ -62,10 +60,6 @@ class ShowContextMenuWatchlistCase @Inject constructor(
 
     pinnedItemsRepository.removePinnedItem(show)
     announcementManager.refreshShowsAnnouncements()
-    with(quickSyncManager) {
-      clearHiddenShows(listOf(traktId.id))
-      scheduleShowsWatchlist(listOf(traktId.id))
-    }
     floppySyncManager.scheduleShowWatchlist(traktId, Operation.ADD)
 
     RemoveTraktUiEvent(removeProgress = isMyShow, removeHidden = isHidden)
@@ -75,7 +69,6 @@ class ShowContextMenuWatchlistCase @Inject constructor(
     withContext(dispatchers.IO) {
       showsRepository.watchlistShows.delete(traktId)
       announcementManager.refreshShowsAnnouncements()
-      quickSyncManager.clearWatchlistShows(listOf(traktId.id))
       floppySyncManager.scheduleShowWatchlist(traktId, Operation.REMOVE)
     }
 }

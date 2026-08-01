@@ -6,7 +6,6 @@ import com.michaldrabik.repository.UserTraktManager
 import com.michaldrabik.repository.settings.SettingsRepository
 import com.michaldrabik.repository.shows.ShowsRepository
 import com.michaldrabik.ui_base.floppy.FloppySyncManager
-import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.EpisodeBundle
 import com.michaldrabik.ui_show.sections.seasons.helpers.SeasonsCache
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class EpisodesSetEpisodeWatchedCase @Inject constructor(
   private val showsRepository: ShowsRepository,
   private val episodesManager: EpisodesManager,
-  private val quickSyncManager: QuickSyncManager,
   private val floppySyncManager: FloppySyncManager,
   private val userTraktManager: UserTraktManager,
   private val seasonsCache: SeasonsCache,
@@ -40,19 +38,12 @@ class EpisodesSetEpisodeWatchedCase @Inject constructor(
       isChecked -> {
         episodesManager.setEpisodeWatched(episodeBundle, customDate)
         if (isMyShows) {
-          quickSyncManager.scheduleEpisodes(
-            episodesIds = listOf(episode.ids.trakt.id),
-            showId = show.traktId,
-            customDate = customDate,
-            clearProgress = false,
-          )
           floppySyncManager.scheduleEpisodeWatched(show.ids, episode.season, episode.number, Operation.ADD)
         }
         return Result.SUCCESS
       }
       else -> {
         episodesManager.setEpisodeUnwatched(episodeBundle)
-        quickSyncManager.clearEpisodes(listOf(episode.ids.trakt.id))
         floppySyncManager.scheduleEpisodeWatched(show.ids, episode.season, episode.number, Operation.REMOVE)
 
         val traktQuickRemoveEnabled = settingsRepository.load().traktQuickRemoveEnabled

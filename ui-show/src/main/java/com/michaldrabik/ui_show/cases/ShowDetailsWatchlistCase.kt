@@ -6,7 +6,6 @@ import com.michaldrabik.repository.PinnedItemsRepository
 import com.michaldrabik.repository.shows.ShowsRepository
 import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.notifications.AnnouncementManager
-import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.Show
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.withContext
@@ -17,7 +16,6 @@ class ShowDetailsWatchlistCase @Inject constructor(
   private val dispatchers: CoroutineDispatchers,
   private val showsRepository: ShowsRepository,
   private val pinnedItemsRepository: PinnedItemsRepository,
-  private val quickSyncManager: QuickSyncManager,
   private val floppySyncManager: FloppySyncManager,
   private val announcementManager: AnnouncementManager,
 ) {
@@ -32,7 +30,6 @@ class ShowDetailsWatchlistCase @Inject constructor(
       showsRepository.watchlistShows.insert(show.ids.trakt)
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
-      quickSyncManager.scheduleShowsWatchlist(listOf(show.traktId))
       floppySyncManager.scheduleShowWatchlist(show.ids, Operation.ADD)
     }
 
@@ -41,7 +38,6 @@ class ShowDetailsWatchlistCase @Inject constructor(
       showsRepository.watchlistShows.delete(show.ids.trakt)
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
-      quickSyncManager.clearWatchlistShows(listOf(show.traktId))
       floppySyncManager.scheduleShowWatchlist(show.ids, Operation.REMOVE)
     }
 }

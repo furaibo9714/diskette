@@ -9,7 +9,6 @@ import com.michaldrabik.repository.EpisodesManager
 import com.michaldrabik.ui_base.Logger
 import com.michaldrabik.ui_base.common.WidgetsProvider
 import com.michaldrabik.ui_base.floppy.FloppySyncManager
-import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.IdTrakt
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +52,6 @@ class ProgressWidgetEpisodeCheckService :
   override val coroutineContext = Job() + Dispatchers.Main
 
   @Inject lateinit var episodesManager: EpisodesManager
-  @Inject lateinit var quickSyncManager: QuickSyncManager
   @Inject lateinit var floppySyncManager: FloppySyncManager
   @Inject lateinit var localSource: LocalDataSource
 
@@ -70,11 +68,6 @@ class ProgressWidgetEpisodeCheckService :
 
     runBlocking {
       episodesManager.setEpisodeWatched(episodeId, seasonId, IdTrakt(showId), null)
-      quickSyncManager.scheduleEpisodes(
-        showId = showId,
-        episodesIds = listOf(episodeId),
-        customDate = null,
-      )
       val episode = localSource.episodes.getById(showId, episodeId)
       if (episode != null) {
         floppySyncManager.scheduleEpisodeWatched(IdTrakt(showId), episode.seasonNumber, episode.episodeNumber, Operation.ADD)

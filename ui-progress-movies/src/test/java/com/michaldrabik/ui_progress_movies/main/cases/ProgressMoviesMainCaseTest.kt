@@ -1,9 +1,9 @@
 package com.michaldrabik.ui_progress_movies.main.cases
 
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.PinnedItemsRepository
 import com.michaldrabik.repository.movies.MoviesRepository
 import com.michaldrabik.ui_base.floppy.FloppySyncManager
-import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Ids
 import com.michaldrabik.ui_model.Movie
@@ -21,7 +21,6 @@ class ProgressMoviesMainCaseTest : BaseMockTest() {
 
   @RelaxedMockK lateinit var moviesRepository: MoviesRepository
   @RelaxedMockK lateinit var pinnedItemsRepository: PinnedItemsRepository
-  @RelaxedMockK lateinit var quickSyncManager: QuickSyncManager
   @RelaxedMockK lateinit var floppySyncManager: FloppySyncManager
 
   private lateinit var SUT: ProgressMoviesMainCase
@@ -32,7 +31,6 @@ class ProgressMoviesMainCaseTest : BaseMockTest() {
     SUT = ProgressMoviesMainCase(
       moviesRepository,
       pinnedItemsRepository,
-      quickSyncManager,
       floppySyncManager,
     )
   }
@@ -51,7 +49,7 @@ class ProgressMoviesMainCaseTest : BaseMockTest() {
 
       coVerify { moviesRepository.myMovies.insert(IdTrakt(123), null) }
       coVerify { pinnedItemsRepository.removePinnedItem(movie) }
-      coVerify { quickSyncManager.scheduleMovies(listOf(123), null) }
+      coVerify { floppySyncManager.scheduleMovieWatched(IdTrakt(123), Operation.ADD) }
     }
 
   @Test
@@ -61,6 +59,6 @@ class ProgressMoviesMainCaseTest : BaseMockTest() {
 
       coVerify { moviesRepository.myMovies.insert(IdTrakt(123), null) }
       coVerify { pinnedItemsRepository.removePinnedItem(any<Movie>()) }
-      coVerify { quickSyncManager.scheduleMovies(listOf(123), null) }
+      coVerify { floppySyncManager.scheduleMovieWatched(IdTrakt(123), Operation.ADD) }
     }
 }
