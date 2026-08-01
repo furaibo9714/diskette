@@ -1,7 +1,9 @@
 package com.michaldrabik.ui_show.sections.seasons.cases
 
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.EpisodesManager
 import com.michaldrabik.repository.shows.ShowsRepository
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.Episode
 import com.michaldrabik.ui_model.EpisodeBundle
@@ -20,6 +22,7 @@ class ShowDetailsQuickProgressCase @Inject constructor(
   private val showsRepository: ShowsRepository,
   private val episodesManager: EpisodesManager,
   private val quickSyncManager: QuickSyncManager,
+  private val floppySyncManager: FloppySyncManager,
 ) {
 
   suspend fun setQuickProgress(
@@ -65,6 +68,9 @@ class ShowDetailsQuickProgressCase @Inject constructor(
         customDate = customDate,
         clearProgress = true,
       )
+      episodesAdded.forEach {
+        floppySyncManager.scheduleEpisodeWatched(show.ids, it.season, it.number, Operation.ADD)
+      }
     }
   }
 }

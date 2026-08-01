@@ -1,9 +1,11 @@
 package com.michaldrabik.ui_base.common.sheets.context_menu.movie.cases
 
 import com.michaldrabik.common.dispatchers.CoroutineDispatchers
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.PinnedItemsRepository
 import com.michaldrabik.repository.movies.MoviesRepository
 import com.michaldrabik.ui_base.common.sheets.context_menu.events.RemoveTraktUiEvent
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.notifications.AnnouncementManager
 import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.IdTrakt
@@ -23,6 +25,7 @@ class MovieContextMenuMyMoviesCase @Inject constructor(
   private val pinnedItemsRepository: PinnedItemsRepository,
   private val announcementManager: AnnouncementManager,
   private val quickSyncManager: QuickSyncManager,
+  private val floppySyncManager: FloppySyncManager,
 ) {
 
   suspend fun moveToMyMovies(
@@ -44,6 +47,7 @@ class MovieContextMenuMyMoviesCase @Inject constructor(
       clearHiddenMovies(listOf(traktId.id))
       scheduleMovies(listOf(traktId.id), customDate)
     }
+    floppySyncManager.scheduleMovieWatched(traktId, Operation.ADD)
 
     RemoveTraktUiEvent(removeWatchlist = isWatchlist, removeHidden = isHidden)
   }
@@ -54,5 +58,6 @@ class MovieContextMenuMyMoviesCase @Inject constructor(
       moviesRepository.myMovies.delete(traktId)
       pinnedItemsRepository.removePinnedItem(movie)
       quickSyncManager.clearMovies(listOf(traktId.id))
+      floppySyncManager.scheduleMovieWatched(traktId, Operation.REMOVE)
     }
 }

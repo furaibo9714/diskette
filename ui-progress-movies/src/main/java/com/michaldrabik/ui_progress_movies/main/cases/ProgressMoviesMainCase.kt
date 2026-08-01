@@ -1,7 +1,9 @@
 package com.michaldrabik.ui_progress_movies.main.cases
 
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.PinnedItemsRepository
 import com.michaldrabik.repository.movies.MoviesRepository
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Ids
@@ -15,6 +17,7 @@ class ProgressMoviesMainCase @Inject constructor(
   private val moviesRepository: MoviesRepository,
   private val pinnedItemsRepository: PinnedItemsRepository,
   private val quickSyncManager: QuickSyncManager,
+  private val floppySyncManager: FloppySyncManager,
 ) {
 
   suspend fun addToMyMovies(
@@ -24,6 +27,7 @@ class ProgressMoviesMainCase @Inject constructor(
     moviesRepository.myMovies.insert(movie.ids.trakt, customDate)
     pinnedItemsRepository.removePinnedItem(movie)
     quickSyncManager.scheduleMovies(listOf(movie.traktId), customDate)
+    floppySyncManager.scheduleMovieWatched(movie.ids.trakt, Operation.ADD)
   }
 
   suspend fun addToMyMovies(movieId: IdTrakt) {

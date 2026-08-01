@@ -3,9 +3,12 @@ package com.michaldrabik.ui_widgets.progress
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
+import com.michaldrabik.data_local.LocalDataSource
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.EpisodesManager
 import com.michaldrabik.ui_base.Logger
 import com.michaldrabik.ui_base.common.WidgetsProvider
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.IdTrakt
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,6 +54,8 @@ class ProgressWidgetEpisodeCheckService :
 
   @Inject lateinit var episodesManager: EpisodesManager
   @Inject lateinit var quickSyncManager: QuickSyncManager
+  @Inject lateinit var floppySyncManager: FloppySyncManager
+  @Inject lateinit var localSource: LocalDataSource
 
   override fun onHandleWork(intent: Intent) {
     val episodeId = intent.getLongExtra(EXTRA_EPISODE_ID, -1)
@@ -70,6 +75,10 @@ class ProgressWidgetEpisodeCheckService :
         episodesIds = listOf(episodeId),
         customDate = null,
       )
+      val episode = localSource.episodes.getById(showId, episodeId)
+      if (episode != null) {
+        floppySyncManager.scheduleEpisodeWatched(IdTrakt(showId), episode.seasonNumber, episode.episodeNumber, Operation.ADD)
+      }
       (applicationContext as WidgetsProvider).requestShowsWidgetsUpdate()
     }
   }

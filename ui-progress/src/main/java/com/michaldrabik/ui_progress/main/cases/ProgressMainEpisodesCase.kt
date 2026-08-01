@@ -1,9 +1,11 @@
 package com.michaldrabik.ui_progress.main.cases
 
 import com.michaldrabik.common.dispatchers.CoroutineDispatchers
+import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.data_local.sources.EpisodesLocalDataSource
 import com.michaldrabik.repository.EpisodesManager
 import com.michaldrabik.repository.settings.SettingsSpoilersRepository
+import com.michaldrabik.ui_base.floppy.FloppySyncManager
 import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncManager
 import com.michaldrabik.ui_model.Episode
 import com.michaldrabik.ui_model.EpisodeBundle
@@ -18,6 +20,7 @@ class ProgressMainEpisodesCase @Inject constructor(
   private val dispatchers: CoroutineDispatchers,
   private val episodesManager: EpisodesManager,
   private val quickSyncManager: QuickSyncManager,
+  private val floppySyncManager: FloppySyncManager,
   private val spoilersSettings: SettingsSpoilersRepository,
   private val localDataSource: EpisodesLocalDataSource,
 ) {
@@ -32,6 +35,7 @@ class ProgressMainEpisodesCase @Inject constructor(
       episodesIds = listOf(bundle.episode.ids.trakt.id),
       customDate = customDate,
     )
+    floppySyncManager.scheduleEpisodeWatched(bundle.show.ids, bundle.episode.season, bundle.episode.number, Operation.ADD)
   }
 
   suspend fun isWatched(

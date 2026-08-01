@@ -8,6 +8,9 @@ import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.SOUR
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.SOURCE_TMDB
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Operation
 import com.michaldrabik.repository.floppy.FloppyConnectionManager
+import com.michaldrabik.ui_model.IdSlug
+import com.michaldrabik.ui_model.IdTmdb
+import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Ids
 import timber.log.Timber
 import javax.inject.Inject
@@ -60,6 +63,57 @@ class FloppySyncManager @Inject constructor(
   ) {
     val (source, mediaId) = resolveSourceAndMediaId(showIds) ?: return
     enqueue(FloppySyncQueue.createEpisodeWatched(source, mediaId, seasonNumber, episodeNumber, operation, nowUtcMillis()))
+  }
+
+  /**
+   * Convenience overloads for call sites that only have an [IdTrakt] on hand (context-menu
+   * sheets, widgets, progress-tab quick actions) rather than the full [Ids] a details screen
+   * already has in memory. Resolves the local row's tmdb id/id_slug before delegating to the
+   * [Ids]-based overload above; if the item isn't cached locally there's nothing to resolve and
+   * the sync is silently skipped, same as any other unresolvable case.
+   */
+  suspend fun scheduleShowWatchlist(
+    showId: IdTrakt,
+    operation: Operation,
+  ) {
+    val ids = resolveShowIds(showId) ?: return
+    scheduleShowWatchlist(ids, operation)
+  }
+
+  suspend fun scheduleMovieWatchlist(
+    movieId: IdTrakt,
+    operation: Operation,
+  ) {
+    val ids = resolveMovieIds(movieId) ?: return
+    scheduleMovieWatchlist(ids, operation)
+  }
+
+  suspend fun scheduleMovieWatched(
+    movieId: IdTrakt,
+    operation: Operation,
+  ) {
+    val ids = resolveMovieIds(movieId) ?: return
+    scheduleMovieWatched(ids, operation)
+  }
+
+  suspend fun scheduleEpisodeWatched(
+    showId: IdTrakt,
+    seasonNumber: Int,
+    episodeNumber: Int,
+    operation: Operation,
+  ) {
+    val ids = resolveShowIds(showId) ?: return
+    scheduleEpisodeWatched(ids, seasonNumber, episodeNumber, operation)
+  }
+
+  private suspend fun resolveShowIds(showId: IdTrakt): Ids? {
+    val show = localSource.shows.getById(showId.id) ?: return null
+    return Ids.EMPTY.copy(trakt = showId, tmdb = IdTmdb(show.idTmdb), slug = IdSlug(show.idSlug))
+  }
+
+  private suspend fun resolveMovieIds(movieId: IdTrakt): Ids? {
+    val movie = localSource.movies.getById(movieId.id) ?: return null
+    return Ids.EMPTY.copy(trakt = movieId, tmdb = IdTmdb(movie.idTmdb), slug = IdSlug(movie.idSlug))
   }
 
   /**
