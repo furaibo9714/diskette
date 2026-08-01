@@ -325,7 +325,7 @@ class ListsFragment :
           fragmentListsFilters.setSorting(it.first, it.second)
         }
         isSyncing?.let {
-          fragmentListsSearchView.setTraktProgress(it)
+          fragmentListsSearchView.setSyncProgress(it)
           fragmentListsSearchView.isEnabled = !it
         }
       }

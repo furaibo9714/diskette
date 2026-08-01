@@ -15,7 +15,6 @@ import com.michaldrabik.ui_base.utilities.extensions.withApiAtLeast
 import com.michaldrabik.ui_base.viewmodel.ChannelsDelegate
 import com.michaldrabik.ui_base.viewmodel.DefaultChannelsDelegate
 import com.michaldrabik.ui_model.Settings
-import com.michaldrabik.ui_model.TraktSyncSchedule
 import com.michaldrabik.ui_settings.R
 import com.michaldrabik.ui_settings.sections.trakt.SettingsTraktUiEvent.RequestNotificationsPermission
 import com.michaldrabik.ui_settings.sections.trakt.SettingsTraktUiEvent.StartAuthorization
@@ -114,13 +113,6 @@ class SettingsTraktViewModel @Inject constructor(
   fun enableQuickSync(enable: Boolean) {
     viewModelScope.launch {
       traktCase.enableTraktQuickSync(enable)
-      refreshSettings()
-    }
-  }
-
-  fun setTraktSyncSchedule(schedule: TraktSyncSchedule) {
-    viewModelScope.launch {
-      traktCase.setTraktSyncSchedule(schedule)
       refreshSettings()
     }
   }

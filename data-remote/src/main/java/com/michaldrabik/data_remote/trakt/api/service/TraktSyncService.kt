@@ -1,9 +1,5 @@
 package com.michaldrabik.data_remote.trakt.api.service
 
-import com.michaldrabik.data_remote.trakt.model.RatingResultEpisode
-import com.michaldrabik.data_remote.trakt.model.RatingResultMovie
-import com.michaldrabik.data_remote.trakt.model.RatingResultSeason
-import com.michaldrabik.data_remote.trakt.model.RatingResultShow
 import com.michaldrabik.data_remote.trakt.model.SyncActivity
 import com.michaldrabik.data_remote.trakt.model.SyncExportRequest
 import com.michaldrabik.data_remote.trakt.model.SyncHistoryItem
@@ -75,15 +71,4 @@ interface TraktSyncService {
     @Body request: RatingRequest,
   )
 
-  @GET("sync/ratings/shows")
-  suspend fun fetchShowsRatings(): List<RatingResultShow>
-
-  @GET("sync/ratings/movies")
-  suspend fun fetchMoviesRatings(): List<RatingResultMovie>
-
-  @GET("sync/ratings/episodes")
-  suspend fun fetchEpisodesRatings(): List<RatingResultEpisode>
-
-  @GET("sync/ratings/seasons")
-  suspend fun fetchSeasonsRatings(): List<RatingResultSeason>
 }

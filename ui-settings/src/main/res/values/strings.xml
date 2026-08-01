@@ -19,8 +19,6 @@
   <string name="textSettingsTraktAuthorizeSummarySignIn">Click to sign in into your Trakt.tv account.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOut">Signed in. Click to sign out.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOutUser">Signed in as %1$s. Click to sign out.</string>
-  <string name="textSettingsTraktSyncTitle">Trakt.tv Sync</string>
-  <string name="textSettingsTraktSyncSummary">Sync data between Trakt.tv and Showly.</string>
   <string name="textSettingsTraktQuickSyncTitle">Trakt.tv Instant Upload</string>
   <string name="textSettingsTraktQuickSyncSummary">Instantly upload data to Trakt.tv after you add it in the app.</string>
   <string name="textSettingsTraktQuickRemoveTitle">Trakt.tv Data Remove</string>
@@ -56,8 +54,6 @@
   <string name="textSettingsRateAppSummary">Enjoying Showly? Drop us a review on PlayStore. Thanks!</string>
   <string name="textSettingsDeleteCacheTitle">Clear Images Cache</string>
   <string name="textSettingsDeleteCacheSummary">Click to clear local images cache. This may help if shows images are not being loaded correctly.</string>
-  <string name="textSettingsQuickSyncConfirmationTitle">Disable Automatic Sync</string>
-  <string name="textSettingsQuickSyncConfirmationMessage">\nIt seems like Automatic Sync is already turned on.\n\nWould you like to turn it off before enabling instant sync (advised)?\n</string>
   <string name="textSettingsLogoutTitle">Trakt.tv Sign Out</string>
   <string name="textSettingsLogoutMessage">\nAre you sure you want to sign out?\n</string>
   <string name="textSettingsMoviesEnabledTitle">Movies</string>

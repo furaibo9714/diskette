@@ -1,23 +1,35 @@
 package com.michaldrabik.ui_base.floppy.imports
 
+import com.michaldrabik.common.extensions.nowUtc
+import com.michaldrabik.common.extensions.toMillis
 import com.michaldrabik.data_local.LocalDataSource
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.MEDIA_TYPE_MOVIE
 import com.michaldrabik.data_remote.floppy.api.FloppyService
-import com.michaldrabik.repository.EpisodesManager
 import com.michaldrabik.repository.floppy.FloppyConnectionManager
 import com.michaldrabik.repository.movies.MyMoviesRepository
+import com.michaldrabik.repository.shows.MyShowsRepository
+import com.michaldrabik.ui_base.events.EventsManager
+import com.michaldrabik.ui_base.events.FloppySyncProgress
+import com.michaldrabik.ui_base.floppy.FloppyEpisodeSyntheticIds
 import com.michaldrabik.ui_model.IdTrakt
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.michaldrabik.data_local.database.model.Episode as EpisodeDb
+import com.michaldrabik.data_local.database.model.Season as SeasonDb
+import com.michaldrabik.data_local.database.model.Show as ShowDb
 
 /**
  * Pulls the user's watched movies/episodes from Floppy and reconciles Showly's local watched
- * state. Movies are matched by tmdb id, or resolved as a thin local row for Floppy "manual"
- * items via [FloppyManualMediaResolver] (manual *episodes* are out of scope - deferred, same as
- * an unresolvable tmdb id). Episodes are matched by tmdb id + season/episode number against a
- * locally-fetched season. Floppy carries no Trakt id and no delta/"since" endpoint, so this is a
- * full reconcile each run.
+ * state. Movies are matched/created via [FloppyManualMediaResolver] like the watchlist import.
+ * Episodes are matched by show (same resolver) + season/episode number, with a thin
+ * season/episode row created on first encounter when not already cached locally (see
+ * [FloppyEpisodeSyntheticIds] for why episode identity can't reuse the show/movie synthetic-id
+ * approach directly, and why that's still safe). Floppy carries no delta/"since" endpoint, so
+ * this is a full reconcile each run.
+ *
+ * Emits [FloppySyncProgress] once per fetched page (rather than per item) so screens can reload
+ * incrementally during a full sync without hammering the event bus on large libraries.
  */
 @Singleton
 class FloppyImportWatchedRunner @Inject constructor(
@@ -25,7 +37,8 @@ class FloppyImportWatchedRunner @Inject constructor(
   private val localSource: LocalDataSource,
   private val mediaResolver: FloppyManualMediaResolver,
   private val myMoviesRepository: MyMoviesRepository,
-  private val episodesManager: EpisodesManager,
+  private val myShowsRepository: MyShowsRepository,
+  private val eventsManager: EventsManager,
 ) {
 
   suspend fun run(): Int {
@@ -43,15 +56,18 @@ class FloppyImportWatchedRunner @Inject constructor(
     var offset = 0
     while (true) {
       val page = service.getTrackedMedia(MEDIA_TYPE_MOVIE, FloppyService.MEDIA_LIST_PAGE_SIZE, offset)
+      var pageImported = 0
       page.results
         .filter { (it.status ?: 0) >= FLOPPY_STATUS_COMPLETED }
         .forEach { media ->
           val id = mediaResolver.resolveMovieId(media.item) ?: return@forEach
           if (!myMoviesRepository.exists(id)) {
             myMoviesRepository.insert(id, customDate = null)
-            imported++
+            pageImported++
           }
         }
+      imported += pageImported
+      if (pageImported > 0) eventsManager.sendEvent(FloppySyncProgress)
       if (page.results.size < FloppyService.MEDIA_LIST_PAGE_SIZE) break
       offset += FloppyService.MEDIA_LIST_PAGE_SIZE
     }
@@ -64,28 +80,106 @@ class FloppyImportWatchedRunner @Inject constructor(
     var offset = 0
     while (true) {
       val page = service.getTrackedMedia(MEDIA_TYPE_EPISODE, FloppyService.MEDIA_LIST_PAGE_SIZE, offset)
+      var pageImported = 0
       page.results
         .filter { (it.status ?: 0) >= FLOPPY_STATUS_COMPLETED }
         .forEach { media ->
-          val tmdbId = media.item.mediaId.toLongOrNull() ?: return@forEach
           val seasonNumber = media.item.seasonNumber ?: return@forEach
           val episodeNumber = media.item.episodeNumber ?: return@forEach
-          val show = localSource.shows.getByTmdbId(tmdbId) ?: return@forEach
-          val episode = localSource.episodes
-            .getAllByShowId(show.idTrakt, seasonNumber)
-            .find { it.episodeNumber == episodeNumber }
-            ?: return@forEach
+          val showId = mediaResolver.resolveShowId(media.item) ?: return@forEach
+          val show = localSource.shows.getById(showId.id) ?: return@forEach
+          val episode = resolveEpisode(show, seasonNumber, episodeNumber)
           if (!episode.isWatched) {
-            episodesManager.setEpisodeWatched(episode.idTrakt, episode.idSeason, IdTrakt(show.idTrakt), customDate = null)
-            imported++
+            markEpisodeWatched(show, episode)
+            pageImported++
           }
         }
+      imported += pageImported
+      if (pageImported > 0) eventsManager.sendEvent(FloppySyncProgress)
       if (page.results.size < FloppyService.MEDIA_LIST_PAGE_SIZE) break
       offset += FloppyService.MEDIA_LIST_PAGE_SIZE
     }
     Timber.d("Imported $imported watched episode(s) from Floppy.")
     return imported
   }
+
+  private suspend fun resolveEpisode(
+    show: ShowDb,
+    seasonNumber: Int,
+    episodeNumber: Int,
+  ): EpisodeDb {
+    val seasonId = FloppyEpisodeSyntheticIds.toSeasonTraktId(show.idTrakt, seasonNumber)
+    if (localSource.seasons.getById(seasonId) == null) {
+      localSource.seasons.upsert(listOf(buildThinSeason(seasonId, show.idTrakt, seasonNumber)))
+    }
+
+    val episodeId = FloppyEpisodeSyntheticIds.toEpisodeTraktId(show.idTrakt, seasonNumber, episodeNumber)
+    localSource.episodes.getById(show.idTrakt, episodeId)?.let { return it }
+
+    val thinEpisode = buildThinEpisode(episodeId, seasonId, show, seasonNumber, episodeNumber)
+    localSource.episodes.upsert(listOf(thinEpisode))
+    return thinEpisode
+  }
+
+  private suspend fun markEpisodeWatched(
+    show: ShowDb,
+    episode: EpisodeDb,
+  ) {
+    val date = nowUtc()
+    localSource.episodes.upsert(listOf(episode.copy(isWatched = true, lastWatchedAt = date)))
+
+    val showId = IdTrakt(show.idTrakt)
+    if (myShowsRepository.exists(showId)) {
+      myShowsRepository.updateWatchedAt(show.idTrakt, date.toMillis())
+    } else {
+      myShowsRepository.insert(showId, date.toMillis())
+    }
+  }
+
+  private fun buildThinSeason(
+    seasonId: Long,
+    showTraktId: Long,
+    seasonNumber: Int,
+  ) = SeasonDb(
+    idTrakt = seasonId,
+    idShowTrakt = showTraktId,
+    seasonNumber = seasonNumber,
+    seasonTitle = "",
+    seasonOverview = "",
+    seasonFirstAired = null,
+    episodesCount = 0,
+    episodesAiredCount = 0,
+    rating = null,
+    isWatched = false,
+  )
+
+  private fun buildThinEpisode(
+    episodeId: Long,
+    seasonId: Long,
+    show: ShowDb,
+    seasonNumber: Int,
+    episodeNumber: Int,
+  ) = EpisodeDb(
+    idTrakt = episodeId,
+    idSeason = seasonId,
+    idShowTrakt = show.idTrakt,
+    idShowTvdb = show.idTvdb,
+    idShowImdb = show.idImdb,
+    idShowTmdb = show.idTmdb,
+    seasonNumber = seasonNumber,
+    episodeNumber = episodeNumber,
+    episodeNumberAbs = null,
+    episodeOverview = "",
+    title = "",
+    firstAired = null,
+    commentsCount = 0,
+    rating = 0F,
+    runtime = -1,
+    votesCount = 0,
+    isWatched = false,
+    lastExportedAt = null,
+    lastWatchedAt = null,
+  )
 
   companion object {
     private const val MEDIA_TYPE_EPISODE = "episode"

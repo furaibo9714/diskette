@@ -29,14 +29,12 @@ class SearchView :
 
   var onSettingsClickListener: (() -> Unit)? = null
   var onStatsClickListener: (() -> Unit)? = null
-  var onTraktClickListener: (() -> Unit)? = null
 
   init {
     with(binding) {
       searchSettingsIcon.expandTouch()
       searchSettingsIcon.onClick { onSettingsClickListener?.invoke() }
       searchStatsIcon.onClick { onStatsClickListener?.invoke() }
-      searchTraktIcon.onClick { onTraktClickListener?.invoke() }
     }
   }
 
@@ -59,12 +57,6 @@ class SearchView :
     get() = binding.searchStatsIcon.isVisible
     set(value) {
       binding.searchStatsIcon.visibleIf(value)
-    }
-
-  var traktIconVisible
-    get() = binding.searchTraktIcon.isVisible
-    set(value) {
-      binding.searchTraktIcon.visibleIf(value)
     }
 
   var isSearching = false
@@ -90,14 +82,10 @@ class SearchView :
     super.setEnabled(enabled)
   }
 
-  fun setTraktProgress(
-    isProgress: Boolean,
-    withIcon: Boolean = false,
-  ) {
+  fun setSyncProgress(isProgress: Boolean) {
     with(binding) {
       searchViewIcon.visibleIf(!isProgress)
       searchViewText.visibleIf(!isProgress)
-      searchTraktIcon.visibleIf(!isProgress && withIcon)
       searchViewTraktSync.visibleIf(isProgress)
     }
   }

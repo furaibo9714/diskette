@@ -106,12 +106,10 @@ class MainViewModel @Inject constructor(
     }
   }
 
-  fun refreshTraktSyncSchedule() {
+  fun refreshFloppySync() {
+    traktCase.refreshFloppySync()
     viewModelScope.launch {
-      traktCase.run {
-        refreshTraktSyncSchedule()
-        refreshTraktQuickSync()
-      }
+      traktCase.refreshTraktQuickSync()
     }
   }
 

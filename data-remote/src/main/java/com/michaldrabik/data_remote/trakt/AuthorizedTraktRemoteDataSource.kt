@@ -4,10 +4,6 @@ import com.michaldrabik.data_remote.trakt.model.CustomList
 import com.michaldrabik.data_remote.trakt.model.Episode
 import com.michaldrabik.data_remote.trakt.model.HiddenItem
 import com.michaldrabik.data_remote.trakt.model.Movie
-import com.michaldrabik.data_remote.trakt.model.RatingResultEpisode
-import com.michaldrabik.data_remote.trakt.model.RatingResultMovie
-import com.michaldrabik.data_remote.trakt.model.RatingResultSeason
-import com.michaldrabik.data_remote.trakt.model.RatingResultShow
 import com.michaldrabik.data_remote.trakt.model.Season
 import com.michaldrabik.data_remote.trakt.model.Show
 import com.michaldrabik.data_remote.trakt.model.SyncActivity
@@ -126,12 +122,4 @@ interface AuthorizedTraktRemoteDataSource {
     rating: Int,
     ratedAt: String,
   )
-
-  suspend fun fetchShowsRatings(): List<RatingResultShow>
-
-  suspend fun fetchMoviesRatings(): List<RatingResultMovie>
-
-  suspend fun fetchEpisodesRatings(): List<RatingResultEpisode>
-
-  suspend fun fetchSeasonsRatings(): List<RatingResultSeason>
 }

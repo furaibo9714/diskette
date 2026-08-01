@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
 import com.michaldrabik.common.extensions.nowUtcMillis
-import com.michaldrabik.ui_base.trakt.TraktSyncWorker.Companion.SYNC_NOTIFICATION_COMPLETE_ERROR_LISTS_ID
+import com.michaldrabik.ui_base.trakt.quicksync.QuickSyncWorker.Companion.SYNC_NOTIFICATION_COMPLETE_ERROR_LISTS_ID
 import timber.log.Timber
 
 class ListLimitNotificationReceiver : BroadcastReceiver() {

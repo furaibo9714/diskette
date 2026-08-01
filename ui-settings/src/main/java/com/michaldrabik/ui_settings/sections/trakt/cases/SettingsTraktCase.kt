@@ -1,13 +1,10 @@
 package com.michaldrabik.ui_settings.sections.trakt.cases
 
 import android.net.Uri
-import androidx.work.WorkManager
 import com.michaldrabik.common.dispatchers.CoroutineDispatchers
-import com.michaldrabik.data_local.sources.TraktSyncLogLocalDataSource
 import com.michaldrabik.repository.RatingsRepository
 import com.michaldrabik.repository.UserTraktManager
 import com.michaldrabik.repository.settings.SettingsRepository
-import com.michaldrabik.ui_base.trakt.TraktSyncWorker
 import com.michaldrabik.ui_model.Settings
 import com.michaldrabik.ui_model.TraktSyncSchedule
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -19,9 +16,7 @@ class SettingsTraktCase @Inject constructor(
   private val dispatchers: CoroutineDispatchers,
   private val settingsRepository: SettingsRepository,
   private val ratingsRepository: RatingsRepository,
-  private val syncLogLocalSource: TraktSyncLogLocalDataSource,
   private val userManager: UserTraktManager,
-  private val workManager: WorkManager,
 ) {
 
   suspend fun enableTraktQuickSync(enable: Boolean) {
@@ -46,7 +41,6 @@ class SettingsTraktCase @Inject constructor(
       val new = it.copy(traktSyncSchedule = schedule)
       settingsRepository.update(new)
     }
-    TraktSyncWorker.schedulePeriodic(workManager, schedule, cancelExisting = true)
   }
 
   suspend fun authorizeTrakt(authData: Uri) {
@@ -75,9 +69,7 @@ class SettingsTraktCase @Inject constructor(
     }
 
     userManager.revokeToken()
-    syncLogLocalSource.deleteAll()
     disableTraktFeatures()
-    TraktSyncWorker.cancelAllPeriodic(workManager)
   }
 
   fun isTraktAuthorized() = userManager.isAuthorized()

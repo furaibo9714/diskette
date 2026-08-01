@@ -10,8 +10,6 @@
   <string name="textSettingsTraktAuthorizeSummarySignIn">Cliquez pour vous connecter à votre compte Trakt.tv.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOut">Connecté. Cliquez pour vous déconnecter.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOutUser">Connecté en tant que %1$s.\nCliquez pour vous déconnecter.</string>
-  <string name="textSettingsTraktSyncTitle">Synchronisation Trakt.tv</string>
-  <string name="textSettingsTraktSyncSummary">Synchronisation des données entre Trakt.tv et Showly.</string>
   <string name="textSettingsTraktQuickSyncTitle">Téléversement Instantané Trakt.tv</string>
   <string name="textSettingsTraktQuickSyncSummary">Téléversement instantané des données vers Trakt.tv après les avoir ajoutées dans l\'application.</string>
   <string name="textSettingsTraktQuickRemoveTitle">Suppression des données Trakt.tv</string>
@@ -47,8 +45,6 @@
   <string name="textSettingsRateAppSummary">Vous aimez Showly ? Laissez-nous un avis sur le Play Store. Merci !</string>
   <string name="textSettingsDeleteCacheTitle">Vider la mémoire cache des images</string>
   <string name="textSettingsDeleteCacheSummary">Cliquez pour vider la mémoire cache des images. Cela peut aider si les images des séries ne se chargent pas correctement.</string>
-  <string name="textSettingsQuickSyncConfirmationTitle">Désactiver la Synchronisation Automatique</string>
-  <string name="textSettingsQuickSyncConfirmationMessage">\nIl semblerait que la Synchronisation Automatique soit déjà activée.\n\nVoulez-vous la désactiver avant d\'activer la synchronisation instantanée (conseillé) ?\n</string>
   <string name="textSettingsLogoutTitle">Déconnexion de Trakt.tv</string>
   <string name="textSettingsLogoutMessage">\nVoulez-vous vraiment vous déconnecter ?\n</string>
   <string name="textSettingsMoviesEnabledTitle">Films</string>

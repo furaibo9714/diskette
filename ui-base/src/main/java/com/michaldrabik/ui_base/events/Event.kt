@@ -6,17 +6,17 @@ object ReloadData : Event()
 
 // Trakt Sync
 
-object TraktSyncStart : Event()
-
-object TraktSyncSuccess : Event()
-
-object TraktSyncError : Event()
-
 object TraktSyncAuthError : Event()
 
-data class TraktSyncProgress(
-  val status: String = "",
-) : Event()
+// Floppy Sync
+
+object FloppySyncStart : Event()
+
+object FloppySyncProgress : Event()
+
+object FloppySyncSuccess : Event()
+
+object FloppySyncError : Event()
 
 // Trakt Instant Sync
 

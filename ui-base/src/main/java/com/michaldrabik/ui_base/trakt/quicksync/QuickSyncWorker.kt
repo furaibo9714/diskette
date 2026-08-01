@@ -28,8 +28,6 @@ import com.michaldrabik.ui_base.events.EventsManager
 import com.michaldrabik.ui_base.events.TraktQuickSyncSuccess
 import com.michaldrabik.ui_base.events.TraktSyncAuthError
 import com.michaldrabik.ui_base.trakt.TraktNotificationWorker
-import com.michaldrabik.ui_base.trakt.TraktSyncWorker.Companion.SYNC_NOTIFICATION_COMPLETE_ERROR_LISTS_ID
-import com.michaldrabik.ui_base.trakt.TraktSyncWorker.Companion.TRAKT_LISTS_INFO_URL
 import com.michaldrabik.ui_base.trakt.quicksync.runners.QuickSyncListsRunner
 import com.michaldrabik.ui_base.trakt.quicksync.runners.QuickSyncRunner
 import com.michaldrabik.ui_base.trakt.receivers.ListLimitNotificationReceiver
@@ -58,6 +56,10 @@ class QuickSyncWorker @AssistedInject constructor(
     private const val TAG = "TRAKT_QUICK_SYNC_WORK"
     private const val SYNC_NOTIFICATION_PROGRESS_ID = 916
     private const val SYNC_NOTIFICATION_ERROR_ID = 917
+    const val SYNC_NOTIFICATION_COMPLETE_ERROR_LISTS_ID = 832
+
+    const val TRAKT_LISTS_INFO_URL =
+      "https://releasenotes.trakt.tv/release/Y2LCE-january-21-2025"
 
     fun schedule(workManager: WorkManager) {
       val request = OneTimeWorkRequestBuilder<QuickSyncWorker>()

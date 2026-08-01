@@ -11,8 +11,6 @@
     <string name="textSettingsTraktAuthorizeSummarySignIn">Clic pentru a te conecta la contul Trakt.tv.</string>
     <string name="textSettingsTraktAuthorizeSummarySignOut">Conectat. Clic pentru a te deconecta.</string>
     <string name="textSettingsTraktAuthorizeSummarySignOutUser">Conectat ca %1$s. Clic pentru a te deconecta.</string>
-    <string name="textSettingsTraktSyncTitle">Sincronizare Trakt.tv</string>
-    <string name="textSettingsTraktSyncSummary">Sincronizează datele între Trakt.tv și Showly.</string>
     <string name="textSettingsTraktQuickSyncTitle">Încărcare instantanee Trakt.tv</string>
     <string name="textSettingsTraktQuickSyncSummary">Încarcă instantaneu datele pe Trakt.tv după ce le adaugi în aplicație.</string>
     <string name="textSettingsTraktQuickRemoveTitle">Eliminarea datelor Trakt.tv</string>
@@ -48,8 +46,6 @@
     <string name="textSettingsRateAppSummary">Îți place Showly? Lasă-ne un comentariu pe PlayStore. Mulțumim!</string>
     <string name="textSettingsDeleteCacheTitle">Șterge memoria cache a imaginilor</string>
     <string name="textSettingsDeleteCacheSummary">Selectează pentru a șterge memoria cache a imaginilor locale. Acest lucru poate fi util dacă imaginile nu se încarcă corect.</string>
-    <string name="textSettingsQuickSyncConfirmationTitle">Dezactivează sincronizarea automată</string>
-    <string name="textSettingsQuickSyncConfirmationMessage">\nSe pare că sincronizarea automată este deja activată.\n\nDorești să o dezactivezi înainte de a activa sincronizarea instantanee (recomandat)?\n</string>
     <string name="textSettingsLogoutTitle">Deconectare Trakt.tv</string>
     <string name="textSettingsLogoutMessage">\nEști sigur că dorești să te deconectezi?\n</string>
     <string name="textSettingsMoviesEnabledTitle">Filme</string>

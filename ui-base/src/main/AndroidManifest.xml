@@ -3,6 +3,5 @@
 
   <application>
     <receiver android:name=".trakt.receivers.ListLimitNotificationReceiver" />
-    <receiver android:name=".trakt.receivers.WatchlistLimitNotificationReceiver" />
   </application>
 </manifest>

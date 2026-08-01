@@ -5,7 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-const val DATABASE_VERSION = 45
+const val DATABASE_VERSION = 46
 const val DATABASE_NAME = "SHOWLY2_DB_2"
 
 class Migrations(
@@ -846,6 +846,14 @@ class Migrations(
     }
   }
 
+  private val migration46 = object : Migration(45, 46) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+      with(database) {
+        execSQL("DROP TABLE IF EXISTS sync_trakt_log")
+      }
+    }
+  }
+
   fun getAll() =
     listOf(
       migration2,
@@ -892,5 +900,6 @@ class Migrations(
       migration43,
       migration44,
       migration45,
+      migration46,
     )
 }

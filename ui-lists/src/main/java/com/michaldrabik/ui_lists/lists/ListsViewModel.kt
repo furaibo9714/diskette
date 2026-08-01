@@ -7,10 +7,11 @@ import androidx.work.WorkManager
 import com.michaldrabik.repository.images.MovieImagesProvider
 import com.michaldrabik.repository.images.ShowImagesProvider
 import com.michaldrabik.ui_base.events.EventsManager
+import com.michaldrabik.ui_base.events.FloppySyncError
+import com.michaldrabik.ui_base.events.FloppySyncProgress
+import com.michaldrabik.ui_base.events.FloppySyncSuccess
 import com.michaldrabik.ui_base.events.TraktSyncAuthError
-import com.michaldrabik.ui_base.events.TraktSyncError
-import com.michaldrabik.ui_base.events.TraktSyncSuccess
-import com.michaldrabik.ui_base.trakt.TraktSyncWorker
+import com.michaldrabik.ui_base.floppy.FloppySyncWorker
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import com.michaldrabik.ui_base.utilities.extensions.findReplace
@@ -52,7 +53,7 @@ class ListsViewModel @Inject constructor(
     viewModelScope.launch {
       eventsManager.events.collect { onEvent(it) }
     }
-    workManager.getWorkInfosByTagLiveData(TraktSyncWorker.TAG_ID).observeForever { work ->
+    workManager.getWorkInfosByTagLiveData(FloppySyncWorker.TAG_ID).observeForever { work ->
       syncingState.value = work.any { it.state == WorkInfo.State.RUNNING }
     }
   }
@@ -115,7 +116,7 @@ class ListsViewModel @Inject constructor(
   }
 
   private fun onEvent(event: EventSync) {
-    if (event in arrayOf(TraktSyncError, TraktSyncAuthError, TraktSyncSuccess)) {
+    if (event in arrayOf(FloppySyncError, TraktSyncAuthError, FloppySyncSuccess, FloppySyncProgress)) {
       loadItems(resetScroll = true)
     }
   }

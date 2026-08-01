@@ -10,8 +10,6 @@
   <string name="textSettingsTraktAuthorizeSummarySignIn">Натисніть для входу до Вашого облікового запису Trakt.tv.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOut">Ви увійшли. Натисніть, щоб вийти.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOutUser">Ви увійшли як %1$s. Натисніть, щоб вийти.</string>
-  <string name="textSettingsTraktSyncTitle">Синхронізація Trakt.tv</string>
-  <string name="textSettingsTraktSyncSummary">Синхронізація даних між Trakt.tv і Showly.</string>
   <string name="textSettingsTraktQuickSyncTitle">Миттєве вивантаження Trakt.tv</string>
   <string name="textSettingsTraktQuickSyncSummary">Миттєво вивантажуйте дані на Trakt.tv після додавання їх в додатку.</string>
   <string name="textSettingsTraktQuickRemoveTitle">Видалення даних з Trakt.tv</string>
@@ -47,8 +45,6 @@
   <string name="textSettingsRateAppSummary">Подобається Showly? Залиште свій відгук у Play Store. Дякуємо!</string>
   <string name="textSettingsDeleteCacheTitle">Очистити кеш зображень</string>
   <string name="textSettingsDeleteCacheSummary">Натисніть, щоб очистити кеш локальних зображень. Це може допомогти, якщо зображення серіалів не завантажуються коректно.</string>
-  <string name="textSettingsQuickSyncConfirmationTitle">Вимкнути автоматичну синхронізацію</string>
-  <string name="textSettingsQuickSyncConfirmationMessage">\nСхоже, що автоматична синхронізація вже ввімкнена.\n\nБажаєте вимкнути її перед увімкненням миттєвої синхронізації (рекомендовано)?\n</string>
   <string name="textSettingsLogoutTitle">Вихід з Trakt.tv</string>
   <string name="textSettingsLogoutMessage">\nВи дійсно бажаєте вийти?\n</string>
   <string name="textSettingsMoviesEnabledTitle">Фільми</string>

@@ -9,13 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.work.WorkInfo.State
-import androidx.work.WorkManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.michaldrabik.data_remote.Config.TRAKT_AUTHORIZE_URL
 import com.michaldrabik.ui_base.BaseFragment
 import com.michaldrabik.ui_base.common.OnTraktAuthorizeListener
-import com.michaldrabik.ui_base.trakt.TraktSyncWorker
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.events.MessageEvent
 import com.michaldrabik.ui_base.utilities.extensions.launchAndRepeatStarted
@@ -24,7 +21,6 @@ import com.michaldrabik.ui_base.utilities.extensions.openWebUrl
 import com.michaldrabik.ui_base.utilities.extensions.visibleIf
 import com.michaldrabik.ui_base.utilities.viewBinding
 import com.michaldrabik.ui_model.PremiumFeature
-import com.michaldrabik.ui_model.TraktSyncSchedule.OFF
 import com.michaldrabik.ui_navigation.java.NavigationArgs.ARG_ITEM
 import com.michaldrabik.ui_settings.R
 import com.michaldrabik.ui_settings.databinding.FragmentSettingsTraktBinding
@@ -47,7 +43,6 @@ class SettingsTraktFragment :
   ) {
     super.onViewCreated(view, savedInstanceState)
     setupView()
-    setupWorkManager()
     launchAndRepeatStarted(
       { viewModel.uiState.collect { render(it) } },
       { viewModel.eventFlow.collect { handleEvent(it) } },
@@ -61,26 +56,13 @@ class SettingsTraktFragment :
       settingsTraktQuickRemove.onClick {
         viewModel.enableQuickRemove(!settingsTraktQuickRemoveSwitch.isChecked)
       }
-      settingsTraktSync.onClick {
-        navigateTo(R.id.actionSettingsFragmentToTraktSync)
-      }
     }
-  }
-
-  private fun setupWorkManager() {
-    WorkManager
-      .getInstance(requireAppContext())
-      .getWorkInfosByTagLiveData(TraktSyncWorker.TAG_ID)
-      .observe(viewLifecycleOwner) {
-        binding.settingsTraktSyncProgress.visibleIf(it.any { work -> work.state == State.RUNNING })
-      }
   }
 
   private fun render(uiState: SettingsTraktUiState) {
     uiState.run {
       with(binding) {
         settingsTraktAuthorizeProgress.visibleIf(isSigningIn)
-        settingsTraktSync.visibleIf(isSignedInTrakt)
         settingsTraktQuickSync.visibleIf(isSignedInTrakt)
         settingsTraktQuickRemove.visibleIf(isSignedInTrakt)
         settingsTraktQuickRate.visibleIf(isSignedInTrakt)
@@ -103,11 +85,7 @@ class SettingsTraktFragment :
 
         settingsTraktQuickSyncSwitch.isChecked = settings?.traktQuickSyncEnabled ?: false
         settingsTraktQuickSync.onClick {
-          val isChecked = settingsTraktQuickSyncSwitch.isChecked
-          viewModel.enableQuickSync(!isChecked)
-          if (!isChecked && settings?.traktSyncSchedule != OFF) {
-            showQuickSyncConfirmationDialog()
-          }
+          viewModel.enableQuickSync(!settingsTraktQuickSyncSwitch.isChecked)
         }
 
         settingsTraktAuthorize.onClick {
@@ -148,17 +126,6 @@ class SettingsTraktFragment :
       }
     }
     navigateTo(R.id.actionSettingsFragmentToPremium, args)
-  }
-
-  private fun showQuickSyncConfirmationDialog() {
-    MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialog)
-      .setTitle(R.string.textSettingsQuickSyncConfirmationTitle)
-      .setMessage(R.string.textSettingsQuickSyncConfirmationMessage)
-      .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.bg_dialog))
-      .setPositiveButton(R.string.textTurnOff) { _, _ ->
-        viewModel.setTraktSyncSchedule(OFF)
-      }.setNegativeButton(R.string.textNotNow) { _, _ -> }
-      .show()
   }
 
   private fun showLogoutDialog() {

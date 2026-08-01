@@ -10,8 +10,6 @@
   <string name="textSettingsTraktAuthorizeSummarySignIn">Kliknij aby zalogować się do konta Trakt.tv.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOut">Zalogowano. Kliknij aby wylogować.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOutUser">Zalogowano jako %1$s.\nKliknij aby wylogować.</string>
-  <string name="textSettingsTraktSyncTitle">Synchronizacja Trakt.tv</string>
-  <string name="textSettingsTraktSyncSummary">Synchronizuj dane między Trakt.tv i Showly</string>
   <string name="textSettingsTraktQuickSyncTitle">Trakt.tv Szybki Upload</string>
   <string name="textSettingsTraktQuickSyncSummary">Natychmiast wyślij odcinki i seriale \'Na Później\' do Trakt.tv po dodaniu w aplikacji.</string>
   <string name="textSettingsTraktQuickRemoveTitle">Trakt.tv Usuwanie Danych</string>
@@ -47,8 +45,6 @@
   <string name="textSettingsRateAppSummary">Podoba ci się aplikacja? Kliknij aby dodać swoją recenzję w sklepie Play Store!</string>
   <string name="textSettingsDeleteCacheTitle">Wyczyść Obrazki</string>
   <string name="textSettingsDeleteCacheSummary">Kliknij aby wyczyścić pamięć podręczną obrazków jeżeli występują problemy z ich ładowaniem.</string>
-  <string name="textSettingsQuickSyncConfirmationTitle">Wyłącz Planowane Synchronizacje</string>
-  <string name="textSettingsQuickSyncConfirmationMessage">\nPlanowane synchronizacje są obecnie włączone.\n\nWyłączyć przed włączeniem Szybkiej Synchronizacji (zalecane)?\n</string>
   <string name="textSettingsLogoutTitle">Trakt.tv Wylogowanie</string>
   <string name="textSettingsLogoutMessage">\nCzy na pewno chcesz się wylogować?\n</string>
   <string name="textSettingsMoviesEnabledTitle">Filmy</string>

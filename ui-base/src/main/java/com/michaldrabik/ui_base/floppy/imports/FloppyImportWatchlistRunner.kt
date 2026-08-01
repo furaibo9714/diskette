@@ -6,6 +6,8 @@ import com.michaldrabik.data_remote.floppy.api.FloppyService
 import com.michaldrabik.repository.floppy.FloppyConnectionManager
 import com.michaldrabik.repository.movies.WatchlistMoviesRepository
 import com.michaldrabik.repository.shows.WatchlistShowsRepository
+import com.michaldrabik.ui_base.events.EventsManager
+import com.michaldrabik.ui_base.events.FloppySyncProgress
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,6 +17,9 @@ import javax.inject.Singleton
  * Items are matched by tmdb id where possible; Floppy "manual" items (no external provider id)
  * are resolved to a thin local Show/Movie row via [FloppyManualMediaResolver] instead of being
  * skipped. Floppy has no delta/"since" endpoint, so this is a full reconcile each run.
+ *
+ * Emits [FloppySyncProgress] once per fetched page (rather than per item) so screens can reload
+ * incrementally during a full sync without hammering the event bus on large watchlists.
  */
 @Singleton
 class FloppyImportWatchlistRunner @Inject constructor(
@@ -22,6 +27,7 @@ class FloppyImportWatchlistRunner @Inject constructor(
   private val mediaResolver: FloppyManualMediaResolver,
   private val watchlistShowsRepository: WatchlistShowsRepository,
   private val watchlistMoviesRepository: WatchlistMoviesRepository,
+  private val eventsManager: EventsManager,
 ) {
 
   suspend fun run(): Int {
@@ -39,15 +45,18 @@ class FloppyImportWatchlistRunner @Inject constructor(
     var offset = 0
     while (true) {
       val page = service.getTrackedMedia(MEDIA_TYPE_TV, FloppyService.MEDIA_LIST_PAGE_SIZE, offset)
+      var pageImported = 0
       page.results
         .filter { (it.status ?: -1) == FLOPPY_STATUS_PLANNING }
         .forEach { media ->
           val id = mediaResolver.resolveShowId(media.item) ?: return@forEach
           if (!watchlistShowsRepository.exists(id)) {
             watchlistShowsRepository.insert(id)
-            imported++
+            pageImported++
           }
         }
+      imported += pageImported
+      if (pageImported > 0) eventsManager.sendEvent(FloppySyncProgress)
       if (page.results.size < FloppyService.MEDIA_LIST_PAGE_SIZE) break
       offset += FloppyService.MEDIA_LIST_PAGE_SIZE
     }
@@ -60,15 +69,18 @@ class FloppyImportWatchlistRunner @Inject constructor(
     var offset = 0
     while (true) {
       val page = service.getTrackedMedia(MEDIA_TYPE_MOVIE, FloppyService.MEDIA_LIST_PAGE_SIZE, offset)
+      var pageImported = 0
       page.results
         .filter { (it.status ?: -1) == FLOPPY_STATUS_PLANNING }
         .forEach { media ->
           val id = mediaResolver.resolveMovieId(media.item) ?: return@forEach
           if (!watchlistMoviesRepository.exists(id)) {
             watchlistMoviesRepository.insert(id)
-            imported++
+            pageImported++
           }
         }
+      imported += pageImported
+      if (pageImported > 0) eventsManager.sendEvent(FloppySyncProgress)
       if (page.results.size < FloppyService.MEDIA_LIST_PAGE_SIZE) break
       offset += FloppyService.MEDIA_LIST_PAGE_SIZE
     }

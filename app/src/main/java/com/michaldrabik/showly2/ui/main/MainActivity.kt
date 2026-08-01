@@ -147,7 +147,7 @@ class MainActivity :
       }
     }
     viewModel.initialize()
-    viewModel.refreshTraktSyncSchedule()
+    viewModel.refreshFloppySync()
     viewModel.refreshBackupExportSchedule()
     viewModel.backfillFloppyLists()
   }

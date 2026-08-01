@@ -1,27 +1,19 @@
 package com.michaldrabik.repository.shows.ratings
 
 import com.michaldrabik.common.extensions.nowUtc
-import com.michaldrabik.common.extensions.toUtcZone
 import com.michaldrabik.data_local.LocalDataSource
 import com.michaldrabik.data_local.database.model.Rating
-import com.michaldrabik.data_remote.trakt.AuthorizedTraktRemoteDataSource
 import com.michaldrabik.repository.mappers.Mappers
 import com.michaldrabik.ui_model.Episode
 import com.michaldrabik.ui_model.Season
 import com.michaldrabik.ui_model.Show
 import com.michaldrabik.ui_model.TraktRating
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
-import timber.log.Timber
-import java.time.temporal.ChronoUnit.SECONDS
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShowsRatingsRepository @Inject constructor(
   val external: ShowsExternalRatingsRepository,
-  private val remoteSource: AuthorizedTraktRemoteDataSource,
   private val localSource: LocalDataSource,
   private val mappers: Mappers,
 ) {
@@ -32,86 +24,6 @@ class ShowsRatingsRepository @Inject constructor(
     private const val TYPE_SEASON = "season"
     private const val CHUNK_SIZE = 250
   }
-
-  suspend fun preloadRatings() =
-    supervisorScope {
-      suspend fun preloadShowsRatings() {
-        val remoteRatings = remoteSource.fetchShowsRatings()
-        val localRatings = localSource.ratings
-          .getAllByType(TYPE_SHOW)
-          .map { mappers.userRatings.fromDatabase(it) }
-
-        val entities = remoteRatings
-          .filter { it.rated_at != null && it.show.ids.trakt != null }
-          .map { mappers.userRatings.toDatabaseShow(it) }
-          .filter { remoteRating ->
-            val localRating = localRatings.find { remoteRating.idTrakt == it.idTrakt.id }
-            if (localRating != null) {
-              return@filter localRating.ratedAt
-                .toUtcZone()
-                .truncatedTo(SECONDS)
-                .isBefore(remoteRating.ratedAt.toUtcZone().truncatedTo(SECONDS))
-            }
-            true
-          }
-
-        localSource.ratings.replaceAll(entities, TYPE_SHOW)
-      }
-
-      suspend fun preloadEpisodesRatings() {
-        val remoteRatings = remoteSource.fetchEpisodesRatings()
-        val localRatings = localSource.ratings
-          .getAllByType(TYPE_EPISODE)
-          .map { mappers.userRatings.fromDatabase(it) }
-
-        val entities = remoteRatings
-          .filter { it.rated_at != null && it.episode.ids.trakt != null }
-          .map { mappers.userRatings.toDatabaseEpisode(it) }
-          .filter { remoteRating ->
-            val localRating = localRatings.find { remoteRating.idTrakt == it.idTrakt.id }
-            if (localRating != null) {
-              return@filter localRating.ratedAt
-                .toUtcZone()
-                .truncatedTo(SECONDS)
-                .isBefore(remoteRating.ratedAt.toUtcZone().truncatedTo(SECONDS))
-            }
-            true
-          }
-
-        localSource.ratings.replaceAll(entities, TYPE_EPISODE)
-      }
-
-      suspend fun preloadSeasonsRatings() {
-        val remoteRatings = remoteSource.fetchSeasonsRatings()
-        val localRatings = localSource.ratings
-          .getAllByType(TYPE_SEASON)
-          .map { mappers.userRatings.fromDatabase(it) }
-
-        val entities = remoteRatings
-          .filter { it.rated_at != null && it.season.ids.trakt != null }
-          .map { mappers.userRatings.toDatabaseSeason(it) }
-          .filter { remoteRating ->
-            val localRating = localRatings.find { remoteRating.idTrakt == it.idTrakt.id }
-            if (localRating != null) {
-              return@filter localRating.ratedAt
-                .toUtcZone()
-                .truncatedTo(SECONDS)
-                .isBefore(remoteRating.ratedAt.toUtcZone().truncatedTo(SECONDS))
-            }
-            true
-          }
-
-        localSource.ratings.replaceAll(entities, TYPE_SEASON)
-      }
-
-      val errorHandler = CoroutineExceptionHandler { _, _ ->
-        Timber.e("Failed to preload some of ratings.")
-      }
-
-      launch(errorHandler) { preloadShowsRatings() }
-      launch(errorHandler) { preloadEpisodesRatings() }
-      launch(errorHandler) { preloadSeasonsRatings() }
-    }
 
   suspend fun loadShowsRatings(): List<TraktRating> {
     val ratings = localSource.ratings.getAllByType(TYPE_SHOW)

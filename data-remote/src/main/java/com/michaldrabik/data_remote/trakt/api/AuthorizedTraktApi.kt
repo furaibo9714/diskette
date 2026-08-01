@@ -299,14 +299,6 @@ internal class AuthorizedTraktApi(
     val body = RatingRequest(seasons = listOf(requestValue))
     syncService.postRating(body)
   }
-
-  override suspend fun fetchShowsRatings() = syncService.fetchShowsRatings()
-
-  override suspend fun fetchMoviesRatings() = syncService.fetchMoviesRatings()
-
-  override suspend fun fetchEpisodesRatings() = syncService.fetchEpisodesRatings()
-
-  override suspend fun fetchSeasonsRatings() = syncService.fetchSeasonsRatings()
 }
 
 private fun Headers.getPaginationPageCount(): Int = this["x-pagination-page-count"]?.toInt() ?: 0

@@ -123,7 +123,7 @@ class ProgressFragment :
 
   private fun setupView() {
     with(binding) {
-      progressEmptyView.progressEmptyTraktButton.onClick { requireMainFragment().openTraktSync() }
+      progressEmptyView.progressEmptyTraktButton.onClick { viewModel.startFloppySync() }
       progressEmptyView.progressEmptyDiscoverButton.onClick {
         (requireActivity() as NavigationHost).navigateToDiscover()
       }
@@ -248,7 +248,7 @@ class ProgressFragment :
                   binding.progressOverscrollProgress.progress >= 100
                 ) {
                   overscrollEnabled = false
-                  viewModel.startTraktSync()
+                  viewModel.startFloppySync()
                 }
               }
             }

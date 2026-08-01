@@ -67,14 +67,27 @@ data class FloppyInfo(
 /**
  * Full media detail lookup - unlike [FloppyMedia] (the tracked-list item shape), this works for
  * any (media_type, source, media_id) regardless of whether the user is tracking it, since Floppy
- * proxies the underlying provider's metadata. Only the rating fields Showly needs are declared;
- * Moshi ignores the large amount of unrelated metadata Floppy returns per item.
+ * proxies the underlying provider's metadata (e.g. TMDB) through its own backend and caches the
+ * result - Showly never calls the provider directly for this. Confirmed live against a real
+ * Floppy instance: `synopsis`/`score`/`score_count`/`title`/`details.first_air_date`
+ * (tv)/`details.release_date` (movie) are all real top-level fields, not guesses. Moshi ignores
+ * the large amount of unrelated metadata Floppy returns per item.
  */
 @JsonClass(generateAdapter = true)
 data class FloppyMediaDetail(
   @Json(name = "id") val id: Long?,
+  @Json(name = "title") val title: String?,
+  @Json(name = "synopsis") val overview: String?,
+  @Json(name = "genres") val genres: List<String>?,
   @Json(name = "score") val score: Double?,
   @Json(name = "score_count") val scoreCount: Int?,
+  @Json(name = "details") val details: FloppyMediaDetailInfo?,
+)
+
+@JsonClass(generateAdapter = true)
+data class FloppyMediaDetailInfo(
+  @Json(name = "release_date") val releaseDate: String?,
+  @Json(name = "first_air_date") val firstAirDate: String?,
 )
 
 @JsonClass(generateAdapter = true)

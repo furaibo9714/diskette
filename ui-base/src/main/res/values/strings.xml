@@ -8,7 +8,6 @@
   <string name="textClose">Close</string>
   <string name="textShare">Share</string>
   <string name="textNow">Now</string>
-  <string name="textNotNow">Not Now</string>
   <string name="textReleaseDay">Release Day</string>
   <string name="textNew">New</string>
   <string name="textSelect">Select</string>
@@ -111,6 +110,14 @@
   <string name="textTraktSyncRunning">Running…</string>
   <string name="textTraktSyncError">Trakt.tv sync failed.</string>
   <string name="textTraktSyncErrorFull">Trakt.tv sync failed. Please check your internet connection and try again or contact us if this keeps happening.</string>
+  <string name="textFloppySync">Floppy Sync</string>
+  <string name="textFloppySyncComplete">Sync completed successfully.</string>
+  <string name="textFloppySyncRunning">Running…</string>
+  <string name="textFloppySyncError">Floppy sync failed.</string>
+  <string name="textFloppySyncErrorFull">Floppy sync failed. Please check your internet connection and try again or contact us if this keeps happening.</string>
+  <string name="textFloppySyncImportingWatchlist">Importing watchlist…</string>
+  <string name="textFloppySyncImportingWatched">Importing watched…</string>
+  <string name="textFloppySyncExporting">Syncing changes…</string>
   <string name="textTraktQuickSyncError">Instant Sync failed.</string>
   <string name="textTraktQuickSyncErrorFull">Instant Sync failed. We will try again next time you open the app. Please check your internet connection.</string>
   <string name="textTraktNotificationsRationale">Please grant the application a permission to display information about synchronization progress and results.\n\nWould you like to do it now?</string>

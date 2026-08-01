@@ -33,7 +33,6 @@ import com.michaldrabik.data_local.sources.ShowRatingsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowStreamingsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowTranslationsLocalDataSource
 import com.michaldrabik.data_local.sources.ShowsLocalDataSource
-import com.michaldrabik.data_local.sources.TraktSyncLogLocalDataSource
 import com.michaldrabik.data_local.sources.TraktSyncQueueLocalDataSource
 import com.michaldrabik.data_local.sources.TranslationsMoviesSyncLogLocalDataSource
 import com.michaldrabik.data_local.sources.TranslationsShowsSyncLogLocalDataSource
@@ -82,7 +81,6 @@ interface LocalDataSource {
   val showStreamings: ShowStreamingsLocalDataSource
   val showTranslations: ShowTranslationsLocalDataSource
   val shows: ShowsLocalDataSource
-  val traktSyncLog: TraktSyncLogLocalDataSource
   val traktSyncQueue: TraktSyncQueueLocalDataSource
   val translationsMoviesSyncLog: TranslationsMoviesSyncLogLocalDataSource
   val translationsShowsSyncLog: TranslationsShowsSyncLogLocalDataSource
@@ -126,7 +124,6 @@ internal class MainLocalDataSource @Inject constructor(
   override val showStreamings: ShowStreamingsLocalDataSource,
   override val showTranslations: ShowTranslationsLocalDataSource,
   override val shows: ShowsLocalDataSource,
-  override val traktSyncLog: TraktSyncLogLocalDataSource,
   override val traktSyncQueue: TraktSyncQueueLocalDataSource,
   override val translationsMoviesSyncLog: TranslationsMoviesSyncLogLocalDataSource,
   override val translationsShowsSyncLog: TranslationsShowsSyncLogLocalDataSource,

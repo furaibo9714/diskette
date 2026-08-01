@@ -10,8 +10,6 @@
   <string name="textSettingsTraktAuthorizeSummarySignIn">Trakt.tv hesabınızda oturum açmak için tıklayın.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOut">Giriş yapıldı. Çıkış yapmak için tıklayın.</string>
   <string name="textSettingsTraktAuthorizeSummarySignOutUser">%1$s olarak giriş yapıldı.\nÇıkış yapmak için tıklayın.</string>
-  <string name="textSettingsTraktSyncTitle">Trakt.tv Eşitlemesi</string>
-  <string name="textSettingsTraktSyncSummary">Trakt.tv ve Showly arasında verileri eşitleyin.</string>
   <string name="textSettingsTraktQuickSyncTitle">Trakt.tv Anlık Karşıya Yükleme</string>
   <string name="textSettingsTraktQuickSyncSummary">Verileri, uygulamaya ekledikten sonra anında Trakt.tv hizmetine yükleyin.</string>
   <string name="textSettingsTraktQuickRemoveTitle">Trakt.tv Verisini Sil</string>
@@ -47,8 +45,6 @@
   <string name="textSettingsRateAppSummary">Showly uygulamasından keyif alıyor musunuz? PlayStore\'da yorum yapabilirsiniz. Teşekkürler!</string>
   <string name="textSettingsDeleteCacheTitle">Görüntü Önbelleğini Temizle</string>
   <string name="textSettingsDeleteCacheSummary">Yerel görüntü önbelleğini temizlemek için dokunun. Bu, dizi görüntülerinin doğru yüklenmediğinde yardımcı olabilir.</string>
-  <string name="textSettingsQuickSyncConfirmationTitle">Otomatik Eşitlemeyi Devre Dışı Bırak</string>
-  <string name="textSettingsQuickSyncConfirmationMessage">\nOtomatik Eşitleme zaten açık gibi görünüyor.\n\nAnlık eşitlemeyi etkinleştirmeden önce bu özelliği kapatmak ister misiniz (önerilir)?\n</string>
   <string name="textSettingsLogoutTitle">Trakt.tv Çıkış Yap</string>
   <string name="textSettingsLogoutMessage">\nOturumu kapatmak istediğinizden emin misiniz?\n</string>
   <string name="textSettingsMoviesEnabledTitle">Filmler</string>

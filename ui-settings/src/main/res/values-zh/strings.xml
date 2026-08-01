@@ -10,8 +10,6 @@
   <string name="textSettingsTraktAuthorizeSummarySignIn">点击登录您的 Trakt.tv 账号。</string>
   <string name="textSettingsTraktAuthorizeSummarySignOut">已登录。点击登出。</string>
   <string name="textSettingsTraktAuthorizeSummarySignOutUser">已以用户： %1$s 登录，点击登出。</string>
-  <string name="textSettingsTraktSyncTitle">Trakt.tv 同步</string>
-  <string name="textSettingsTraktSyncSummary">双向同步 Trakt.tv 和 Showly 的数据。</string>
   <string name="textSettingsTraktQuickSyncTitle">Trakt.tv 即时上传</string>
   <string name="textSettingsTraktQuickSyncSummary">在此应用中添加数据后，立即上传同步到 Trakt.tv。</string>
   <string name="textSettingsTraktQuickRemoveTitle">Trakt.tv 数据移除</string>
@@ -47,8 +45,6 @@
   <string name="textSettingsRateAppSummary">喜欢 Showly 吗？请在 PlayStore 上给我们留下评论。谢谢！</string>
   <string name="textSettingsDeleteCacheTitle">清理图片缓存</string>
   <string name="textSettingsDeleteCacheSummary">点击清除本地图片缓存。如果显示图片未正确加载，这可能会有帮助。</string>
-  <string name="textSettingsQuickSyncConfirmationTitle">禁用自动同步</string>
-  <string name="textSettingsQuickSyncConfirmationMessage">\n似乎自动同步已经开启。\n\n您想要在启用即时同步之前将其关闭吗（推荐）？\n</string>
   <string name="textSettingsLogoutTitle">登出 Trakt.tv</string>
   <string name="textSettingsLogoutMessage">\n您确定要退出吗？\n</string>
   <string name="textSettingsMoviesEnabledTitle">电影</string>

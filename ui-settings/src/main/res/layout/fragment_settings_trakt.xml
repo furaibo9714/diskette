@@ -25,7 +25,7 @@
   <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/settingsTraktAuthorize"
     style="@style/Settings.ItemLayout"
-    app:layout_constraintBottom_toTopOf="@id/settingsTraktSync"
+    app:layout_constraintBottom_toTopOf="@id/settingsTraktQuickSync"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/settingsCategoryTrakt"
@@ -102,61 +102,12 @@
   </androidx.constraintlayout.widget.ConstraintLayout>
 
   <androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/settingsTraktSync"
-    style="@style/Settings.ItemLayout"
-    android:visibility="gone"
-    app:layout_constraintBottom_toTopOf="@id/settingsTraktQuickSync"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/settingsTraktAuthorize"
-    tools:visibility="visible"
-    >
-
-    <TextView
-      android:id="@+id/settingsTraktSyncTitle"
-      style="@style/Settings.Title"
-      android:text="@string/textSettingsTraktSyncTitle"
-      app:layout_constraintBottom_toTopOf="@id/settingsTraktSyncDescription"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_chainStyle="packed"
-      />
-
-    <TextView
-      android:id="@+id/settingsTraktSyncDescription"
-      style="@style/Settings.Summary"
-      android:layout_marginEnd="@dimen/spaceSmall"
-      android:text="@string/textSettingsTraktSyncSummary"
-      app:layout_constrainedWidth="true"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toStartOf="@id/settingsTraktSyncProgress"
-      app:layout_constraintHorizontal_bias="0"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/settingsTraktSyncTitle"
-      tools:text="@tools:sample/lorem/random"
-      />
-
-    <ProgressBar
-      android:id="@+id/settingsTraktSyncProgress"
-      style="@style/ProgressBar.Accent"
-      android:layout_width="24dp"
-      android:layout_height="24dp"
-      android:visibility="gone"
-      app:layout_constraintBottom_toBottomOf="@id/settingsTraktSync"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toTopOf="@id/settingsTraktSync"
-      tools:visibility="visible"
-      />
-
-  </androidx.constraintlayout.widget.ConstraintLayout>
-
-  <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/settingsTraktQuickSync"
     style="@style/Settings.ItemLayout"
     app:layout_constraintBottom_toTopOf="@id/settingsTraktQuickRemove"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/settingsTraktSync"
+    app:layout_constraintTop_toBottomOf="@id/settingsTraktAuthorize"
     >
 
     <TextView

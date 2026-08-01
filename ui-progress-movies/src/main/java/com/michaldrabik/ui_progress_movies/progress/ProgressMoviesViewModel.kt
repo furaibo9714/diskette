@@ -8,7 +8,7 @@ import com.michaldrabik.repository.TranslationsRepository
 import com.michaldrabik.repository.UserTraktManager
 import com.michaldrabik.repository.images.MovieImagesProvider
 import com.michaldrabik.repository.settings.SettingsRepository
-import com.michaldrabik.ui_base.trakt.TraktSyncWorker
+import com.michaldrabik.ui_base.floppy.FloppySyncWorker
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import com.michaldrabik.ui_base.utilities.extensions.findReplace
@@ -142,13 +142,8 @@ class ProgressMoviesViewModel @Inject constructor(
     loadItems(resetScroll = item.isPinned)
   }
 
-  fun startTraktSync() {
-    TraktSyncWorker.scheduleOneOff(
-      workManager,
-      isImport = true,
-      isExport = true,
-      isSilent = false,
-    )
+  fun startFloppySync() {
+    FloppySyncWorker.scheduleFullSync(workManager)
   }
 
   private fun updateItem(newItem: ProgressMovieListItem.MovieItem) {
