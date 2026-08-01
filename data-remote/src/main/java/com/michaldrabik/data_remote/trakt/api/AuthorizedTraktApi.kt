@@ -1,7 +1,6 @@
 package com.michaldrabik.data_remote.trakt.api
 
 import com.michaldrabik.data_remote.trakt.AuthorizedTraktRemoteDataSource
-import com.michaldrabik.data_remote.trakt.api.service.TraktCommentsService
 import com.michaldrabik.data_remote.trakt.api.service.TraktSyncService
 import com.michaldrabik.data_remote.trakt.api.service.TraktUsersService
 import com.michaldrabik.data_remote.trakt.model.CustomList
@@ -15,7 +14,6 @@ import com.michaldrabik.data_remote.trakt.model.SyncExportItem
 import com.michaldrabik.data_remote.trakt.model.SyncExportRequest
 import com.michaldrabik.data_remote.trakt.model.SyncHistoryItem
 import com.michaldrabik.data_remote.trakt.model.SyncItem
-import com.michaldrabik.data_remote.trakt.model.request.CommentRequest
 import com.michaldrabik.data_remote.trakt.model.request.CreateListRequest
 import com.michaldrabik.data_remote.trakt.model.request.RatingRequest
 import com.michaldrabik.data_remote.trakt.model.request.RatingRequestIds
@@ -27,17 +25,7 @@ private const val TRAKT_SYNC_PAGE_LIMIT = 250
 internal class AuthorizedTraktApi(
   private val usersService: TraktUsersService,
   private val syncService: TraktSyncService,
-  private val commentsService: TraktCommentsService,
 ) : AuthorizedTraktRemoteDataSource {
-
-  override suspend fun postComment(commentRequest: CommentRequest) = commentsService.postComment(commentRequest)
-
-  override suspend fun postCommentReply(
-    commentId: Long,
-    commentRequest: CommentRequest,
-  ) = commentsService.postCommentReply(commentId, commentRequest)
-
-  override suspend fun deleteComment(commentId: Long) = commentsService.deleteComment(commentId)
 
   override suspend fun fetchMyProfile() = usersService.fetchMyProfile()
 

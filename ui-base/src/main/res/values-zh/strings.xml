@@ -24,8 +24,6 @@
   <string name="textEpisode">第 %1$d 集</string>
   <string name="textSeasonEpisode">%02d 季 %02d 集</string>
   <string name="textSortBy">排序：</string>
-  <string name="textSpoilersWarning">此评论包含剧透。\n点后阅读。</string>
-  <string name="textCommentedOn">%s 的评论</string>
   <string name="textNetwork">%1$s (%2$s)</string>
   <string name="textNetworks" comment="TV network like HBO, AMC, Showtime, Disney etc.">流媒体：</string>
   <string name="textGenres">类型：</string>

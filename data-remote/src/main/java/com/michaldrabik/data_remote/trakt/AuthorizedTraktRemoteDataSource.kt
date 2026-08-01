@@ -1,6 +1,5 @@
 package com.michaldrabik.data_remote.trakt
 
-import com.michaldrabik.data_remote.trakt.model.Comment
 import com.michaldrabik.data_remote.trakt.model.CustomList
 import com.michaldrabik.data_remote.trakt.model.Episode
 import com.michaldrabik.data_remote.trakt.model.HiddenItem
@@ -17,23 +16,12 @@ import com.michaldrabik.data_remote.trakt.model.SyncExportRequest
 import com.michaldrabik.data_remote.trakt.model.SyncHistoryItem
 import com.michaldrabik.data_remote.trakt.model.SyncItem
 import com.michaldrabik.data_remote.trakt.model.User
-import com.michaldrabik.data_remote.trakt.model.request.CommentRequest
 import com.michaldrabik.data_remote.trakt.model.request.RatingRequest
-import retrofit2.Response
 
 /**
  * Fetch/post remote resources via authorized Trakt API
  */
 interface AuthorizedTraktRemoteDataSource {
-
-  suspend fun postComment(commentRequest: CommentRequest): Comment
-
-  suspend fun postCommentReply(
-    commentId: Long,
-    commentRequest: CommentRequest,
-  ): Comment
-
-  suspend fun deleteComment(commentId: Long): Response<Any>
 
   suspend fun fetchMyProfile(): User
 
