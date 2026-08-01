@@ -13,6 +13,7 @@ data class FloppyMediaItemRef(
   @Json(name = "media_id") val mediaId: String,
   @Json(name = "source") val source: String,
   @Json(name = "media_type") val mediaType: String,
+  @Json(name = "title") val title: String? = null,
   @Json(name = "season_number") val seasonNumber: Int? = null,
   @Json(name = "episode_number") val episodeNumber: Int? = null,
 )

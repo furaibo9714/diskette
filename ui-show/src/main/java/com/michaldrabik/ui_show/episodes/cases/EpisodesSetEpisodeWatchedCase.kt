@@ -46,14 +46,14 @@ class EpisodesSetEpisodeWatchedCase @Inject constructor(
             customDate = customDate,
             clearProgress = false,
           )
-          floppySyncManager.scheduleEpisodeWatched(show.ids.tmdb.id, episode.season, episode.number, Operation.ADD)
+          floppySyncManager.scheduleEpisodeWatched(show.ids, episode.season, episode.number, Operation.ADD)
         }
         return Result.SUCCESS
       }
       else -> {
         episodesManager.setEpisodeUnwatched(episodeBundle)
         quickSyncManager.clearEpisodes(listOf(episode.ids.trakt.id))
-        floppySyncManager.scheduleEpisodeWatched(show.ids.tmdb.id, episode.season, episode.number, Operation.REMOVE)
+        floppySyncManager.scheduleEpisodeWatched(show.ids, episode.season, episode.number, Operation.REMOVE)
 
         val traktQuickRemoveEnabled = settingsRepository.load().traktQuickRemoveEnabled
         val isSeasonLocal = seasonsCache.areSeasonsLocal(show.ids.trakt)

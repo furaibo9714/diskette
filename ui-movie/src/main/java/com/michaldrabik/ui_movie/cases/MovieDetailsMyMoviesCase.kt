@@ -46,7 +46,7 @@ class MovieDetailsMyMoviesCase @Inject constructor(
     withContext(dispatchers.IO) {
       moviesRepository.myMovies.insert(movie.ids.trakt, customDate)
       quickSyncManager.scheduleMovies(listOf(movie.traktId), customDate)
-      floppySyncManager.scheduleMovieWatched(movie.ids.tmdb.id, Operation.ADD)
+      floppySyncManager.scheduleMovieWatched(movie.ids, Operation.ADD)
       pinnedItemsRepository.removePinnedItem(movie)
       announcementManager.refreshMoviesAnnouncements()
     }
@@ -57,7 +57,7 @@ class MovieDetailsMyMoviesCase @Inject constructor(
       moviesRepository.myMovies.delete(movie.ids.trakt)
       pinnedItemsRepository.removePinnedItem(movie)
       quickSyncManager.clearMovies(listOf(movie.traktId))
-      floppySyncManager.scheduleMovieWatched(movie.ids.tmdb.id, Operation.REMOVE)
+      floppySyncManager.scheduleMovieWatched(movie.ids, Operation.REMOVE)
     }
   }
 }

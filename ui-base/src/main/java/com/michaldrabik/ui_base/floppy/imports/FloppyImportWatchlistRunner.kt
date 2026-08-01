@@ -1,27 +1,25 @@
 package com.michaldrabik.ui_base.floppy.imports
 
-import com.michaldrabik.data_local.LocalDataSource
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.MEDIA_TYPE_MOVIE
 import com.michaldrabik.data_local.database.model.FloppySyncQueue.Companion.MEDIA_TYPE_TV
 import com.michaldrabik.data_remote.floppy.api.FloppyService
 import com.michaldrabik.repository.floppy.FloppyConnectionManager
 import com.michaldrabik.repository.movies.WatchlistMoviesRepository
 import com.michaldrabik.repository.shows.WatchlistShowsRepository
-import com.michaldrabik.ui_model.IdTrakt
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
  * Pulls the user's tracked shows/movies from Floppy and reconciles Showly's local watchlist.
- * Only items already known locally (matched by tmdb id) can be reconciled - Floppy carries no
- * Trakt id, so items with no existing local match are skipped rather than partially imported.
- * Floppy has no delta/"since" endpoint, so this is a full reconcile each run.
+ * Items are matched by tmdb id where possible; Floppy "manual" items (no external provider id)
+ * are resolved to a thin local Show/Movie row via [FloppyManualMediaResolver] instead of being
+ * skipped. Floppy has no delta/"since" endpoint, so this is a full reconcile each run.
  */
 @Singleton
 class FloppyImportWatchlistRunner @Inject constructor(
   private val connectionManager: FloppyConnectionManager,
-  private val localSource: LocalDataSource,
+  private val mediaResolver: FloppyManualMediaResolver,
   private val watchlistShowsRepository: WatchlistShowsRepository,
   private val watchlistMoviesRepository: WatchlistMoviesRepository,
 ) {
@@ -44,9 +42,7 @@ class FloppyImportWatchlistRunner @Inject constructor(
       page.results
         .filter { (it.status ?: -1) == FLOPPY_STATUS_PLANNING }
         .forEach { media ->
-          val tmdbId = media.item.mediaId.toLongOrNull() ?: return@forEach
-          val show = localSource.shows.getByTmdbId(tmdbId) ?: return@forEach
-          val id = IdTrakt(show.idTrakt)
+          val id = mediaResolver.resolveShowId(media.item) ?: return@forEach
           if (!watchlistShowsRepository.exists(id)) {
             watchlistShowsRepository.insert(id)
             imported++
@@ -67,9 +63,7 @@ class FloppyImportWatchlistRunner @Inject constructor(
       page.results
         .filter { (it.status ?: -1) == FLOPPY_STATUS_PLANNING }
         .forEach { media ->
-          val tmdbId = media.item.mediaId.toLongOrNull() ?: return@forEach
-          val movie = localSource.movies.getByTmdbId(tmdbId) ?: return@forEach
-          val id = IdTrakt(movie.idTrakt)
+          val id = mediaResolver.resolveMovieId(media.item) ?: return@forEach
           if (!watchlistMoviesRepository.exists(id)) {
             watchlistMoviesRepository.insert(id)
             imported++

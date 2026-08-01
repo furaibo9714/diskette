@@ -13,14 +13,17 @@ import javax.inject.Singleton
 
 /**
  * Pulls the user's watched movies/episodes from Floppy and reconciles Showly's local watched
- * state. Only items already known locally can be reconciled: movies matched by tmdb id, episodes
- * matched by tmdb id + season/episode number against a locally-fetched season. Floppy carries no
- * Trakt id and no delta/"since" endpoint, so this is a full reconcile each run.
+ * state. Movies are matched by tmdb id, or resolved as a thin local row for Floppy "manual"
+ * items via [FloppyManualMediaResolver] (manual *episodes* are out of scope - deferred, same as
+ * an unresolvable tmdb id). Episodes are matched by tmdb id + season/episode number against a
+ * locally-fetched season. Floppy carries no Trakt id and no delta/"since" endpoint, so this is a
+ * full reconcile each run.
  */
 @Singleton
 class FloppyImportWatchedRunner @Inject constructor(
   private val connectionManager: FloppyConnectionManager,
   private val localSource: LocalDataSource,
+  private val mediaResolver: FloppyManualMediaResolver,
   private val myMoviesRepository: MyMoviesRepository,
   private val episodesManager: EpisodesManager,
 ) {
@@ -43,9 +46,7 @@ class FloppyImportWatchedRunner @Inject constructor(
       page.results
         .filter { (it.status ?: 0) >= FLOPPY_STATUS_COMPLETED }
         .forEach { media ->
-          val tmdbId = media.item.mediaId.toLongOrNull() ?: return@forEach
-          val movie = localSource.movies.getByTmdbId(tmdbId) ?: return@forEach
-          val id = IdTrakt(movie.idTrakt)
+          val id = mediaResolver.resolveMovieId(media.item) ?: return@forEach
           if (!myMoviesRepository.exists(id)) {
             myMoviesRepository.insert(id, customDate = null)
             imported++

@@ -33,7 +33,7 @@ class ShowDetailsWatchlistCase @Inject constructor(
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
       quickSyncManager.scheduleShowsWatchlist(listOf(show.traktId))
-      floppySyncManager.scheduleShowWatchlist(show.ids.tmdb.id, Operation.ADD)
+      floppySyncManager.scheduleShowWatchlist(show.ids, Operation.ADD)
     }
 
   suspend fun removeFromWatchlist(show: Show) =
@@ -42,6 +42,6 @@ class ShowDetailsWatchlistCase @Inject constructor(
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
       quickSyncManager.clearWatchlistShows(listOf(show.traktId))
-      floppySyncManager.scheduleShowWatchlist(show.ids.tmdb.id, Operation.REMOVE)
+      floppySyncManager.scheduleShowWatchlist(show.ids, Operation.REMOVE)
     }
 }

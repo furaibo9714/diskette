@@ -19,25 +19,29 @@ data class FloppySyncQueue(
 
   companion object {
     fun createShowWatchlist(
-      idTmdb: Long,
+      source: String,
+      mediaId: String,
       operation: Operation,
       createdAt: Long,
-    ) = FloppySyncQueue(0, MEDIA_TYPE_TV, SOURCE_TMDB, idTmdb.toString(), null, null, Type.SHOW_WATCHLIST.slug, operation.slug, createdAt)
+    ) = FloppySyncQueue(0, MEDIA_TYPE_TV, source, mediaId, null, null, Type.SHOW_WATCHLIST.slug, operation.slug, createdAt)
 
     fun createMovieWatchlist(
-      idTmdb: Long,
+      source: String,
+      mediaId: String,
       operation: Operation,
       createdAt: Long,
-    ) = FloppySyncQueue(0, MEDIA_TYPE_MOVIE, SOURCE_TMDB, idTmdb.toString(), null, null, Type.MOVIE_WATCHLIST.slug, operation.slug, createdAt)
+    ) = FloppySyncQueue(0, MEDIA_TYPE_MOVIE, source, mediaId, null, null, Type.MOVIE_WATCHLIST.slug, operation.slug, createdAt)
 
     fun createMovieWatched(
-      idTmdb: Long,
+      source: String,
+      mediaId: String,
       operation: Operation,
       createdAt: Long,
-    ) = FloppySyncQueue(0, MEDIA_TYPE_MOVIE, SOURCE_TMDB, idTmdb.toString(), null, null, Type.MOVIE_WATCHED.slug, operation.slug, createdAt)
+    ) = FloppySyncQueue(0, MEDIA_TYPE_MOVIE, source, mediaId, null, null, Type.MOVIE_WATCHED.slug, operation.slug, createdAt)
 
     fun createEpisodeWatched(
-      showIdTmdb: Long,
+      source: String,
+      showMediaId: String,
       seasonNumber: Int,
       episodeNumber: Int,
       operation: Operation,
@@ -45,8 +49,8 @@ data class FloppySyncQueue(
     ) = FloppySyncQueue(
       0,
       MEDIA_TYPE_TV,
-      SOURCE_TMDB,
-      showIdTmdb.toString(),
+      source,
+      showMediaId,
       seasonNumber,
       episodeNumber,
       Type.EPISODE_WATCHED.slug,
@@ -57,6 +61,7 @@ data class FloppySyncQueue(
     const val MEDIA_TYPE_TV = "tv"
     const val MEDIA_TYPE_MOVIE = "movie"
     const val SOURCE_TMDB = "tmdb"
+    const val SOURCE_MANUAL = "manual"
   }
 
   enum class Type(

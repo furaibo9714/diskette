@@ -32,7 +32,7 @@ class MovieDetailsWatchlistCase @Inject constructor(
       moviesRepository.watchlistMovies.insert(movie.ids.trakt)
       pinnedItemsRepository.removePinnedItem(movie)
       quickSyncManager.scheduleMoviesWatchlist(listOf(movie.traktId))
-      floppySyncManager.scheduleMovieWatchlist(movie.ids.tmdb.id, Operation.ADD)
+      floppySyncManager.scheduleMovieWatchlist(movie.ids, Operation.ADD)
       announcementManager.refreshMoviesAnnouncements()
     }
   }
@@ -42,7 +42,7 @@ class MovieDetailsWatchlistCase @Inject constructor(
       moviesRepository.watchlistMovies.delete(movie.ids.trakt)
       pinnedItemsRepository.removePinnedItem(movie)
       quickSyncManager.clearWatchlistMovies(listOf(movie.traktId))
-      floppySyncManager.scheduleMovieWatchlist(movie.ids.tmdb.id, Operation.REMOVE)
+      floppySyncManager.scheduleMovieWatchlist(movie.ids, Operation.REMOVE)
     }
   }
 }
