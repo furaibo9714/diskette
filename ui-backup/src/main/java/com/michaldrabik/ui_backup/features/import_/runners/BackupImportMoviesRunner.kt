@@ -31,6 +31,9 @@ internal class BackupImportMoviesRunner @Inject constructor(
   private val pinnedItemsRepository: PinnedItemsRepository,
 ) : BackupImportRunner<BackupMovies>() {
 
+  private var importedCount = 0
+  private var importedTotal = 0
+
   override suspend fun run(backup: BackupMovies) {
     Timber.d("Initialized.")
     runImport(backup)
@@ -89,6 +92,9 @@ internal class BackupImportMoviesRunner @Inject constructor(
         .loadCollection()
         .map { it.traktId }
 
+      importedCount = 0
+      importedTotal = backup.collectionHistory.size + backup.collectionWatchlist.size + backup.collectionHidden.size
+
       importMyMovies(backup, localCollection)
       importWatchlistMovies(backup, localCollection)
       importHiddenMovies(backup, localCollection)
@@ -101,7 +107,8 @@ internal class BackupImportMoviesRunner @Inject constructor(
   ) {
     for (movie in backupMovies.collectionHistory) {
       Timber.d("Importing movie ${movie.traktId} ...")
-      statusListener?.invoke(Importing(movie.title))
+      importedCount++
+      statusListener?.invoke(Importing(movie.title, importedCount, importedTotal))
 
       if (localCollection.contains(movie.traktId)) {
         Timber.d("Movie already in collection. Skipping.")
@@ -129,7 +136,8 @@ internal class BackupImportMoviesRunner @Inject constructor(
   ) {
     for (movie in backupMovies.collectionWatchlist) {
       Timber.d("Importing movie ${movie.traktId} ...")
-      statusListener?.invoke(Importing(movie.title))
+      importedCount++
+      statusListener?.invoke(Importing(movie.title, importedCount, importedTotal))
 
       if (localCollection.contains(movie.traktId)) {
         Timber.d("Movie already in collection. Skipping.")
@@ -157,7 +165,8 @@ internal class BackupImportMoviesRunner @Inject constructor(
   ) {
     for (movie in backupMovies.collectionHidden) {
       Timber.d("Importing movie ${movie.traktId} ...")
-      statusListener?.invoke(Importing(movie.title))
+      importedCount++
+      statusListener?.invoke(Importing(movie.title, importedCount, importedTotal))
 
       if (localCollection.contains(movie.traktId)) {
         Timber.d("Movie already in collection. Skipping.")

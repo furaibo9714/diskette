@@ -45,6 +45,9 @@ internal class BackupImportShowsRunner @Inject constructor(
   private val transactions: TransactionsProvider,
 ) : BackupImportRunner<BackupShows>() {
 
+  private var importedCount = 0
+  private var importedTotal = 0
+
   override suspend fun run(backup: BackupShows) {
     Timber.d("Initialized.")
     runImport(backup)
@@ -72,6 +75,9 @@ internal class BackupImportShowsRunner @Inject constructor(
         .loadCollection()
         .map { it.traktId }
 
+      importedCount = 0
+      importedTotal = backup.collectionHistory.size + backup.collectionWatchlist.size + backup.collectionHidden.size
+
       importMyShows(backup, localCollection)
       importWatchlistShows(backup, localCollection)
       importHiddenShows(backup, localCollection)
@@ -84,7 +90,8 @@ internal class BackupImportShowsRunner @Inject constructor(
   ) {
     for (show in backupShows.collectionHistory) {
       Timber.d("Importing show ${show.traktId} ...")
-      statusListener?.invoke(Importing(show.title))
+      importedCount++
+      statusListener?.invoke(Importing(show.title, importedCount, importedTotal))
 
       if (localCollection.contains(show.traktId)) {
         if (showsRepository.myShows.exists(IdTrakt(show.traktId))) {
@@ -130,7 +137,8 @@ internal class BackupImportShowsRunner @Inject constructor(
   ) {
     for (show in backupShows.collectionWatchlist) {
       Timber.d("Importing show ${show.traktId} ...")
-      statusListener?.invoke(Importing(show.title))
+      importedCount++
+      statusListener?.invoke(Importing(show.title, importedCount, importedTotal))
 
       if (localCollection.contains(show.traktId)) {
         Timber.d("Show already in collection. Skipping.")
@@ -158,7 +166,8 @@ internal class BackupImportShowsRunner @Inject constructor(
   ) {
     for (show in backupShows.collectionHidden) {
       Timber.d("Importing show ${show.traktId} ...")
-      statusListener?.invoke(Importing(show.title))
+      importedCount++
+      statusListener?.invoke(Importing(show.title, importedCount, importedTotal))
 
       if (localCollection.contains(show.traktId)) {
         Timber.d("Show already in collection. Skipping.")

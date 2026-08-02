@@ -39,8 +39,9 @@ internal class BackupImportListsRunner @Inject constructor(
   private suspend fun runImport(backup: BackupLists) {
     withContext(dispatchers.IO) {
       val localLists = localSource.customLists.getAll()
-      for (backupList in backup.lists) {
-        statusListener?.invoke(Importing(backupList.name))
+      val total = backup.lists.size
+      backup.lists.forEachIndexed { index, backupList ->
+        statusListener?.invoke(Importing(backupList.name, index + 1, total))
 
         val idCheck = localLists.any { it.id == backupList.id }
         val traktIdCheck = backupList.traktId != null && localLists.any { it.idTrakt == backupList.traktId }

@@ -7,5 +7,7 @@ sealed interface BackupImportStatus {
 
   data class Importing(
     val title: String,
+    val count: Int,
+    val total: Int,
   ) : BackupImportStatus
 }

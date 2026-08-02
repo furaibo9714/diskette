@@ -150,7 +150,10 @@ class BackupImportFragment : BaseFragment<BackupImportViewModel>(R.layout.fragme
       statusText.text = when (uiState.isImporting) {
         is Idle -> ""
         is Initializing -> "Importing..."
-        is Importing -> "Importing...\n\n\"${uiState.isImporting.title}\""
+        is Importing -> {
+          val status = uiState.isImporting
+          "Importing...\n\n\"${status.title}\"\n(${status.count}/${status.total})"
+        }
       }
     }
   }
