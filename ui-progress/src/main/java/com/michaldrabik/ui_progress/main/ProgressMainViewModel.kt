@@ -9,7 +9,8 @@ import com.michaldrabik.ui_base.events.FloppySyncError
 import com.michaldrabik.ui_base.events.FloppySyncProgress
 import com.michaldrabik.ui_base.events.FloppySyncSuccess
 import com.michaldrabik.ui_base.floppy.FloppySyncWorker
-import com.michaldrabik.ui_base.floppy.floppySyncPhaseTextRes
+import com.michaldrabik.ui_base.floppy.FloppySyncProgressState
+import com.michaldrabik.ui_base.floppy.floppySyncProgressState
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.events.MessageEvent
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
@@ -44,7 +45,7 @@ class ProgressMainViewModel @Inject constructor(
   private val calendarModeState = MutableStateFlow<CalendarMode?>(null)
   private val scrollState = MutableStateFlow<Event<Boolean>?>(null)
   private val syncingState = MutableStateFlow(false)
-  private val syncPhaseState = MutableStateFlow<Int?>(null)
+  private val syncPhaseState = MutableStateFlow<FloppySyncProgressState?>(null)
 
   private var calendarMode = CalendarMode.PRESENT_FUTURE
 
@@ -55,7 +56,7 @@ class ProgressMainViewModel @Inject constructor(
     workManager.getWorkInfosByTagLiveData(FloppySyncWorker.TAG_ID).observeForever { work ->
       val running = work.find { it.state == WorkInfo.State.RUNNING }
       syncingState.value = running != null
-      syncPhaseState.value = running?.floppySyncPhaseTextRes()
+      syncPhaseState.value = running?.floppySyncProgressState()
     }
   }
 
@@ -129,7 +130,7 @@ class ProgressMainViewModel @Inject constructor(
       calendarMode = s3,
       resetScroll = s4,
       isSyncing = s5,
-      syncPhaseTextRes = s6,
+      syncPhaseState = s6,
     )
   }.stateIn(
     scope = viewModelScope,

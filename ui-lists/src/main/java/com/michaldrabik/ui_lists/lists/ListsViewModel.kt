@@ -11,7 +11,8 @@ import com.michaldrabik.ui_base.events.FloppySyncError
 import com.michaldrabik.ui_base.events.FloppySyncProgress
 import com.michaldrabik.ui_base.events.FloppySyncSuccess
 import com.michaldrabik.ui_base.floppy.FloppySyncWorker
-import com.michaldrabik.ui_base.floppy.floppySyncPhaseTextRes
+import com.michaldrabik.ui_base.floppy.FloppySyncProgressState
+import com.michaldrabik.ui_base.floppy.floppySyncProgressState
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import com.michaldrabik.ui_base.utilities.extensions.findReplace
@@ -48,7 +49,7 @@ class ListsViewModel @Inject constructor(
   private val scrollState = MutableStateFlow(Event(false))
   private val sortOrderState = MutableStateFlow<Pair<SortOrder, SortType>?>(null)
   private val syncingState = MutableStateFlow(false)
-  private val syncPhaseState = MutableStateFlow<Int?>(null)
+  private val syncPhaseState = MutableStateFlow<FloppySyncProgressState?>(null)
 
   init {
     viewModelScope.launch {
@@ -57,7 +58,7 @@ class ListsViewModel @Inject constructor(
     workManager.getWorkInfosByTagLiveData(FloppySyncWorker.TAG_ID).observeForever { work ->
       val running = work.find { it.state == WorkInfo.State.RUNNING }
       syncingState.value = running != null
-      syncPhaseState.value = running?.floppySyncPhaseTextRes()
+      syncPhaseState.value = running?.floppySyncProgressState()
     }
   }
 
@@ -136,7 +137,7 @@ class ListsViewModel @Inject constructor(
       resetScroll = s2,
       sortOrder = s3,
       isSyncing = s4,
-      syncPhaseTextRes = s5,
+      syncPhaseState = s5,
     )
   }.stateIn(
     scope = viewModelScope,

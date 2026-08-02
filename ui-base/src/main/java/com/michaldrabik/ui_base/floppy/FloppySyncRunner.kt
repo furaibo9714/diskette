@@ -28,6 +28,8 @@ class FloppySyncRunner @Inject constructor(
   private val localSource: LocalDataSource,
 ) {
 
+  var progressListener: (suspend (count: Int, total: Int) -> Unit)? = null
+
   suspend fun run(): Int {
     if (!connectionManager.isConfigured()) return 0
 
@@ -37,7 +39,8 @@ class FloppySyncRunner @Inject constructor(
     val service = connectionManager.service()
     var pushed = 0
 
-    items.forEach { item ->
+    items.forEachIndexed { index, item ->
+      progressListener?.invoke(index + 1, items.size)
       try {
         push(service, item)
         pushed++

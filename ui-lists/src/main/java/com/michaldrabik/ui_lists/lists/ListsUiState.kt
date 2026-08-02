@@ -1,5 +1,6 @@
 package com.michaldrabik.ui_lists.lists
 
+import com.michaldrabik.ui_base.floppy.FloppySyncProgressState
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_lists.lists.recycler.ListsItem
 import com.michaldrabik.ui_model.SortOrder
@@ -10,5 +11,5 @@ data class ListsUiState(
   val resetScroll: Event<Boolean> = Event(false),
   val sortOrder: Pair<SortOrder, SortType>? = null,
   val isSyncing: Boolean? = null,
-  val syncPhaseTextRes: Int? = null,
+  val syncPhaseState: FloppySyncProgressState? = null,
 )

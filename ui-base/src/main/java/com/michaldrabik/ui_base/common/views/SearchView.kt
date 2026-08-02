@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import androidx.annotation.StringRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -85,14 +84,14 @@ class SearchView :
 
   fun setSyncProgress(
     isProgress: Boolean,
-    @StringRes phaseTextRes: Int? = null,
+    text: String? = null,
   ) {
     with(binding) {
       searchViewIcon.visibleIf(!isProgress)
       searchViewText.visibleIf(!isProgress)
       searchViewTraktSync.visibleIf(isProgress)
       if (isProgress) {
-        searchViewTraktSyncText.setText(phaseTextRes ?: R.string.textFloppySyncRunning)
+        searchViewTraktSyncText.text = text ?: context.getString(R.string.textFloppySyncRunning)
       }
     }
   }

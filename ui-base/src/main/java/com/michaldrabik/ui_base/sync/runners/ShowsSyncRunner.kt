@@ -41,6 +41,8 @@ class ShowsSyncRunner @Inject constructor(
     private const val MAX_SHOWS_PER_RUN = 25
   }
 
+  var progressListener: (suspend (count: Int, total: Int) -> Unit)? = null
+
   suspend fun run(): Int {
     Timber.i("Shows sync initialized.")
 
@@ -69,7 +71,8 @@ class ShowsSyncRunner @Inject constructor(
     }
 
     var syncCount = 0
-    showsToSync.forEach { show ->
+    showsToSync.forEachIndexed { index, show ->
+      progressListener?.invoke(index + 1, showsToSync.size)
       val isInWatchlist = show.traktId in watchlistShowsIds
 
       try {

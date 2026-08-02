@@ -10,7 +10,8 @@ import com.michaldrabik.common.Config
 import com.michaldrabik.common.extensions.nowUtcMillis
 import com.michaldrabik.repository.images.MovieImagesProvider
 import com.michaldrabik.ui_base.floppy.FloppySyncWorker
-import com.michaldrabik.ui_base.floppy.floppySyncPhaseTextRes
+import com.michaldrabik.ui_base.floppy.FloppySyncProgressState
+import com.michaldrabik.ui_base.floppy.floppySyncProgressState
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.events.MessageEvent
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
@@ -49,7 +50,7 @@ internal class DiscoverMoviesViewModel @Inject constructor(
   private val itemsState = MutableStateFlow<List<DiscoverMovieListItem>?>(null)
   private val loadingState = MutableStateFlow(false)
   private val syncingState = MutableStateFlow(false)
-  private val syncPhaseState = MutableStateFlow<Int?>(null)
+  private val syncPhaseState = MutableStateFlow<FloppySyncProgressState?>(null)
   private val filtersState = MutableStateFlow<DiscoverFilters?>(null)
   private val scrollState = MutableStateFlow(Event(false))
 
@@ -60,7 +61,7 @@ internal class DiscoverMoviesViewModel @Inject constructor(
     workManager.getWorkInfosByTagLiveData(FloppySyncWorker.TAG_ID).observeForever { work ->
       val running = work.find { it.state == WorkInfo.State.RUNNING }
       syncingState.value = running != null
-      syncPhaseState.value = running?.floppySyncPhaseTextRes()
+      syncPhaseState.value = running?.floppySyncProgressState()
     }
     viewModelScope.launch {
       initialFilters = filtersCase.loadFilters()
@@ -186,7 +187,7 @@ internal class DiscoverMoviesViewModel @Inject constructor(
       isSyncing = s3,
       filters = s4,
       resetScroll = s5,
-      syncPhaseTextRes = s6,
+      syncPhaseState = s6,
     )
   }.stateIn(
     scope = viewModelScope,

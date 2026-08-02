@@ -25,6 +25,7 @@ import com.michaldrabik.repository.settings.SettingsViewModeRepository
 import com.michaldrabik.ui_base.BaseFragment
 import com.michaldrabik.ui_base.common.OnTabReselectedListener
 import com.michaldrabik.ui_base.common.sheets.sort_order.SortOrderBottomSheet
+import com.michaldrabik.ui_base.floppy.format
 import com.michaldrabik.ui_base.utilities.ModeHost
 import com.michaldrabik.ui_base.utilities.extensions.add
 import com.michaldrabik.ui_base.utilities.extensions.dimenToPx
@@ -319,7 +320,7 @@ class ListsFragment :
           fragmentListsFilters.setSorting(it.first, it.second)
         }
         isSyncing?.let {
-          fragmentListsSearchView.setSyncProgress(it, syncPhaseTextRes)
+          fragmentListsSearchView.setSyncProgress(it, syncPhaseState?.format(requireContext()))
           fragmentListsSearchView.isEnabled = !it
         }
       }

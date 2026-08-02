@@ -114,6 +114,7 @@
   <string name="textFloppySyncImportingWatched">Importing watched…</string>
   <string name="textFloppySyncSyncingDetails">Syncing episode and movie details…</string>
   <string name="textFloppySyncExporting">Syncing changes…</string>
+  <string name="textFloppySyncPhaseWithProgress">%1$s (%2$d/%3$d)</string>
   <string name="textTraktQuickSyncError">Instant Sync failed.</string>
   <string name="textTraktQuickSyncErrorFull">Instant Sync failed. We will try again next time you open the app. Please check your internet connection.</string>
   <string name="textTraktNotificationsRationale">Please grant the application a permission to display information about synchronization progress and results.\n\nWould you like to do it now?</string>

@@ -21,6 +21,7 @@ import com.michaldrabik.ui_base.common.sheets.date_selection.DateSelectionBottom
 import com.michaldrabik.ui_base.common.sheets.date_selection.DateSelectionBottomSheet.Companion.REQUEST_DATE_SELECTION
 import com.michaldrabik.ui_base.common.sheets.date_selection.DateSelectionBottomSheet.Companion.RESULT_DATE_SELECTION
 import com.michaldrabik.ui_base.common.sheets.date_selection.DateSelectionBottomSheet.Result
+import com.michaldrabik.ui_base.floppy.format
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.extensions.add
 import com.michaldrabik.ui_base.utilities.extensions.dimenToPx
@@ -371,7 +372,7 @@ class ProgressMainFragment :
 
   private fun render(uiState: ProgressMainUiState) {
     with(binding) {
-      progressMainSearchView.setSyncProgress(uiState.isSyncing, uiState.syncPhaseTextRes)
+      progressMainSearchView.setSyncProgress(uiState.isSyncing, uiState.syncPhaseState?.format(requireContext()))
       progressMainSearchView.isEnabled = !uiState.isSyncing
     }
   }

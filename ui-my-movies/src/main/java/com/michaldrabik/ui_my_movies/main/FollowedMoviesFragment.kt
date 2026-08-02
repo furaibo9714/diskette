@@ -15,6 +15,7 @@ import com.michaldrabik.ui_base.common.OnScrollResetListener
 import com.michaldrabik.ui_base.common.OnSearchClickListener
 import com.michaldrabik.ui_base.common.OnTabReselectedListener
 import com.michaldrabik.ui_base.common.sheets.context_menu.ContextMenuBottomSheet
+import com.michaldrabik.ui_base.floppy.format
 import com.michaldrabik.ui_base.utilities.extensions.add
 import com.michaldrabik.ui_base.utilities.extensions.dimenToPx
 import com.michaldrabik.ui_base.utilities.extensions.disableUi
@@ -288,7 +289,7 @@ class FollowedMoviesFragment :
 
   private fun render(uiState: FollowedMoviesUiState) {
     uiState.isSyncing?.let {
-      binding.followedMoviesSearchView.setSyncProgress(it, uiState.syncPhaseTextRes)
+      binding.followedMoviesSearchView.setSyncProgress(it, uiState.syncPhaseState?.format(requireContext()))
       binding.followedMoviesSearchView.isEnabled = !it
     }
   }

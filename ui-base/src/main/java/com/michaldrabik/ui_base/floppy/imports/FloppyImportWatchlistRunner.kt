@@ -37,6 +37,17 @@ class FloppyImportWatchlistRunner @Inject constructor(
 
   private var lastProgressEventAt = 0L
 
+  /**
+   * Reports (count/total) for the sub-collection currently being imported (shows, then movies),
+   * resetting at each sub-collection boundary. Fires once per fetched page - a much cheaper signal
+   * than [FloppySyncProgress] below (only updates the sync notification/status text, no screen
+   * reload), so unlike that event it doesn't need throttling. Deliberately not per-item: items here
+   * are pure local DB writes with no network delay, so a whole page (up to 100 items) finishes
+   * faster than the UI can render intermediate values - per-item updates just flash by unreadably,
+   * and slowing down real import work purely to animate a counter isn't worth the tradeoff.
+   */
+  var progressListener: (suspend (count: Int, total: Int) -> Unit)? = null
+
   private suspend fun emitProgressThrottled() {
     val now = System.currentTimeMillis()
     if (now - lastProgressEventAt >= PROGRESS_THROTTLE_MS) {
@@ -60,6 +71,7 @@ class FloppyImportWatchlistRunner @Inject constructor(
     var offset = 0
     while (true) {
       val page = service.getTrackedMedia(MEDIA_TYPE_TV, FloppyService.MEDIA_LIST_PAGE_SIZE, offset)
+      progressListener?.invoke(offset + page.results.size, page.pagination.total)
       var pageImported = 0
       page.results
         .filter { (it.status ?: -1) == FLOPPY_STATUS_PLANNING }
@@ -84,6 +96,7 @@ class FloppyImportWatchlistRunner @Inject constructor(
     var offset = 0
     while (true) {
       val page = service.getTrackedMedia(MEDIA_TYPE_MOVIE, FloppyService.MEDIA_LIST_PAGE_SIZE, offset)
+      progressListener?.invoke(offset + page.results.size, page.pagination.total)
       var pageImported = 0
       page.results
         .filter { (it.status ?: -1) == FLOPPY_STATUS_PLANNING }

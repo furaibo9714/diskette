@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.michaldrabik.ui_base.BaseFragment
 import com.michaldrabik.ui_base.common.OnTabReselectedListener
 import com.michaldrabik.ui_base.common.sheets.context_menu.ContextMenuBottomSheet
+import com.michaldrabik.ui_base.floppy.format
 import com.michaldrabik.ui_base.utilities.extensions.add
 import com.michaldrabik.ui_base.utilities.extensions.colorFromAttr
 import com.michaldrabik.ui_base.utilities.extensions.dimenToPx
@@ -282,7 +283,7 @@ internal class DiscoverMoviesFragment :
           discoverMoviesRecycler.fadeIn(200, withHardware = true)
         }
         isSyncing?.let {
-          discoverMoviesSearchView.setSyncProgress(it, syncPhaseTextRes)
+          discoverMoviesSearchView.setSyncProgress(it, syncPhaseState?.format(requireContext()))
           discoverMoviesSearchView.isEnabled = !it
         }
         isLoading?.let {

@@ -17,6 +17,7 @@ import com.michaldrabik.common.Config
 import com.michaldrabik.ui_base.BaseFragment
 import com.michaldrabik.ui_base.common.OnTabReselectedListener
 import com.michaldrabik.ui_base.common.sheets.context_menu.ContextMenuBottomSheet
+import com.michaldrabik.ui_base.floppy.format
 import com.michaldrabik.ui_base.utilities.extensions.add
 import com.michaldrabik.ui_base.utilities.extensions.colorFromAttr
 import com.michaldrabik.ui_base.utilities.extensions.dimenToPx
@@ -318,7 +319,7 @@ internal class DiscoverFragment :
           discoverRecycler.fadeIn(200, withHardware = true)
         }
         isSyncing?.let {
-          discoverSearchView.setSyncProgress(it, syncPhaseTextRes)
+          discoverSearchView.setSyncProgress(it, syncPhaseState?.format(requireContext()))
           discoverSearchView.isEnabled = !it
         }
         isLoading?.let {

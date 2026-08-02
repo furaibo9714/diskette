@@ -20,6 +20,7 @@ import com.michaldrabik.ui_base.common.sheets.context_menu.ContextMenuBottomShee
 import com.michaldrabik.ui_base.common.sheets.date_selection.DateSelectionBottomSheet
 import com.michaldrabik.ui_base.common.sheets.date_selection.DateSelectionBottomSheet.Companion.REQUEST_DATE_SELECTION
 import com.michaldrabik.ui_base.common.sheets.date_selection.DateSelectionBottomSheet.Result
+import com.michaldrabik.ui_base.floppy.format
 import com.michaldrabik.ui_base.utilities.extensions.add
 import com.michaldrabik.ui_base.utilities.extensions.dimenToPx
 import com.michaldrabik.ui_base.utilities.extensions.disableUi
@@ -321,7 +322,7 @@ class ProgressMoviesMainFragment :
 
   private fun render(uiState: ProgressMoviesMainUiState) {
     with(binding) {
-      progressMoviesSearchView.setSyncProgress(uiState.isSyncing, uiState.syncPhaseTextRes)
+      progressMoviesSearchView.setSyncProgress(uiState.isSyncing, uiState.syncPhaseState?.format(requireContext()))
       progressMoviesSearchView.isEnabled = !uiState.isSyncing
     }
   }

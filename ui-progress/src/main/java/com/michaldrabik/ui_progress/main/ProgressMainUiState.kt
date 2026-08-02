@@ -1,5 +1,6 @@
 package com.michaldrabik.ui_progress.main
 
+import com.michaldrabik.ui_base.floppy.FloppySyncProgressState
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_model.CalendarMode
 
@@ -9,5 +10,5 @@ data class ProgressMainUiState(
   val calendarMode: CalendarMode? = null,
   val resetScroll: Event<Boolean>? = null,
   val isSyncing: Boolean = false,
-  val syncPhaseTextRes: Int? = null,
+  val syncPhaseState: FloppySyncProgressState? = null,
 )

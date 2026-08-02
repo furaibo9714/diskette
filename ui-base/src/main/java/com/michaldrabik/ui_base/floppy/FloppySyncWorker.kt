@@ -56,6 +56,8 @@ class FloppySyncWorker @AssistedInject constructor(
   companion object {
     const val TAG_ID = "FLOPPY_FULL_SYNC_WORK_ID"
     const val ARG_SYNC_PHASE = "ARG_SYNC_PHASE"
+    const val ARG_SYNC_COUNT = "ARG_SYNC_COUNT"
+    const val ARG_SYNC_TOTAL = "ARG_SYNC_TOTAL"
     private const val TAG = "FLOPPY_SYNC_WORK"
     private const val TAG_FULL_SYNC = "FLOPPY_FULL_SYNC_WORK"
     private const val ARG_IS_FULL_SYNC = "ARG_IS_FULL_SYNC"
@@ -109,12 +111,22 @@ class FloppySyncWorker @AssistedInject constructor(
     return try {
       if (isFullSync) {
         setPhase(FloppySyncPhase.IMPORTING_WATCHLIST)
+        importWatchlistRunner.progressListener = { count, total ->
+          updateProgress(FloppySyncPhase.IMPORTING_WATCHLIST, count, total)
+        }
         val importedWatchlist = importWatchlistRunner.run()
+
         setPhase(FloppySyncPhase.IMPORTING_WATCHED)
+        importWatchedRunner.progressListener = { count, total ->
+          updateProgress(FloppySyncPhase.IMPORTING_WATCHED, count, total)
+        }
         val importedWatched = importWatchedRunner.run()
         Timber.d("Floppy import completed. Watchlist: $importedWatchlist, Watched: $importedWatched")
 
         setPhase(FloppySyncPhase.SYNCING_DETAILS)
+        showsSyncRunner.progressListener = { count, total ->
+          updateProgress(FloppySyncPhase.SYNCING_DETAILS, count, total)
+        }
         val showsSynced = showsSyncRunner.run()
         val moviesSynced = syncMovieDetails()
         Timber.d("Floppy details sync completed. Shows: $showsSynced, Movies: $moviesSynced")
@@ -123,6 +135,9 @@ class FloppySyncWorker @AssistedInject constructor(
         }
 
         setPhase(FloppySyncPhase.EXPORTING)
+        syncRunner.progressListener = { count, total ->
+          updateProgress(FloppySyncPhase.EXPORTING, count, total)
+        }
       }
       val count = syncRunner.run()
       Timber.d("Floppy sync completed. Pushed: $count")
@@ -140,6 +155,10 @@ class FloppySyncWorker @AssistedInject constructor(
       Result.failure()
     } finally {
       if (isFullSync) notificationManager().cancel(SYNC_NOTIFICATION_PROGRESS_ID)
+      importWatchlistRunner.progressListener = null
+      importWatchedRunner.progressListener = null
+      showsSyncRunner.progressListener = null
+      syncRunner.progressListener = null
     }
   }
 
@@ -156,19 +175,21 @@ class FloppySyncWorker @AssistedInject constructor(
    */
   private suspend fun syncMovieDetails(): Int {
     var count = 0
-    moviesRepository.loadCollection()
+    val movies = moviesRepository.loadCollection()
       .filter { it.updatedAt == -1L }
       .take(MAX_MOVIES_PER_RUN)
-      .forEach { movie ->
-        try {
-          movieDetailsRepository.load(movie.ids.trakt)
-          count++
-        } catch (error: Throwable) {
-          Timber.w(error, "Failed to sync details for movie ${movie.ids.trakt}.")
-        } finally {
-          delay(MOVIE_SYNC_DELAY_MS)
-        }
+
+    movies.forEachIndexed { index, movie ->
+      updateProgress(FloppySyncPhase.SYNCING_DETAILS, index + 1, movies.size)
+      try {
+        movieDetailsRepository.load(movie.ids.trakt)
+        count++
+      } catch (error: Throwable) {
+        Timber.w(error, "Failed to sync details for movie ${movie.ids.trakt}.")
+      } finally {
+        delay(MOVIE_SYNC_DELAY_MS)
       }
+    }
     return count
   }
 
@@ -177,9 +198,21 @@ class FloppySyncWorker @AssistedInject constructor(
     return ForegroundInfo(SYNC_NOTIFICATION_PROGRESS_ID, notification)
   }
 
-  private suspend fun setPhase(phase: FloppySyncPhase) {
-    setProgress(workDataOf(ARG_SYNC_PHASE to phase.name))
-    val content = applicationContext.getString(phase.textRes)
+  private suspend fun setPhase(phase: FloppySyncPhase) = updateProgress(phase, count = 0, total = 0)
+
+  private suspend fun updateProgress(
+    phase: FloppySyncPhase,
+    count: Int,
+    total: Int,
+  ) {
+    setProgress(
+      workDataOf(
+        ARG_SYNC_PHASE to phase.name,
+        ARG_SYNC_COUNT to count,
+        ARG_SYNC_TOTAL to total,
+      ),
+    )
+    val content = FloppySyncProgressState(phase, count, total).format(applicationContext)
     notificationManager().notify(SYNC_NOTIFICATION_PROGRESS_ID, createProgressNotification(content))
   }
 

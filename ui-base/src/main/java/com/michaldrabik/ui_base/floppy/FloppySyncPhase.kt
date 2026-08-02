@@ -1,5 +1,6 @@
 package com.michaldrabik.ui_base.floppy
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.work.WorkInfo
 import com.michaldrabik.ui_base.R
@@ -13,15 +14,34 @@ enum class FloppySyncPhase(
   EXPORTING(R.string.textFloppySyncExporting),
 }
 
+data class FloppySyncProgressState(
+  val phase: FloppySyncPhase,
+  val count: Int = 0,
+  val total: Int = 0,
+)
+
 /**
- * Resolves the current [FloppySyncPhase] set via [FloppySyncWorker]'s `setProgress` calls, for
- * screens observing [FloppySyncWorker.TAG_ID] work to show what a running full sync is doing
- * right now, rather than a static "syncing" label.
+ * Resolves the current [FloppySyncPhase]/count/total set via [FloppySyncWorker]'s `setProgress`
+ * calls, for screens observing [FloppySyncWorker.TAG_ID] work to show what a running full sync is
+ * doing right now, rather than a static "syncing" label.
  */
-@StringRes
-fun WorkInfo.floppySyncPhaseTextRes(): Int {
+fun WorkInfo.floppySyncProgressState(): FloppySyncProgressState? {
   val phase = progress
     .getString(FloppySyncWorker.ARG_SYNC_PHASE)
     ?.let { name -> runCatching { FloppySyncPhase.valueOf(name) }.getOrNull() }
-  return phase?.textRes ?: R.string.textFloppySyncRunning
+    ?: return null
+  return FloppySyncProgressState(
+    phase = phase,
+    count = progress.getInt(FloppySyncWorker.ARG_SYNC_COUNT, 0),
+    total = progress.getInt(FloppySyncWorker.ARG_SYNC_TOTAL, 0),
+  )
+}
+
+fun FloppySyncProgressState.format(context: Context): String {
+  val phaseText = context.getString(phase.textRes)
+  return if (total > 0) {
+    context.getString(R.string.textFloppySyncPhaseWithProgress, phaseText, count, total)
+  } else {
+    phaseText
+  }
 }

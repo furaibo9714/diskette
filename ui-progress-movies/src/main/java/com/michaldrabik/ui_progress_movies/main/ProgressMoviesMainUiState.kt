@@ -1,5 +1,6 @@
 package com.michaldrabik.ui_progress_movies.main
 
+import com.michaldrabik.ui_base.floppy.FloppySyncProgressState
 import com.michaldrabik.ui_model.CalendarMode
 
 data class ProgressMoviesMainUiState(
@@ -7,5 +8,5 @@ data class ProgressMoviesMainUiState(
   val searchQuery: String? = null,
   val calendarMode: CalendarMode? = null,
   val isSyncing: Boolean = false,
-  val syncPhaseTextRes: Int? = null,
+  val syncPhaseState: FloppySyncProgressState? = null,
 )
