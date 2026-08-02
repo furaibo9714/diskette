@@ -319,7 +319,7 @@ class ListsFragment :
           fragmentListsFilters.setSorting(it.first, it.second)
         }
         isSyncing?.let {
-          fragmentListsSearchView.setSyncProgress(it)
+          fragmentListsSearchView.setSyncProgress(it, syncPhaseTextRes)
           fragmentListsSearchView.isEnabled = !it
         }
       }

@@ -6,6 +6,7 @@ import com.michaldrabik.data_local.database.dao.MyShowsDao
 import com.michaldrabik.data_local.database.dao.WatchlistShowsDao
 import com.michaldrabik.data_local.database.model.WatchlistShow
 import com.michaldrabik.repository.common.BaseMockTest
+import com.michaldrabik.repository.shows.ShowsCollectionCache
 import com.michaldrabik.repository.shows.WatchlistShowsRepository
 import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Show
@@ -35,7 +36,7 @@ class WatchlistShowsRepositoryTest : BaseMockTest() {
   @Before
   override fun setUp() {
     super.setUp()
-    SUT = WatchlistShowsRepository(database, transactions, mappers)
+    SUT = WatchlistShowsRepository(database, transactions, mappers, ShowsCollectionCache())
 
     coEvery { database.watchlistShows } returns seeLaterShowsDao
     coEvery { database.myShows } returns myShowsDao

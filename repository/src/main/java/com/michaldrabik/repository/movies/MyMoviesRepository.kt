@@ -8,6 +8,7 @@ import com.michaldrabik.data_local.database.model.MyMovie
 import com.michaldrabik.data_local.utilities.TransactionsProvider
 import com.michaldrabik.repository.mappers.Mappers
 import com.michaldrabik.ui_model.IdTrakt
+import com.michaldrabik.ui_model.Movie
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -15,6 +16,7 @@ class MyMoviesRepository @Inject constructor(
   private val localSource: LocalDataSource,
   private val transactions: TransactionsProvider,
   private val mappers: Mappers,
+  private val cache: MoviesCollectionCache,
 ) {
 
   suspend fun load(id: IdTrakt) =
@@ -22,10 +24,14 @@ class MyMoviesRepository @Inject constructor(
       mappers.movie.fromDatabase(it)
     }
 
-  suspend fun loadAll() =
-    localSource.myMovies
+  suspend fun loadAll(): List<Movie> {
+    cache.myMovies?.let { return it }
+    val movies = localSource.myMovies
       .getAll()
       .map { mappers.movie.fromDatabase(it) }
+    cache.myMovies = movies
+    return movies
+  }
 
   suspend fun loadAll(ids: List<IdTrakt>) =
     localSource.myMovies
@@ -54,9 +60,13 @@ class MyMoviesRepository @Inject constructor(
         archiveMovies.deleteById(id.id)
       }
     }
+    cache.invalidate()
   }
 
-  suspend fun delete(id: IdTrakt) = localSource.myMovies.deleteById(id.id)
+  suspend fun delete(id: IdTrakt) {
+    localSource.myMovies.deleteById(id.id)
+    cache.invalidate()
+  }
 
   suspend fun exists(id: IdTrakt) = localSource.myMovies.checkExists(id.id)
 }

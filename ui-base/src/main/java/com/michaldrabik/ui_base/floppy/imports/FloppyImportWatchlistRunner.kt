@@ -19,7 +19,12 @@ import javax.inject.Singleton
  * skipped. Floppy has no delta/"since" endpoint, so this is a full reconcile each run.
  *
  * Emits [FloppySyncProgress] once per fetched page (rather than per item) so screens can reload
- * incrementally during a full sync without hammering the event bus on large watchlists.
+ * incrementally during a full sync without hammering the event bus on large watchlists - throttled
+ * to at most once every [PROGRESS_THROTTLE_MS], since on a large library each reload it triggers
+ * (e.g. re-listing hundreds of followed shows) is itself expensive enough that firing on every
+ * page during a many-page reconcile was observed to compound into an OOM. The final
+ * FloppySyncSuccess event (sent once, after the whole sync completes) still guarantees a correct
+ * final reload regardless of how many intermediate progress events were skipped here.
  */
 @Singleton
 class FloppyImportWatchlistRunner @Inject constructor(
@@ -29,6 +34,16 @@ class FloppyImportWatchlistRunner @Inject constructor(
   private val watchlistMoviesRepository: WatchlistMoviesRepository,
   private val eventsManager: EventsManager,
 ) {
+
+  private var lastProgressEventAt = 0L
+
+  private suspend fun emitProgressThrottled() {
+    val now = System.currentTimeMillis()
+    if (now - lastProgressEventAt >= PROGRESS_THROTTLE_MS) {
+      lastProgressEventAt = now
+      eventsManager.sendEvent(FloppySyncProgress)
+    }
+  }
 
   suspend fun run(): Int {
     if (!connectionManager.isConfigured()) return 0
@@ -56,7 +71,7 @@ class FloppyImportWatchlistRunner @Inject constructor(
           }
         }
       imported += pageImported
-      if (pageImported > 0) eventsManager.sendEvent(FloppySyncProgress)
+      if (pageImported > 0) emitProgressThrottled()
       if (page.results.size < FloppyService.MEDIA_LIST_PAGE_SIZE) break
       offset += FloppyService.MEDIA_LIST_PAGE_SIZE
     }
@@ -80,7 +95,7 @@ class FloppyImportWatchlistRunner @Inject constructor(
           }
         }
       imported += pageImported
-      if (pageImported > 0) eventsManager.sendEvent(FloppySyncProgress)
+      if (pageImported > 0) emitProgressThrottled()
       if (page.results.size < FloppyService.MEDIA_LIST_PAGE_SIZE) break
       offset += FloppyService.MEDIA_LIST_PAGE_SIZE
     }
@@ -90,5 +105,6 @@ class FloppyImportWatchlistRunner @Inject constructor(
 
   companion object {
     private const val FLOPPY_STATUS_PLANNING = 0
+    private const val PROGRESS_THROTTLE_MS = 5_000L
   }
 }

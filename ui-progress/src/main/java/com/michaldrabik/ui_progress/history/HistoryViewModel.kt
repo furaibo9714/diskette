@@ -14,6 +14,8 @@ import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Image
 import com.michaldrabik.ui_progress.history.entities.HistoryListItem
 import com.michaldrabik.ui_progress.history.usecases.GetHistoryItemsCase
+import com.michaldrabik.ui_progress.history.usecases.GetHistoryItemsCase.Companion.PAGE_SIZE
+import com.michaldrabik.ui_progress.history.utilities.groupers.HistoryItemsGrouper
 import com.michaldrabik.ui_progress.main.ProgressMainUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -30,6 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class HistoryViewModel @Inject constructor(
   private val getHistoryItemsCase: GetHistoryItemsCase,
+  private val grouper: HistoryItemsGrouper,
   private val settingsRepository: SettingsRepository,
   private val translationsRepository: TranslationsRepository,
   private val imagesProvider: ShowImagesProvider,
@@ -42,10 +45,16 @@ internal class HistoryViewModel @Inject constructor(
   private val resetScrollEvent = MutableStateFlow(initialState.resetScrollEvent)
 
   private var itemsJob: Job? = null
+  private var loadMoreJob: Job? = null
   private var translationJobs: MutableSet<IdTrakt> = mutableSetOf()
 
   private var searchQuery: String? = null
   private var timestamp = 0L
+
+  private var rawItems: List<HistoryListItem.Episode> = emptyList()
+  private var offset = 0
+  private var hasMorePages = true
+  private var periodFilter: HistoryPeriod = settingsRepository.filters.historyShowsPeriod
 
   fun handleParentAction(state: ProgressMainUiState) {
     when {
@@ -62,20 +71,50 @@ internal class HistoryViewModel @Inject constructor(
 
   private fun loadItems(resetScroll: Boolean = false) {
     itemsJob?.cancel()
+    loadMoreJob?.cancel()
     itemsJob = viewModelScope.launch {
       val loadingJob = launch {
         delay(1000)
         loadingState.update { true }
       }
       try {
-        val items = getHistoryItemsCase.loadItems(searchQuery)
-        itemsState.update { items }
+        val page = getHistoryItemsCase.loadItems(searchQuery, offset = 0, limit = PAGE_SIZE)
+        rawItems = page.items
+        hasMorePages = page.hasMore
+        periodFilter = page.periodFilter
+        offset = PAGE_SIZE
+
+        itemsState.update { buildGroupedItems() }
         resetScrollEvent.update { Event(resetScroll) }
         loadingState.update { false }
       } finally {
         loadingJob.cancel()
       }
     }
+  }
+
+  fun loadNextPage() {
+    if (!hasMorePages || itemsJob?.isActive == true || loadMoreJob?.isActive == true) {
+      return
+    }
+    loadMoreJob = viewModelScope.launch {
+      try {
+        val page = getHistoryItemsCase.loadItems(searchQuery, offset = offset, limit = PAGE_SIZE)
+        rawItems = rawItems + page.items
+        hasMorePages = page.hasMore
+        offset += PAGE_SIZE
+
+        itemsState.update { buildGroupedItems() }
+      } catch (error: Throwable) {
+        Timber.e(error)
+      }
+    }
+  }
+
+  private fun buildGroupedItems(): List<HistoryListItem> {
+    val language = translationsRepository.getLanguage()
+    val filtersItem = listOf(HistoryListItem.Filters(periodFilter))
+    return filtersItem + grouper.groupByDay(rawItems, language)
   }
 
   fun setPeriod(period: HistoryPeriod) {
@@ -125,6 +164,9 @@ internal class HistoryViewModel @Inject constructor(
   }
 
   private fun updateItem(newItem: HistoryListItem.Episode) {
+    rawItems = rawItems.toMutableList().apply {
+      findReplace(newItem) { it.isSameAs(newItem) }
+    }
     itemsState.update { value ->
       value.toMutableList().apply {
         findReplace(newItem) { it.isSameAs(newItem) }

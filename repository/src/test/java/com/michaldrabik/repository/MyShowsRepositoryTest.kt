@@ -7,6 +7,7 @@ import com.michaldrabik.data_local.sources.MyShowsLocalDataSource
 import com.michaldrabik.data_local.sources.WatchlistShowsLocalDataSource
 import com.michaldrabik.repository.common.BaseMockTest
 import com.michaldrabik.repository.shows.MyShowsRepository
+import com.michaldrabik.repository.shows.ShowsCollectionCache
 import com.michaldrabik.ui_model.IdTrakt
 import com.michaldrabik.ui_model.Show
 import io.mockk.coEvery
@@ -39,6 +40,7 @@ class MyShowsRepositoryTest : BaseMockTest() {
       hiddenShowsLocalDataSource,
       transactions,
       mappers,
+      ShowsCollectionCache(),
     )
     coEvery { database.myShows } returns myShowsLocalSource
     coEvery { database.watchlistShows } returns watchlistShowsLocalSource

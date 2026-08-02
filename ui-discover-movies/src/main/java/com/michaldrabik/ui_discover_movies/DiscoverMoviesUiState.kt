@@ -8,6 +8,7 @@ data class DiscoverMoviesUiState(
   val items: List<DiscoverMovieListItem>? = null,
   val isLoading: Boolean? = null,
   val isSyncing: Boolean? = null,
+  val syncPhaseTextRes: Int? = null,
   var filters: DiscoverFilters? = null,
   var resetScroll: Event<Boolean>? = null,
 )

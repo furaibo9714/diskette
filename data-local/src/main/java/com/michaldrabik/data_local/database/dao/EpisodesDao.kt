@@ -66,6 +66,26 @@ interface EpisodesDao : EpisodesLocalDataSource {
   @Query("SELECT * FROM episodes WHERE id_show_trakt IN (:showTraktIds)")
   override suspend fun getAllByShowsIdsChunk(showTraktIds: List<Long>): List<Episode>
 
+  @Transaction
+  override suspend fun getAllByShowsIds(
+    showTraktIds: List<Long>,
+    fromTime: Long,
+  ): List<Episode> {
+    val result = mutableListOf<Episode>()
+    val chunks = showTraktIds.chunked(50)
+    chunks.forEach { chunk ->
+      result += getAllByShowsIdsChunk(chunk, fromTime)
+    }
+    return result
+  }
+
+  @Transaction
+  @Query("SELECT * FROM episodes WHERE id_show_trakt IN (:showTraktIds) AND first_aired >= :fromTime")
+  override suspend fun getAllByShowsIdsChunk(
+    showTraktIds: List<Long>,
+    fromTime: Long,
+  ): List<Episode>
+
   @Query(
     "SELECT * from episodes where id_show_trakt = :showTraktId AND is_watched = 0 AND season_number != 0 AND first_aired <= :toTime ORDER BY season_number ASC, episode_number ASC LIMIT 1",
   )
@@ -144,6 +164,16 @@ interface EpisodesDao : EpisodesLocalDataSource {
 
   @Query("SELECT id_trakt FROM episodes WHERE id_show_trakt IN(:showsIds) AND is_watched = 1")
   override suspend fun getAllWatchedIdsForShows(showsIds: List<Long>): List<Long>
+
+  @Query(
+    "SELECT * FROM episodes WHERE is_watched = 1 AND last_watched_at NOT NULL AND last_watched_at >= :fromTime AND last_watched_at <= :toTime AND (id_show_trakt IN (SELECT id_trakt FROM shows_my_shows) OR id_show_trakt IN (SELECT id_trakt FROM shows_see_later)) ORDER BY last_watched_at DESC LIMIT :limit OFFSET :offset",
+  )
+  override suspend fun getAllWatchedForTrackedShowsPaged(
+    fromTime: Long,
+    toTime: Long,
+    limit: Int,
+    offset: Int,
+  ): List<Episode>
 
   @Transaction
   override suspend fun updateIsExported(

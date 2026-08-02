@@ -318,7 +318,7 @@ internal class DiscoverFragment :
           discoverRecycler.fadeIn(200, withHardware = true)
         }
         isSyncing?.let {
-          discoverSearchView.setSyncProgress(it)
+          discoverSearchView.setSyncProgress(it, syncPhaseTextRes)
           discoverSearchView.isEnabled = !it
         }
         isLoading?.let {

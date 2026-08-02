@@ -7,4 +7,5 @@ data class ProgressMoviesMainUiState(
   val searchQuery: String? = null,
   val calendarMode: CalendarMode? = null,
   val isSyncing: Boolean = false,
+  val syncPhaseTextRes: Int? = null,
 )

@@ -297,7 +297,7 @@ class FollowedShowsFragment :
 
   private fun render(uiState: FollowedShowsUiState) {
     uiState.isSyncing?.let {
-      binding.followedShowsSearchView.setSyncProgress(it)
+      binding.followedShowsSearchView.setSyncProgress(it, uiState.syncPhaseTextRes)
       binding.followedShowsSearchView.isEnabled = !it
     }
   }

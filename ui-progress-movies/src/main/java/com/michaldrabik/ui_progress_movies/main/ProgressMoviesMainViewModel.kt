@@ -10,6 +10,7 @@ import com.michaldrabik.ui_base.events.FloppySyncError
 import com.michaldrabik.ui_base.events.FloppySyncProgress
 import com.michaldrabik.ui_base.events.FloppySyncSuccess
 import com.michaldrabik.ui_base.floppy.FloppySyncWorker
+import com.michaldrabik.ui_base.floppy.floppySyncPhaseTextRes
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import com.michaldrabik.ui_model.CalendarMode
 import com.michaldrabik.ui_model.Movie
@@ -34,6 +35,7 @@ class ProgressMoviesMainViewModel @Inject constructor(
   private val searchQueryState = MutableStateFlow<String?>(null)
   private val calendarModeState = MutableStateFlow<CalendarMode?>(null)
   private val syncingState = MutableStateFlow(false)
+  private val syncPhaseState = MutableStateFlow<Int?>(null)
 
   private var calendarMode = CalendarMode.PRESENT_FUTURE
 
@@ -42,7 +44,9 @@ class ProgressMoviesMainViewModel @Inject constructor(
       eventsManager.events.collect { onEvent(it) }
     }
     workManager.getWorkInfosByTagLiveData(FloppySyncWorker.TAG_ID).observeForever { work ->
-      syncingState.value = work.any { it.state == WorkInfo.State.RUNNING }
+      val running = work.find { it.state == WorkInfo.State.RUNNING }
+      syncingState.value = running != null
+      syncPhaseState.value = running?.floppySyncPhaseTextRes()
     }
   }
 
@@ -86,12 +90,14 @@ class ProgressMoviesMainViewModel @Inject constructor(
     searchQueryState,
     calendarModeState,
     syncingState,
-  ) { s1, s2, s3, s4 ->
+    syncPhaseState,
+  ) { s1, s2, s3, s4, s5 ->
     ProgressMoviesMainUiState(
       timestamp = s1,
       searchQuery = s2,
       calendarMode = s3,
       isSyncing = s4,
+      syncPhaseTextRes = s5,
     )
   }.stateIn(
     scope = viewModelScope,

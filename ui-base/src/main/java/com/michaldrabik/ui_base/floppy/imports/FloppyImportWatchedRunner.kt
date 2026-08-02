@@ -29,7 +29,11 @@ import com.michaldrabik.data_local.database.model.Show as ShowDb
  * this is a full reconcile each run.
  *
  * Emits [FloppySyncProgress] once per fetched page (rather than per item) so screens can reload
- * incrementally during a full sync without hammering the event bus on large libraries.
+ * incrementally during a full sync without hammering the event bus on large libraries - throttled
+ * to at most once every [PROGRESS_THROTTLE_MS] for the same reason as
+ * [com.michaldrabik.ui_base.floppy.imports.FloppyImportWatchlistRunner]: on a large library each
+ * reload it triggers is itself expensive, and firing on every page during a many-page reconcile
+ * was observed to compound into an OOM.
  */
 @Singleton
 class FloppyImportWatchedRunner @Inject constructor(
@@ -40,6 +44,16 @@ class FloppyImportWatchedRunner @Inject constructor(
   private val myShowsRepository: MyShowsRepository,
   private val eventsManager: EventsManager,
 ) {
+
+  private var lastProgressEventAt = 0L
+
+  private suspend fun emitProgressThrottled() {
+    val now = System.currentTimeMillis()
+    if (now - lastProgressEventAt >= PROGRESS_THROTTLE_MS) {
+      lastProgressEventAt = now
+      eventsManager.sendEvent(FloppySyncProgress)
+    }
+  }
 
   suspend fun run(): Int {
     if (!connectionManager.isConfigured()) return 0
@@ -67,7 +81,7 @@ class FloppyImportWatchedRunner @Inject constructor(
           }
         }
       imported += pageImported
-      if (pageImported > 0) eventsManager.sendEvent(FloppySyncProgress)
+      if (pageImported > 0) emitProgressThrottled()
       if (page.results.size < FloppyService.MEDIA_LIST_PAGE_SIZE) break
       offset += FloppyService.MEDIA_LIST_PAGE_SIZE
     }
@@ -95,7 +109,7 @@ class FloppyImportWatchedRunner @Inject constructor(
           }
         }
       imported += pageImported
-      if (pageImported > 0) eventsManager.sendEvent(FloppySyncProgress)
+      if (pageImported > 0) emitProgressThrottled()
       if (page.results.size < FloppyService.MEDIA_LIST_PAGE_SIZE) break
       offset += FloppyService.MEDIA_LIST_PAGE_SIZE
     }
@@ -184,5 +198,6 @@ class FloppyImportWatchedRunner @Inject constructor(
   companion object {
     private const val MEDIA_TYPE_EPISODE = "episode"
     private const val FLOPPY_STATUS_COMPLETED = 3
+    private const val PROGRESS_THROTTLE_MS = 5_000L
   }
 }

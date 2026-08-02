@@ -10,6 +10,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.michaldrabik.repository.settings.SettingsViewModeRepository
@@ -57,6 +59,10 @@ internal class HistoryFragment :
   private var adapter: HistoryAdapter? = null
   private var layoutManager: LayoutManager? = null
   private var isSearching = false
+
+  companion object {
+    private const val LOAD_MORE_THRESHOLD = 20
+  }
 
   override fun onViewCreated(
     view: View,
@@ -113,6 +119,23 @@ internal class HistoryFragment :
       layoutManager = this@HistoryFragment.layoutManager
       (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
       setHasFixedSize(true)
+      addOnScrollListener(loadMoreScrollListener)
+    }
+  }
+
+  private val loadMoreScrollListener = object : RecyclerView.OnScrollListener() {
+    override fun onScrolled(
+      recyclerView: RecyclerView,
+      dx: Int,
+      dy: Int,
+    ) {
+      if (dy <= 0) return
+      val manager = layoutManager as? LinearLayoutManager ?: return
+      val lastVisible = manager.findLastVisibleItemPosition()
+      val itemCount = manager.itemCount
+      if (lastVisible >= 0 && itemCount - lastVisible <= LOAD_MORE_THRESHOLD) {
+        viewModel.loadNextPage()
+      }
     }
   }
 

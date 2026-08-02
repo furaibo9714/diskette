@@ -9,4 +9,5 @@ data class ProgressMainUiState(
   val calendarMode: CalendarMode? = null,
   val resetScroll: Event<Boolean>? = null,
   val isSyncing: Boolean = false,
+  val syncPhaseTextRes: Int? = null,
 )

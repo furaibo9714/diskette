@@ -4,6 +4,7 @@ import com.michaldrabik.common.Config
 import com.michaldrabik.common.dispatchers.CoroutineDispatchers
 import com.michaldrabik.common.extensions.nowUtc
 import com.michaldrabik.common.extensions.toLocalZone
+import com.michaldrabik.common.extensions.toMillis
 import com.michaldrabik.data_local.LocalDataSource
 import com.michaldrabik.data_local.database.model.Episode
 import com.michaldrabik.data_local.database.model.Season
@@ -74,10 +75,18 @@ abstract class CalendarItemsCase(
       val showsIds = shows.map { it.traktId }.chunked(250)
       val watchlistShowsIds = watchlistShows.map { it.traktId }
 
+      /**
+       * Both CalendarFutureFilter and CalendarRecentsFilter only ever look at episodes from the
+       * last 3 months onward - bounding the query the same way avoids pulling a show's entire
+       * back-catalog into memory (a long-running show can have 500+ episodes; across hundreds of
+       * shows the unbounded "all episodes for all shows" query was enough to OOM).
+       */
+      val episodesFromTime = now.minusMonths(3).toMillis()
+
       val (episodes, seasons) = awaitAll(
         async {
           showsIds.fold(mutableListOf<Episode>()) { acc, list ->
-            acc += localSource.episodes.getAllByShowsIds(list)
+            acc += localSource.episodes.getAllByShowsIds(list, episodesFromTime)
             acc
           }
         },

@@ -21,16 +21,21 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.michaldrabik.repository.movies.MovieDetailsRepository
+import com.michaldrabik.repository.movies.MoviesRepository
 import com.michaldrabik.ui_base.R
 import com.michaldrabik.ui_base.events.EventsManager
 import com.michaldrabik.ui_base.events.FloppySyncError
 import com.michaldrabik.ui_base.events.FloppySyncStart
 import com.michaldrabik.ui_base.events.FloppySyncSuccess
+import com.michaldrabik.ui_base.events.ShowsMoviesSyncComplete
 import com.michaldrabik.ui_base.floppy.imports.FloppyImportWatchedRunner
 import com.michaldrabik.ui_base.floppy.imports.FloppyImportWatchlistRunner
+import com.michaldrabik.ui_base.sync.runners.ShowsSyncRunner
 import com.michaldrabik.ui_base.utilities.extensions.notificationManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.SECONDS
 
@@ -42,11 +47,15 @@ class FloppySyncWorker @AssistedInject constructor(
   private val syncRunner: FloppySyncRunner,
   private val importWatchlistRunner: FloppyImportWatchlistRunner,
   private val importWatchedRunner: FloppyImportWatchedRunner,
+  private val showsSyncRunner: ShowsSyncRunner,
+  private val moviesRepository: MoviesRepository,
+  private val movieDetailsRepository: MovieDetailsRepository,
   private val eventsManager: EventsManager,
 ) : CoroutineWorker(context, workerParams) {
 
   companion object {
     const val TAG_ID = "FLOPPY_FULL_SYNC_WORK_ID"
+    const val ARG_SYNC_PHASE = "ARG_SYNC_PHASE"
     private const val TAG = "FLOPPY_SYNC_WORK"
     private const val TAG_FULL_SYNC = "FLOPPY_FULL_SYNC_WORK"
     private const val ARG_IS_FULL_SYNC = "ARG_IS_FULL_SYNC"
@@ -54,6 +63,9 @@ class FloppySyncWorker @AssistedInject constructor(
     private const val SYNC_NOTIFICATION_PROGRESS_ID = 921
     private const val SYNC_NOTIFICATION_SUCCESS_ID = 922
     private const val SYNC_NOTIFICATION_ERROR_ID = 923
+
+    private const val MAX_MOVIES_PER_RUN = 50
+    private const val MOVIE_SYNC_DELAY_MS = 50L
 
     fun schedule(workManager: WorkManager) {
       val request = OneTimeWorkRequestBuilder<FloppySyncWorker>()
@@ -96,12 +108,21 @@ class FloppySyncWorker @AssistedInject constructor(
     if (isFullSync) eventsManager.sendEvent(FloppySyncStart)
     return try {
       if (isFullSync) {
-        setProgressNotification(applicationContext.getString(R.string.textFloppySyncImportingWatchlist))
+        setPhase(FloppySyncPhase.IMPORTING_WATCHLIST)
         val importedWatchlist = importWatchlistRunner.run()
-        setProgressNotification(applicationContext.getString(R.string.textFloppySyncImportingWatched))
+        setPhase(FloppySyncPhase.IMPORTING_WATCHED)
         val importedWatched = importWatchedRunner.run()
         Timber.d("Floppy import completed. Watchlist: $importedWatchlist, Watched: $importedWatched")
-        setProgressNotification(applicationContext.getString(R.string.textFloppySyncExporting))
+
+        setPhase(FloppySyncPhase.SYNCING_DETAILS)
+        val showsSynced = showsSyncRunner.run()
+        val moviesSynced = syncMovieDetails()
+        Timber.d("Floppy details sync completed. Shows: $showsSynced, Movies: $moviesSynced")
+        if (showsSynced + moviesSynced > 0) {
+          eventsManager.sendEvent(ShowsMoviesSyncComplete(showsSynced + moviesSynced))
+        }
+
+        setPhase(FloppySyncPhase.EXPORTING)
       }
       val count = syncRunner.run()
       Timber.d("Floppy sync completed. Pushed: $count")
@@ -122,12 +143,43 @@ class FloppySyncWorker @AssistedInject constructor(
     }
   }
 
+  /**
+   * Floppy-imported shows/movies are inserted as thin rows (`updatedAt = -1`) without season/episode
+   * or release-date data, to avoid a TMDB call per item during bulk import. [ShowsSyncRunner] already
+   * backfills full season/episode data for thin `myShows` rows (same mechanism used for periodic
+   * refresh); movies have no per-status runner that fits this "fill the gap" use case, so this walks
+   * the collection directly - [MovieDetailsRepository.load] is a no-op for anything already populated.
+   *
+   * Capped per run for the same reason as [ShowsSyncRunner]: a large library can leave hundreds of
+   * thin movies at once, and backfilling all of them in a single burst risks the same OOM a similar
+   * uncapped show backfill hit. The rest gets picked up by the next full sync.
+   */
+  private suspend fun syncMovieDetails(): Int {
+    var count = 0
+    moviesRepository.loadCollection()
+      .filter { it.updatedAt == -1L }
+      .take(MAX_MOVIES_PER_RUN)
+      .forEach { movie ->
+        try {
+          movieDetailsRepository.load(movie.ids.trakt)
+          count++
+        } catch (error: Throwable) {
+          Timber.w(error, "Failed to sync details for movie ${movie.ids.trakt}.")
+        } finally {
+          delay(MOVIE_SYNC_DELAY_MS)
+        }
+      }
+    return count
+  }
+
   override suspend fun getForegroundInfo(): ForegroundInfo {
     val notification = createProgressNotification(null)
     return ForegroundInfo(SYNC_NOTIFICATION_PROGRESS_ID, notification)
   }
 
-  private fun setProgressNotification(content: String?) {
+  private suspend fun setPhase(phase: FloppySyncPhase) {
+    setProgress(workDataOf(ARG_SYNC_PHASE to phase.name))
+    val content = applicationContext.getString(phase.textRes)
     notificationManager().notify(SYNC_NOTIFICATION_PROGRESS_ID, createProgressNotification(content))
   }
 

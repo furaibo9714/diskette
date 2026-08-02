@@ -10,7 +10,6 @@ import com.michaldrabik.repository.mappers.Mappers
 import com.michaldrabik.repository.shows.ShowsRepository
 import com.michaldrabik.ui_model.ShowStatus.CANCELED
 import com.michaldrabik.ui_model.ShowStatus.ENDED
-import com.michaldrabik.ui_model.ShowStatus.UNKNOWN
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,7 +28,17 @@ class ShowsSyncRunner @Inject constructor(
 ) {
 
   companion object {
-    private const val DELAY_MS = 10L
+    private const val DELAY_MS = 100L
+
+    /**
+     * A Floppy full-library import can leave hundreds of shows never-synced (UNKNOWN status,
+     * see below) all at once. Backfilling every one of them - full show details + a full
+     * season/episode delete-and-reinsert each - in a single run has been observed to run the
+     * heap out of memory on large libraries (900+ shows queued in one run). Capping bounds each
+     * run's peak memory use; the rest gets picked up by the next run, since a full sync already
+     * fires on every app start and Progress pull-to-refresh.
+     */
+    private const val MAX_SHOWS_PER_RUN = 25
   }
 
   suspend fun run(): Int {
@@ -38,9 +47,20 @@ class ShowsSyncRunner @Inject constructor(
     val myShows = showsRepository.myShows.loadAll()
     val watchlistShows = showsRepository.watchlistShows.loadAll()
     val watchlistShowsIds = watchlistShows.map { it.traktId }
+    val syncLog = localSource.episodesSyncLog.getAll()
 
+    fun lastSyncOf(traktId: Long) = syncLog.find { it.idTrakt == traktId }?.syncedAt ?: 0
+
+    /**
+     * UNKNOWN is deliberately not excluded here: it's what a Floppy-imported thin show row reads
+     * as before its first real detail fetch, not a confirmed-stable status like ENDED/CANCELED -
+     * excluding it would permanently skip syncing any freshly imported show's episode data.
+     */
     val showsToSync = (myShows + watchlistShows)
-      .filter { it.status !in arrayOf(ENDED, CANCELED, UNKNOWN) }
+      .filter { it.status !in arrayOf(ENDED, CANCELED) }
+      .filter { nowUtcMillis() - lastSyncOf(it.traktId) >= SHOW_SYNC_COOLDOWN }
+      .sortedBy { lastSyncOf(it.traktId) } // never-synced (0) and longest-stale shows first
+      .take(MAX_SHOWS_PER_RUN)
 
     Timber.i("Shows to sync: ${showsToSync.size}.")
     if (showsToSync.isEmpty()) {
@@ -49,15 +69,8 @@ class ShowsSyncRunner @Inject constructor(
     }
 
     var syncCount = 0
-    val syncLog = localSource.episodesSyncLog.getAll()
     showsToSync.forEach { show ->
       val isInWatchlist = show.traktId in watchlistShowsIds
-
-      val lastSync = syncLog.find { it.idTrakt == show.traktId }?.syncedAt ?: 0
-      if (nowUtcMillis() - lastSync < SHOW_SYNC_COOLDOWN) {
-        Timber.i("${show.title} is on cooldown. No need to sync.")
-        return@forEach
-      }
 
       try {
         Timber.i("Syncing ${show.title}(${show.ids.trakt}) details...")

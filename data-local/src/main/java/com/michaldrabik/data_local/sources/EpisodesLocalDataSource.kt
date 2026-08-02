@@ -38,7 +38,17 @@ interface EpisodesLocalDataSource {
 
   suspend fun getAllByShowsIds(showTraktIds: List<Long>): List<Episode>
 
+  suspend fun getAllByShowsIds(
+    showTraktIds: List<Long>,
+    fromTime: Long,
+  ): List<Episode>
+
   suspend fun getAllByShowsIdsChunk(showTraktIds: List<Long>): List<Episode>
+
+  suspend fun getAllByShowsIdsChunk(
+    showTraktIds: List<Long>,
+    fromTime: Long,
+  ): List<Episode>
 
   suspend fun getFirstUnwatched(
     showTraktId: Long,
@@ -85,6 +95,13 @@ interface EpisodesLocalDataSource {
   ): List<Episode>
 
   suspend fun getAllWatchedIdsForShows(showsIds: List<Long>): List<Long>
+
+  suspend fun getAllWatchedForTrackedShowsPaged(
+    fromTime: Long,
+    toTime: Long,
+    limit: Int,
+    offset: Int,
+  ): List<Episode>
 
   suspend fun deleteAllUnwatchedForShow(showTraktId: Long)
 

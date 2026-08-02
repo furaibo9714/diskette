@@ -8,6 +8,7 @@ import com.michaldrabik.data_local.sources.WatchlistShowsLocalDataSource
 import com.michaldrabik.data_local.utilities.TransactionsProvider
 import com.michaldrabik.repository.mappers.Mappers
 import com.michaldrabik.ui_model.IdTrakt
+import com.michaldrabik.ui_model.Show
 import javax.inject.Inject
 
 class MyShowsRepository @Inject constructor(
@@ -16,6 +17,7 @@ class MyShowsRepository @Inject constructor(
   private val hiddenShowsLocalDataSource: ArchiveShowsLocalDataSource,
   private val transactions: TransactionsProvider,
   private val mappers: Mappers,
+  private val cache: ShowsCollectionCache,
 ) {
 
   suspend fun load(id: IdTrakt) =
@@ -23,10 +25,14 @@ class MyShowsRepository @Inject constructor(
       mappers.show.fromDatabase(it)
     }
 
-  suspend fun loadAll() =
-    myShowsLocalSource
+  suspend fun loadAll(): List<Show> {
+    cache.myShows?.let { return it }
+    val shows = myShowsLocalSource
       .getAll()
       .map { mappers.show.fromDatabase(it) }
+    cache.myShows = shows
+    return shows
+  }
 
   suspend fun loadAll(ids: List<IdTrakt>) =
     myShowsLocalSource
@@ -56,10 +62,12 @@ class MyShowsRepository @Inject constructor(
       watchlistShowsLocalSource.deleteById(id.id)
       hiddenShowsLocalDataSource.deleteById(id.id)
     }
+    cache.invalidate()
   }
 
   suspend fun delete(id: IdTrakt) {
     myShowsLocalSource.deleteById(id.id)
+    cache.invalidate()
   }
 
   suspend fun exists(id: IdTrakt) = myShowsLocalSource.checkExists(id.id)
@@ -69,5 +77,6 @@ class MyShowsRepository @Inject constructor(
     watchedAt: Long,
   ) {
     myShowsLocalSource.updateWatchedAt(idTrakt, watchedAt)
+    cache.invalidate()
   }
 }

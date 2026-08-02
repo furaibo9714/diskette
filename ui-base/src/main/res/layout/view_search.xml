@@ -115,9 +115,10 @@
       />
 
     <TextView
+      android:id="@+id/searchViewTraktSyncText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="@string/textTraktSync"
+      android:text="@string/textFloppySyncRunning"
       android:textColor="?attr/colorAccent"
       />
 

@@ -8,6 +8,7 @@ data class DiscoverUiState(
   val items: List<DiscoverListItem>? = null,
   val isLoading: Boolean? = null,
   val isSyncing: Boolean? = null,
+  val syncPhaseTextRes: Int? = null,
   var filters: DiscoverFilters? = null,
   var resetScroll: Event<Boolean>? = null,
 )

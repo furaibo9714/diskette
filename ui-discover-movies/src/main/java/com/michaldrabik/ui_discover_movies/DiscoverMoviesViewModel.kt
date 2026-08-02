@@ -10,9 +10,11 @@ import com.michaldrabik.common.Config
 import com.michaldrabik.common.extensions.nowUtcMillis
 import com.michaldrabik.repository.images.MovieImagesProvider
 import com.michaldrabik.ui_base.floppy.FloppySyncWorker
+import com.michaldrabik.ui_base.floppy.floppySyncPhaseTextRes
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.events.MessageEvent
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
+import com.michaldrabik.ui_base.utilities.extensions.combine
 import com.michaldrabik.ui_base.utilities.extensions.findReplace
 import com.michaldrabik.ui_base.utilities.extensions.rethrowCancellation
 import com.michaldrabik.ui_base.viewmodel.ChannelsDelegate
@@ -29,7 +31,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,6 +49,7 @@ internal class DiscoverMoviesViewModel @Inject constructor(
   private val itemsState = MutableStateFlow<List<DiscoverMovieListItem>?>(null)
   private val loadingState = MutableStateFlow(false)
   private val syncingState = MutableStateFlow(false)
+  private val syncPhaseState = MutableStateFlow<Int?>(null)
   private val filtersState = MutableStateFlow<DiscoverFilters?>(null)
   private val scrollState = MutableStateFlow(Event(false))
 
@@ -56,7 +58,9 @@ internal class DiscoverMoviesViewModel @Inject constructor(
 
   init {
     workManager.getWorkInfosByTagLiveData(FloppySyncWorker.TAG_ID).observeForever { work ->
-      syncingState.value = work.any { it.state == WorkInfo.State.RUNNING }
+      val running = work.find { it.state == WorkInfo.State.RUNNING }
+      syncingState.value = running != null
+      syncPhaseState.value = running?.floppySyncPhaseTextRes()
     }
     viewModelScope.launch {
       initialFilters = filtersCase.loadFilters()
@@ -174,13 +178,15 @@ internal class DiscoverMoviesViewModel @Inject constructor(
     syncingState,
     filtersState,
     scrollState,
-  ) { s1, s2, s3, s4, s5 ->
+    syncPhaseState,
+  ) { s1, s2, s3, s4, s5, s6 ->
     DiscoverMoviesUiState(
       items = s1,
       isLoading = s2,
       isSyncing = s3,
       filters = s4,
       resetScroll = s5,
+      syncPhaseTextRes = s6,
     )
   }.stateIn(
     scope = viewModelScope,

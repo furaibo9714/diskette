@@ -7,6 +7,7 @@ import androidx.work.WorkManager
 import com.michaldrabik.ui_base.events.EventsManager
 import com.michaldrabik.ui_base.events.ReloadData
 import com.michaldrabik.ui_base.floppy.FloppySyncWorker
+import com.michaldrabik.ui_base.floppy.floppySyncPhaseTextRes
 import com.michaldrabik.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,10 +25,13 @@ class FollowedShowsViewModel @Inject constructor(
 
   private val searchQueryState = MutableStateFlow<String?>(null)
   private val syncingState = MutableStateFlow(false)
+  private val syncPhaseState = MutableStateFlow<Int?>(null)
 
   init {
     workManager.getWorkInfosByTagLiveData(FloppySyncWorker.TAG_ID).observeForever { work ->
-      syncingState.value = work.any { it.state == WorkInfo.State.RUNNING }
+      val running = work.find { it.state == WorkInfo.State.RUNNING }
+      syncingState.value = running != null
+      syncPhaseState.value = running?.floppySyncPhaseTextRes()
     }
   }
 
@@ -44,10 +48,12 @@ class FollowedShowsViewModel @Inject constructor(
   val uiState = combine(
     searchQueryState,
     syncingState,
-  ) { s1, s2 ->
+    syncPhaseState,
+  ) { s1, s2, s3 ->
     FollowedShowsUiState(
       searchQuery = s1,
       isSyncing = s2,
+      syncPhaseTextRes = s3,
     )
   }.stateIn(
     scope = viewModelScope,

@@ -8,8 +8,6 @@ import com.michaldrabik.common.extensions.toLocalZone
 import com.michaldrabik.common.extensions.toMillis
 import com.michaldrabik.common.extensions.toUtcZone
 import com.michaldrabik.data_local.LocalDataSource
-import com.michaldrabik.data_local.database.model.Episode
-import com.michaldrabik.data_local.database.model.Season
 import com.michaldrabik.repository.TranslationsRepository
 import com.michaldrabik.repository.images.ShowImagesProvider
 import com.michaldrabik.repository.mappers.Mappers
@@ -30,7 +28,6 @@ import com.michaldrabik.ui_model.ImageType
 import com.michaldrabik.ui_model.Show
 import com.michaldrabik.ui_progress.helpers.TranslationsBundle
 import com.michaldrabik.ui_progress.history.entities.HistoryListItem
-import com.michaldrabik.ui_progress.history.utilities.groupers.HistoryItemsGrouper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -43,7 +40,12 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.days
 import com.michaldrabik.ui_model.Episode as EpisodeUi
 
-@Suppress("UNCHECKED_CAST")
+internal data class HistoryPage(
+  val items: List<HistoryListItem.Episode>,
+  val periodFilter: HistoryPeriod,
+  val hasMore: Boolean,
+)
+
 internal class GetHistoryItemsCase @Inject constructor(
   private val dispatchers: CoroutineDispatchers,
   private val localSource: LocalDataSource,
@@ -53,80 +55,90 @@ internal class GetHistoryItemsCase @Inject constructor(
   private val imagesProvider: ShowImagesProvider,
   private val dateFormatProvider: DateFormatProvider,
   private val mappers: Mappers,
-  private val grouper: HistoryItemsGrouper,
 ) {
 
-  suspend fun loadItems(searchQuery: String? = "") =
+  companion object {
+    const val PAGE_SIZE = 100
+
+    /**
+     * A page is capped at PAGE_SIZE episodes, so this chunking rarely kicks in today - kept as a
+     * defensive bound on concurrent `async` fan-out in case a caller ever requests a larger page.
+     */
+    private const val LOAD_CHUNK_SIZE = 200
+  }
+
+  suspend fun loadItems(
+    searchQuery: String? = "",
+    offset: Int = 0,
+    limit: Int = PAGE_SIZE,
+  ): HistoryPage =
     withContext(dispatchers.IO) {
+      val periodFilter = settingsRepository.filters.historyShowsPeriod
+      val periodRange = getPeriodRange(periodFilter)
+
+      val pageEpisodes = localSource.episodes.getAllWatchedForTrackedShowsPaged(
+        fromTime = periodRange.first,
+        toTime = periodRange.last,
+        limit = limit,
+        offset = offset,
+      )
+
+      val showIds = pageEpisodes.map { it.idShowTrakt }.distinct()
+
       val shows = coroutineScope {
         val async1 = async { showsRepository.myShows.loadAll() }
         val async2 = async { showsRepository.watchlistShows.loadAll() }
         awaitAll(async1, async2).flatten()
       }
-      val showsIds = shows.map { it.traktId }.chunked(250)
-
-      val periodFilter = settingsRepository.filters.historyShowsPeriod
-      val periodRange = getPeriodRange(periodFilter)
-
-      val (episodes, seasons) = awaitAll(
-        async {
-          showsIds.fold(listOf<Episode>()) { acc, ids ->
-            acc.plus(localSource.episodes.getAllWatchedForShows(ids, periodRange.first, periodRange.last))
-          }
-        },
-        async {
-          showsIds.fold(listOf<Season>()) { acc, ids ->
-            acc.plus(localSource.seasons.getAllByShowsIds(ids))
-          }
-        },
-      )
-
-      val localEpisodes = episodes as List<Episode>
-      val localSeasons = seasons as List<Season>
+      val localSeasons = if (showIds.isEmpty()) {
+        emptyList()
+      } else {
+        localSource.seasons.getAllByShowsIds(showIds)
+      }
 
       val language = translationsRepository.getLanguage()
       val dateFormat = dateFormatProvider.loadFullHourFormat()
 
-      val items = localEpisodes
-        .map { episode ->
-          async {
-            val show = shows.firstOrNull { it.traktId == episode.idShowTrakt }
-            val season = localSeasons.firstOrNull {
-              it.idShowTrakt == episode.idShowTrakt &&
-                it.seasonNumber == episode.seasonNumber
+      val showsById = shows.associateBy { it.traktId }
+      val seasonsByShowAndNumber = localSeasons.associateBy { it.idShowTrakt to it.seasonNumber }
+      val episodesByShowAndSeason = pageEpisodes.groupBy { it.idShowTrakt to it.seasonNumber }
+
+      val items = pageEpisodes
+        .chunked(LOAD_CHUNK_SIZE)
+        .flatMap { chunk ->
+          chunk.map { episode ->
+            async {
+              val show = showsById[episode.idShowTrakt]
+              val season = seasonsByShowAndNumber[episode.idShowTrakt to episode.seasonNumber]
+
+              if (show == null || season == null) {
+                return@async null
+              }
+
+              val seasonEpisodes = episodesByShowAndSeason[season.idShowTrakt to season.seasonNumber].orEmpty()
+
+              val episodeUi = mappers.episode.fromDatabase(episode)
+              val seasonUi = mappers.season.fromDatabase(season, seasonEpisodes)
+
+              HistoryListItem.Episode(
+                show = show,
+                season = seasonUi,
+                episode = episodeUi,
+                image = imagesProvider.findCachedImage(show, ImageType.POSTER),
+                translations = getTranslation(language, show, episodeUi),
+                dateFormat = dateFormat,
+              )
             }
+          }.awaitAll()
+        }.filterNotNull()
 
-            if (show == null || season == null) {
-              return@async null
-            }
-
-            val seasonEpisodes = episodes.filter {
-              it.idShowTrakt == season.idShowTrakt &&
-                it.seasonNumber == season.seasonNumber
-            }
-
-            val episodeUi = mappers.episode.fromDatabase(episode)
-            val seasonUi = mappers.season.fromDatabase(season, seasonEpisodes)
-
-            HistoryListItem.Episode(
-              show = show,
-              season = seasonUi,
-              episode = episodeUi,
-              image = imagesProvider.findCachedImage(show, ImageType.POSTER),
-              translations = getTranslation(language, show, episodeUi),
-              dateFormat = dateFormat,
-            )
-          }
-        }.awaitAll()
-        .filterNotNull()
-
-      val filtersItem = listOf(HistoryListItem.Filters(periodFilter))
       val searchItems = filterByQuery(searchQuery, dateFormat, items)
-      val groupedItems = grouper.groupByDay(
+
+      HistoryPage(
         items = searchItems,
-        language = language,
+        periodFilter = periodFilter,
+        hasMore = pageEpisodes.size == limit,
       )
-      filtersItem + groupedItems
     }
 
   private fun filterByQuery(
