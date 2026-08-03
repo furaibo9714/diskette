@@ -132,11 +132,8 @@ class FloppySyncRunner @Inject constructor(
   }
 
   /**
-   * Show/movie ratings live on the same PATCH endpoint used for watched status, but unlike that
-   * endpoint's `status` field, its `score` field rejects `null` on this Floppy version even though
-   * the schema marks it nullable (confirmed empirically) - so clearing a rating here is a no-op on
-   * Floppy's side; only the local rating is removed.
-   * TODO: Revisit if a future Floppy version fixes this.
+   * Show/movie ratings live on the same PATCH endpoint used for watched status. Clearing a rating
+   * sends `score: null`, which Floppy accepts and clears server-side.
    *
    * Same "not tracked yet" 404 as [pushListItem]/[pushMovieWatched] applies here too - track first
    * and retry on failure.
@@ -147,12 +144,12 @@ class FloppySyncRunner @Inject constructor(
     item: FloppySyncQueue,
     isAdd: Boolean,
   ) {
-    if (!isAdd) return
+    val score = if (isAdd) item.value else null
     try {
-      service.updateMediaScore(mediaType, item.source, item.mediaId, FloppyScoreUpdateRequest(item.value))
+      service.updateMediaScore(mediaType, item.source, item.mediaId, FloppyScoreUpdateRequest(score))
     } catch (error: Throwable) {
       service.trackMedia(mediaType, FloppyTrackRequest(item.source, item.mediaId))
-      service.updateMediaScore(mediaType, item.source, item.mediaId, FloppyScoreUpdateRequest(item.value))
+      service.updateMediaScore(mediaType, item.source, item.mediaId, FloppyScoreUpdateRequest(score))
     }
   }
 
@@ -161,9 +158,9 @@ class FloppySyncRunner @Inject constructor(
     item: FloppySyncQueue,
     isAdd: Boolean,
   ) {
-    if (!isAdd) return
     val seasonNumber = item.seasonNumber ?: return
-    service.updateSeasonScore(item.source, item.mediaId, seasonNumber, FloppyScoreUpdateRequest(item.value))
+    val score = if (isAdd) item.value else null
+    service.updateSeasonScore(item.source, item.mediaId, seasonNumber, FloppyScoreUpdateRequest(score))
   }
 
   private suspend fun pushEpisodeRating(
