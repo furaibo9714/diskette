@@ -56,7 +56,7 @@ abstract class MovieView<Item : MovieListItem> : FrameLayout {
     layoutParams = LayoutParams(
       (
         width * item.image.type
-          .getSpan(isTablet)
+          .getSpan()
           .toFloat()
       ).toInt(),
       height.toInt(),

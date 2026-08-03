@@ -16,8 +16,6 @@ object Config {
   const val AWS_IMAGE_BASE_URL = "https://showly2.s3.eu-west-2.amazonaws.com/images/"
 
   const val DEVELOPER_MAIL = "showlyapp@gmail.com"
-  const val TWITTER_URL = "https://twitter.com/AppShowly/"
-  const val INSTAGRAM_URL = "https://www.instagram.com/showlyapp/"
   const val JUST_WATCH_URL = "https://www.justwatch.com/"
   const val TMDB_URL = "https://www.themoviedb.org/"
 

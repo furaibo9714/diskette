@@ -353,7 +353,7 @@ class ListDetailsFragment :
               ?.get(pos)
               ?.image
               ?.type
-              ?.getSpan(isTablet)!!
+              ?.getSpan()!!
           }
         }
         isManageMode.let { isManageMode ->

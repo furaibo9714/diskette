@@ -42,9 +42,7 @@ class SettingsMiscFragment : BaseFragment<SettingsMiscViewModel>(R.layout.fragme
       settingsContactDevs.onClick { openMailMessage() }
       settingsDeleteCache.onClick { viewModel.deleteImagesCache(requireAppContext()) }
 
-      settingsTwitterIcon.onClick { openWebLink(Config.TWITTER_URL) }
       settingsTmdbIcon.onClick { openWebLink(Config.TMDB_URL) }
-      settingsInstagramIcon.onClick { openWebLink(Config.INSTAGRAM_URL) }
       settingsJustWatchIcon.onClick { openWebLink(Config.JUST_WATCH_URL) }
     }
   }

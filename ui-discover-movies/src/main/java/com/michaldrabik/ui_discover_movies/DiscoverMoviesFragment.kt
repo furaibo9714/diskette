@@ -278,7 +278,7 @@ internal class DiscoverMoviesFragment :
               ?.get(pos)
               ?.image
               ?.type
-              ?.getSpan(isTablet)!!
+              ?.getSpan()!!
           }
           discoverMoviesRecycler.fadeIn(200, withHardware = true)
         }
