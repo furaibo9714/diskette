@@ -22,10 +22,8 @@ class SettingsWidgetsViewModel @Inject constructor(
 ) : ViewModel() {
 
   private val settingsState = MutableStateFlow<Settings?>(null)
-
   private val widgetThemeState = MutableStateFlow(AppTheme.DARK)
   private val widgetTransparencyState = MutableStateFlow(WidgetTransparency.SOLID)
-  private val premiumState = MutableStateFlow(false)
 
   fun loadSettings() {
     viewModelScope.launch {
@@ -43,21 +41,41 @@ class SettingsWidgetsViewModel @Inject constructor(
     }
   }
 
+  fun setWidgetTheme(
+    theme: AppTheme,
+    context: Context,
+  ) {
+    viewModelScope.launch {
+      mainCase.setWidgetTheme(theme, context)
+      refreshSettings()
+    }
+  }
+
+  fun setWidgetTransparency(
+    transparency: WidgetTransparency,
+    context: Context,
+  ) {
+    viewModelScope.launch {
+      mainCase.setWidgetTransparency(transparency, context)
+      refreshSettings()
+    }
+  }
+
   private suspend fun refreshSettings() {
     settingsState.value = mainCase.getSettings()
+    widgetThemeState.value = mainCase.getWidgetTheme()
+    widgetTransparencyState.value = mainCase.getWidgetTransparency()
   }
 
   val uiState = combine(
     settingsState,
-    premiumState,
     widgetThemeState,
     widgetTransparencyState,
-  ) { s1, s2, s3, s4 ->
+  ) { s1, s2, s3 ->
     SettingsWidgetsUiState(
       settings = s1,
-      isPremium = s2,
-      themeWidgets = s3,
-      widgetsTransparency = s4,
+      themeWidgets = s2,
+      widgetsTransparency = s3,
     )
   }.stateIn(
     scope = viewModelScope,

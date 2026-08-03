@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="textTraktLoginSuccess">Você foi autorizado com sucesso.</string>
-    <string name="textTraktVipLoginSuccess">Você foi autorizado com sucesso. Como um Trakt VIP, você agora pode usar todos os recursos do Showly Premium de graça!</string>
   <string name="textTraktLogoutSuccess">Você foi desconectado.</string>
   <string name="textImagesCacheCleared">O cache foi liberado.</string>
   <string name="textTurnOff">Desativar</string>

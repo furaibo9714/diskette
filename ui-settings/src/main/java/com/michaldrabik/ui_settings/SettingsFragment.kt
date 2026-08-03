@@ -66,7 +66,6 @@ class SettingsFragment : BaseFragment<SettingsViewModel>(R.layout.fragment_setti
   private fun setupView() {
     with(binding) {
       settingsToolbar.setOnClickListener { activity?.onBackPressed() }
-      settingsPremium.onClick { navigateTo(R.id.actionSettingsFragmentToPremium) }
       settingsFilters.onFilterClick = { viewModel.setFilter(it) }
     }
   }

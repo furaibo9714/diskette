@@ -68,7 +68,6 @@
   <LinearLayout
     android:id="@+id/settingsWidgetsTheme"
     style="@style/Settings.ItemLayout"
-    android:tag="@string/tagTheme"
     app:layout_constraintBottom_toTopOf="@+id/settingsWidgetsTransparency"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.0"
@@ -79,9 +78,7 @@
     <TextView
       android:id="@+id/settingsWidgetsThemeTitle"
       style="@style/Settings.Title"
-      android:drawablePadding="@dimen/spaceSmall"
       android:text="@string/textSettingsThemeWidgetsTitle"
-      app:drawableStartCompat="@drawable/ic_crown_small"
       app:drawableTint="?android:attr/textColorPrimary"
       />
 
@@ -110,7 +107,6 @@
   <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/settingsWidgetsTransparency"
     style="@style/Settings.ItemLayout"
-    android:tag="@string/tagWidgetTransparency"
     app:layout_constraintBottom_toTopOf="@id/settingsWidgetsLabels"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -120,9 +116,7 @@
     <TextView
       android:id="@+id/settingsWidgetsTransparencyTitle"
       style="@style/Settings.Title"
-      android:drawablePadding="@dimen/spaceSmall"
       android:text="@string/textSettingsWidgetsTransparencyTitle"
-      app:drawableStartCompat="@drawable/ic_crown_small"
       app:drawableTint="?android:attr/textColorPrimary"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"

@@ -116,13 +116,6 @@
       app:destination="@id/discoverFiltersFeedDialog"
       app:launchSingleTop="true"
       />
-    <action
-      android:id="@+id/actionDiscoverFragmentToPremium"
-      app:destination="@id/premiumFragment"
-      app:enterAnim="@anim/anim_fade_in"
-      app:launchSingleTop="true"
-      app:popExitAnim="@anim/anim_fade_out"
-      />
   </fragment>
 
   <fragment
@@ -161,13 +154,6 @@
       android:id="@+id/actionDiscoverMoviesFragmentToFiltersGenres"
       app:destination="@id/discoverMoviesFiltersGenresDialog"
       app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionDiscoverMoviesFragmentToPremium"
-      app:destination="@id/premiumFragment"
-      app:enterAnim="@anim/anim_fade_in"
-      app:launchSingleTop="true"
-      app:popExitAnim="@anim/anim_fade_out"
       />
   </fragment>
 
@@ -515,11 +501,6 @@
       app:destination="@id/myShowsFiltersDialog"
       app:launchSingleTop="true"
       />
-    <action
-      android:id="@+id/actionFollowedShowsFragmentToPremium"
-      app:destination="@id/premiumFragment"
-      app:launchSingleTop="true"
-      />
   </fragment>
 
   <fragment
@@ -561,11 +542,6 @@
     <action
       android:id="@+id/actionFollowedMoviesFragmentToItemMenu"
       app:destination="@id/movieItemContextDialog"
-      app:launchSingleTop="true"
-      />
-    <action
-      android:id="@+id/actionFollowedMoviesFragmentToPremium"
-      app:destination="@id/premiumFragment"
       app:launchSingleTop="true"
       />
     <action
@@ -640,13 +616,6 @@
       app:destination="@id/sortOrderDialog"
       app:launchSingleTop="true"
       />
-    <action
-      android:id="@+id/actionListDetailsFragmentToPremium"
-      app:destination="@id/premiumFragment"
-      app:enterAnim="@anim/anim_fade_in"
-      app:launchSingleTop="true"
-      app:popExitAnim="@anim/anim_fade_out"
-      />
   </fragment>
 
   <fragment
@@ -690,13 +659,6 @@
     android:name="com.michaldrabik.ui_settings.SettingsFragment"
     android:label="fragmentSettings"
     >
-    <action
-      android:id="@+id/actionSettingsFragmentToPremium"
-      app:destination="@id/premiumFragment"
-      app:enterAnim="@anim/anim_fade_in"
-      app:launchSingleTop="true"
-      app:popExitAnim="@anim/anim_fade_out"
-      />
     <action
       android:id="@+id/actionSettingsFragmentToSpoilersShows"
       app:destination="@id/settingsSpoilersShowsDialog"
@@ -756,12 +718,6 @@
       />
   </fragment>
 
-
-  <fragment
-    android:id="@+id/premiumFragment"
-    android:name="com.michaldrabik.ui_premium.PremiumFragment"
-    android:label="fragmentPremium"
-    />
 
   <fragment
     android:id="@+id/backupExportFragment"

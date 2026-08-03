@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="textTraktLoginSuccess">Ai fost autorizat cu succes.</string>
-    <string name="textTraktVipLoginSuccess">Ai fost autorizat cu succes. În calitate de VIP Trakt, poți folosi acum toate funcțiile Showly Premium gratuit!</string>
     <string name="textTraktLogoutSuccess">Ai fost deconectat.</string>
     <string name="textImagesCacheCleared">Cache-ul imaginilor a fost șters.</string>
     <string name="textTurnOff">Dezactivare</string>
