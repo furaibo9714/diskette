@@ -70,6 +70,13 @@ class MyShowsViewModel @Inject constructor(
 
   init {
     viewModelScope.launch { eventsManager.events.collect { onEvent(it) } }
+    viewModeState.value = ListViewMode.valueOf(settingsRepository.viewMode.myShowsViewMode)
+  }
+
+  fun toggleViewMode() {
+    val newMode = if (viewModeState.value == ListViewMode.LIST_NORMAL) ListViewMode.LIST_GRID else ListViewMode.LIST_NORMAL
+    settingsRepository.viewMode.myShowsViewMode = newMode.name
+    viewModeState.value = newMode
   }
 
   fun onParentState(state: FollowedShowsUiState) {

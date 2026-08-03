@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.michaldrabik.common.Config.LISTS_GRID_SPAN
 import com.michaldrabik.repository.settings.SettingsViewModeRepository
 import com.michaldrabik.ui_base.BaseFragment
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_base.common.OnScrollResetListener
 import com.michaldrabik.ui_base.common.OnSearchClickListener
@@ -96,7 +97,7 @@ class MyMoviesFragment :
       itemLongClickListener = { openMovieMenu(it.movie) },
       onSortOrderClickListener = ::openSortOrderDialog,
       onGenresClickListener = ::openGenresDialog,
-      onListViewModeClickListener = { },
+      onListViewModeClickListener = { viewModel.toggleViewMode() },
       missingImageListener = { item, force -> viewModel.loadMissingImage(item, force) },
       missingTranslationListener = { viewModel.loadMissingTranslation(it) },
       listChangeListener = {
@@ -151,6 +152,7 @@ class MyMoviesFragment :
               RECENT_MOVIES, HEADER -> {
                 when (viewMode) {
                   LIST_NORMAL -> if (isTablet) gridSpanSize else LISTS_GRID_SPAN
+                  LIST_GRID -> if (isTablet) LISTS_GRID_SPAN * 2 else LISTS_GRID_SPAN
                 }
               }
               ALL_MOVIES_ITEM -> {

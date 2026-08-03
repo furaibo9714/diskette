@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.michaldrabik.common.Config
 import com.michaldrabik.repository.settings.SettingsViewModeRepository
 import com.michaldrabik.ui_base.BaseFragment
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_base.common.OnScrollResetListener
 import com.michaldrabik.ui_base.common.OnSearchClickListener
@@ -93,7 +94,7 @@ class HiddenFragment :
       genreChipClickListener = ::openGenresDialog,
       missingImageListener = viewModel::loadMissingImage,
       missingTranslationListener = viewModel::loadMissingTranslation,
-      listViewChipClickListener = { },
+      listViewChipClickListener = { viewModel.toggleViewMode() },
       upcomingChipVisible = false,
       upcomingChipClickListener = {},
       listChangeListener = {
@@ -148,6 +149,7 @@ class HiddenFragment :
             is FiltersItem -> {
               when (viewMode) {
                 LIST_NORMAL -> if (isTablet) tabletGridSpanSize else Config.LISTS_GRID_SPAN
+                LIST_GRID -> if (isTablet) Config.LISTS_GRID_SPAN * 2 else Config.LISTS_GRID_SPAN
               }
             }
             is MovieItem -> {

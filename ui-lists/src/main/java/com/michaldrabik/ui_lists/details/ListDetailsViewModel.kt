@@ -8,6 +8,7 @@ import com.michaldrabik.common.Mode.MOVIES
 import com.michaldrabik.common.Mode.SHOWS
 import com.michaldrabik.repository.images.MovieImagesProvider
 import com.michaldrabik.repository.images.ShowImagesProvider
+import com.michaldrabik.repository.settings.SettingsViewModeRepository
 import com.michaldrabik.ui_base.common.ListViewMode
 import com.michaldrabik.ui_base.utilities.events.Event
 import com.michaldrabik.ui_base.utilities.events.MessageEvent
@@ -46,6 +47,7 @@ class ListDetailsViewModel @Inject constructor(
   private val tipsCase: ListDetailsTipsCase,
   private val showImagesProvider: ShowImagesProvider,
   private val movieImagesProvider: MovieImagesProvider,
+  private val settings: SettingsViewModeRepository,
 ) : ViewModel(),
   ChannelsDelegate by DefaultChannelsDelegate() {
 
@@ -57,6 +59,16 @@ class ListDetailsViewModel @Inject constructor(
   private val loadingState = MutableStateFlow(false)
   private val filtersVisibleState = MutableStateFlow(false)
   private val viewModeState = MutableStateFlow(ListViewMode.LIST_NORMAL)
+
+  init {
+    viewModeState.value = ListViewMode.valueOf(settings.customListsViewMode)
+  }
+
+  fun toggleViewMode() {
+    val newMode = if (viewModeState.value == ListViewMode.LIST_NORMAL) ListViewMode.LIST_GRID else ListViewMode.LIST_NORMAL
+    settings.customListsViewMode = newMode.name
+    viewModeState.value = newMode
+  }
 
   fun loadDetails(id: Long) {
     viewModelScope.launch {

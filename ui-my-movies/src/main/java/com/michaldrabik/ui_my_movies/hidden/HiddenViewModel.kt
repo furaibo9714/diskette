@@ -57,6 +57,13 @@ class HiddenViewModel @Inject constructor(
     viewModelScope.launch {
       eventsManager.events.collect { onEvent(it) }
     }
+    viewModeState.value = ListViewMode.valueOf(settingsRepository.viewMode.hiddenMoviesViewMode)
+  }
+
+  fun toggleViewMode() {
+    val newMode = if (viewModeState.value == ListViewMode.LIST_NORMAL) ListViewMode.LIST_GRID else ListViewMode.LIST_NORMAL
+    settingsRepository.viewMode.hiddenMoviesViewMode = newMode.name
+    viewModeState.value = newMode
   }
 
   fun onParentState(state: FollowedMoviesUiState) {

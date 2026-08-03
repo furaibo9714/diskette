@@ -5,12 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_lists.details.helpers.ListItemDragListener
 import com.michaldrabik.ui_lists.details.helpers.ListItemSwipeListener
 import com.michaldrabik.ui_lists.details.helpers.ReorderListCallbackAdapter
 import com.michaldrabik.ui_lists.details.views.ListDetailsItemView
+import com.michaldrabik.ui_lists.details.views.ListDetailsMovieGridItemView
 import com.michaldrabik.ui_lists.details.views.ListDetailsMovieItemView
+import com.michaldrabik.ui_lists.details.views.ListDetailsShowGridItemView
 import com.michaldrabik.ui_lists.details.views.ListDetailsShowItemView
 import java.util.Collections
 
@@ -68,6 +71,7 @@ class ListDetailsAdapter(
     VIEW_TYPE_SHOW -> {
       val view = when (listViewMode) {
         LIST_NORMAL -> ListDetailsShowItemView(parent.context)
+        LIST_GRID -> ListDetailsShowGridItemView(parent.context)
       }.apply {
         itemClickListener = { item -> this@ListDetailsAdapter.itemClickListener(item) }
         missingImageListener = { item, force -> this@ListDetailsAdapter.missingImageListener(item, force) }
@@ -82,6 +86,7 @@ class ListDetailsAdapter(
     VIEW_TYPE_MOVIE -> {
       val view = when (listViewMode) {
         LIST_NORMAL -> ListDetailsMovieItemView(parent.context)
+        LIST_GRID -> ListDetailsMovieGridItemView(parent.context)
       }.apply {
         itemClickListener = { item -> this@ListDetailsAdapter.itemClickListener(item) }
         missingImageListener = { item, force -> this@ListDetailsAdapter.missingImageListener(item, force) }
@@ -106,9 +111,11 @@ class ListDetailsAdapter(
     when (holder.itemViewType) {
       VIEW_TYPE_SHOW -> when (listViewMode) {
         LIST_NORMAL -> (holder.itemView as ListDetailsShowItemView).bind(item)
+        LIST_GRID -> (holder.itemView as ListDetailsShowGridItemView).bind(item)
       }
       VIEW_TYPE_MOVIE -> when (listViewMode) {
         LIST_NORMAL -> (holder.itemView as ListDetailsMovieItemView).bind(item)
+        LIST_GRID -> (holder.itemView as ListDetailsMovieGridItemView).bind(item)
       }
       else -> throw IllegalStateException()
     }

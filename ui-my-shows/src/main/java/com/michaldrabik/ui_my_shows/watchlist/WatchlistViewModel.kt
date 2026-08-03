@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michaldrabik.common.Config
 import com.michaldrabik.repository.images.ShowImagesProvider
+import com.michaldrabik.repository.settings.SettingsRepository
 import com.michaldrabik.ui_base.common.ListViewMode
 import com.michaldrabik.ui_base.events.EventsManager
 import com.michaldrabik.ui_base.events.ReloadData
@@ -44,6 +45,7 @@ class WatchlistViewModel @Inject constructor(
   private val translationsCase: WatchlistTranslationsCase,
   private val imagesProvider: ShowImagesProvider,
   private val eventsManager: EventsManager,
+  private val settingsRepository: SettingsRepository,
 ) : ViewModel(),
   ChannelsDelegate by DefaultChannelsDelegate() {
 
@@ -58,6 +60,13 @@ class WatchlistViewModel @Inject constructor(
 
   init {
     viewModelScope.launch { eventsManager.events.collect { onEvent(it) } }
+    viewModeState.value = ListViewMode.valueOf(settingsRepository.viewMode.watchlistShowsViewMode)
+  }
+
+  fun toggleViewMode() {
+    val newMode = if (viewModeState.value == ListViewMode.LIST_NORMAL) ListViewMode.LIST_GRID else ListViewMode.LIST_NORMAL
+    settingsRepository.viewMode.watchlistShowsViewMode = newMode.name
+    viewModeState.value = newMode
   }
 
   fun onParentState(state: FollowedShowsUiState) {

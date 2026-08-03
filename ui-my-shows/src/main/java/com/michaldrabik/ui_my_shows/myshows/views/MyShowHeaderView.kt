@@ -8,6 +8,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_base.utilities.extensions.onClick
 import com.michaldrabik.ui_base.utilities.extensions.visibleIf
@@ -60,7 +61,8 @@ class MyShowHeaderView : FrameLayout {
 
       with(myShowsSortListViewChip) {
         when (viewMode) {
-          LIST_NORMAL -> setChipIconResource(R.drawable.ic_view_list)
+          LIST_NORMAL -> setChipIconResource(R.drawable.ic_view_grid)
+          LIST_GRID -> setChipIconResource(R.drawable.ic_view_list)
         }
         onClick { listModeClickListener?.invoke() }
       }

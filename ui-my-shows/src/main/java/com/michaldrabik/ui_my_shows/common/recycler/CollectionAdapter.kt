@@ -6,12 +6,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.michaldrabik.ui_base.BaseAdapter
 import com.michaldrabik.ui_base.BaseMovieAdapter
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_model.SortOrder
 import com.michaldrabik.ui_model.SortType
 import com.michaldrabik.ui_my_shows.common.recycler.CollectionListItem.FiltersItem
 import com.michaldrabik.ui_my_shows.common.recycler.CollectionListItem.ShowItem
 import com.michaldrabik.ui_my_shows.common.views.CollectionShowFiltersView
+import com.michaldrabik.ui_my_shows.common.views.CollectionShowGridView
 import com.michaldrabik.ui_my_shows.common.views.CollectionShowView
 
 class CollectionAdapter(
@@ -50,6 +52,7 @@ class CollectionAdapter(
     VIEW_TYPE_SHOW -> BaseMovieAdapter.BaseViewHolder(
       when (listViewMode) {
         LIST_NORMAL -> CollectionShowView(parent.context)
+        LIST_GRID -> CollectionShowGridView(parent.context)
       }.apply {
         itemClickListener = this@CollectionAdapter.itemClickListener
         itemLongClickListener = this@CollectionAdapter.itemLongClickListener
@@ -81,6 +84,7 @@ class CollectionAdapter(
       is ShowItem -> {
         when (listViewMode) {
           LIST_NORMAL -> (holder.itemView as CollectionShowView).bind(item)
+          LIST_GRID -> (holder.itemView as CollectionShowGridView).bind(item)
         }
       }
     }

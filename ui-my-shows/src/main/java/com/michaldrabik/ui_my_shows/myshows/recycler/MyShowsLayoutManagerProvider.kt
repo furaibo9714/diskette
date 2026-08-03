@@ -5,7 +5,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.RecyclerView
+import com.michaldrabik.common.Config.LISTS_GRID_SPAN
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_base.utilities.extensions.isTablet
 
@@ -28,6 +30,7 @@ internal object MyShowsLayoutManagerProvider {
   ): RecyclerView.LayoutManager =
     when (viewMode) {
       LIST_NORMAL -> LinearLayoutManager(context, VERTICAL, false)
+      LIST_GRID -> GridLayoutManager(context, LISTS_GRID_SPAN)
     }
 
   private fun provideTabletLayout(
@@ -37,5 +40,6 @@ internal object MyShowsLayoutManagerProvider {
   ): RecyclerView.LayoutManager =
     when (viewMode) {
       LIST_NORMAL -> GridLayoutManager(context, gridSpanSize)
+      LIST_GRID -> GridLayoutManager(context, LISTS_GRID_SPAN * 2)
     }
 }

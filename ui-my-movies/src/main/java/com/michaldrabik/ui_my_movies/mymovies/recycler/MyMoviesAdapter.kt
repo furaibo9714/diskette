@@ -6,11 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.michaldrabik.ui_base.BaseAdapter
 import com.michaldrabik.ui_base.BaseMovieAdapter
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_model.SortOrder
 import com.michaldrabik.ui_model.SortType
 import com.michaldrabik.ui_my_movies.mymovies.recycler.MyMoviesItem.Type
 import com.michaldrabik.ui_my_movies.mymovies.views.MyMovieAllView
+import com.michaldrabik.ui_my_movies.mymovies.views.MyMovieGridView
 import com.michaldrabik.ui_my_movies.mymovies.views.MyMovieHeaderView
 import com.michaldrabik.ui_my_movies.mymovies.views.MyMoviesRecentsView
 
@@ -54,6 +56,7 @@ class MyMoviesAdapter(
     VIEW_TYPE_MOVIE_ITEM -> BaseAdapter.BaseViewHolder(
       when (listViewMode) {
         LIST_NORMAL -> MyMovieAllView(parent.context)
+        LIST_GRID -> MyMovieGridView(parent.context)
       }.apply {
         itemClickListener = this@MyMoviesAdapter.itemClickListener
         itemLongClickListener = this@MyMoviesAdapter.itemLongClickListener
@@ -84,6 +87,7 @@ class MyMoviesAdapter(
       )
       VIEW_TYPE_MOVIE_ITEM -> when (listViewMode) {
         LIST_NORMAL -> (holder.itemView as MyMovieAllView).bind(item)
+        LIST_GRID -> (holder.itemView as MyMovieGridView).bind(item)
       }
     }
   }

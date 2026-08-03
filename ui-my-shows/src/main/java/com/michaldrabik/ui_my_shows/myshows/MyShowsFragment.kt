@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.michaldrabik.common.Config.LISTS_GRID_SPAN
 import com.michaldrabik.repository.settings.SettingsViewModeRepository
 import com.michaldrabik.ui_base.BaseFragment
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_base.common.OnScrollResetListener
 import com.michaldrabik.ui_base.common.OnSearchClickListener
@@ -97,7 +98,7 @@ class MyShowsFragment :
       itemLongClickListener = { item -> openShowMenu(item.show) },
       onSortOrderClickListener = { section, order, type -> openSortOrderDialog(section, order, type) },
       onTypeClickListener = { navigateToSafe(R.id.actionFollowedShowsFragmentToMyShowsFilters) },
-      onListViewModeClickListener = { },
+      onListViewModeClickListener = { viewModel.toggleViewMode() },
       onNetworksClickListener = ::openNetworksDialog,
       onGenresClickListener = ::openGenresDialog,
       missingImageListener = { item, force -> viewModel.loadMissingImage(item as MyShowsItem, force) },
@@ -156,6 +157,7 @@ class MyShowsFragment :
               RECENT_SHOWS, ALL_SHOWS_HEADER -> {
                 when (viewMode) {
                   LIST_NORMAL -> if (isTablet) tabletGridSpanSize else LISTS_GRID_SPAN
+                  LIST_GRID -> if (isTablet) LISTS_GRID_SPAN * 2 else LISTS_GRID_SPAN
                 }
               }
               ALL_SHOWS_ITEM -> {
