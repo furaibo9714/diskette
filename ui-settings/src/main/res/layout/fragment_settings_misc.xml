@@ -17,26 +17,6 @@
     />
 
   <LinearLayout
-    android:id="@+id/settingsRateApp"
-    style="@style/Settings.ItemLayout"
-    android:layout_width="match_parent"
-    >
-
-    <TextView
-      style="@style/Settings.Title"
-      android:text="@string/textSettingsRateAppTitle"
-      android:textColor="?attr/colorAccent"
-      />
-
-    <TextView
-      style="@style/Settings.Summary"
-      android:text="@string/textSettingsRateAppSummary"
-      android:textColor="?attr/colorAccent"
-      />
-
-  </LinearLayout>
-
-  <LinearLayout
     android:id="@+id/settingsContactDevs"
     style="@style/Settings.ItemLayout"
     android:layout_width="match_parent"

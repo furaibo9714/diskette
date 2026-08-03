@@ -41,8 +41,6 @@
   <string name="textSettingsMisc">Różne</string>
   <string name="textSettingsContactDevsTitle">Kontakt</string>
   <string name="textSettingsContactDevsSummary">Masz problem/pytanie? Kliknij aby wysłać wiadomość email (showlyapp@gmail.com).</string>
-  <string name="textSettingsRateAppTitle">Oceń Showly</string>
-  <string name="textSettingsRateAppSummary">Podoba ci się aplikacja? Kliknij aby dodać swoją recenzję w sklepie Play Store!</string>
   <string name="textSettingsDeleteCacheTitle">Wyczyść Obrazki</string>
   <string name="textSettingsDeleteCacheSummary">Kliknij aby wyczyścić pamięć podręczną obrazków jeżeli występują problemy z ich ładowaniem.</string>
   <string name="textSettingsLogoutTitle">Trakt.tv Wylogowanie</string>

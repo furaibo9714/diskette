@@ -41,8 +41,6 @@
   <string name="textSettingsMisc">Інше</string>
   <string name="textSettingsContactDevsTitle">Зв\'язатися з розробниками</string>
   <string name="textSettingsContactDevsSummary">Є проблема? Натисніть, щоб надіслати нам листа (showlyapp@gmail.com).</string>
-  <string name="textSettingsRateAppTitle">Залишити відгук</string>
-  <string name="textSettingsRateAppSummary">Подобається Showly? Залиште свій відгук у Play Store. Дякуємо!</string>
   <string name="textSettingsDeleteCacheTitle">Очистити кеш зображень</string>
   <string name="textSettingsDeleteCacheSummary">Натисніть, щоб очистити кеш локальних зображень. Це може допомогти, якщо зображення серіалів не завантажуються коректно.</string>
   <string name="textSettingsLogoutTitle">Вихід з Trakt.tv</string>

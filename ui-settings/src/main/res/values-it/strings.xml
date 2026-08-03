@@ -41,8 +41,6 @@
   <string name="textSettingsMisc">Varie</string>
   <string name="textSettingsContactDevsTitle">Contatta gli sviluppatori</string>
   <string name="textSettingsContactDevsSummary">Hai un problema? Clicca qui per inviarci un\'email (showlyapp@gmail.com).</string>
-  <string name="textSettingsRateAppTitle">Dacci la tua opinione</string>
-  <string name="textSettingsRateAppSummary">Ti piace Showly? Scrivi la tua recensione sul PlayStore. Grazie!</string>
   <string name="textSettingsDeleteCacheTitle">Pulisci la cache delle immagini</string>
   <string name="textSettingsDeleteCacheSummary">Clicca per pulire la cache delle immagini. Questo potrebbe aiutare nel caso le immagini degli show non venissero scaricate correttamente.</string>
   <string name="textSettingsLogoutTitle">Esci da Trakt.tv</string>

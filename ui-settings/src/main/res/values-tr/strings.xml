@@ -41,8 +41,6 @@
   <string name="textSettingsMisc">Çeşitli</string>
   <string name="textSettingsContactDevsTitle">Geliştiriciler İle İletişime Geç</string>
   <string name="textSettingsContactDevsSummary">Bir sorununuz mu var? Bize e-posta göndermek için dokunun (showlyapp@gmail.com).</string>
-  <string name="textSettingsRateAppTitle">Geri Bildirim Gönder</string>
-  <string name="textSettingsRateAppSummary">Showly uygulamasından keyif alıyor musunuz? PlayStore\'da yorum yapabilirsiniz. Teşekkürler!</string>
   <string name="textSettingsDeleteCacheTitle">Görüntü Önbelleğini Temizle</string>
   <string name="textSettingsDeleteCacheSummary">Yerel görüntü önbelleğini temizlemek için dokunun. Bu, dizi görüntülerinin doğru yüklenmediğinde yardımcı olabilir.</string>
   <string name="textSettingsLogoutTitle">Trakt.tv Çıkış Yap</string>

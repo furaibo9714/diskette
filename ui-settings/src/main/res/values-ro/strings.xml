@@ -41,8 +41,6 @@
     <string name="textSettingsMisc">Diverse</string>
     <string name="textSettingsContactDevsTitle">Contactează dezvoltatorii</string>
     <string name="textSettingsContactDevsSummary">Ai o problemă? Clic pentru a ne trimite un e-mail (showlyapp@gmail.com).</string>
-    <string name="textSettingsRateAppTitle">Oferă feedback</string>
-    <string name="textSettingsRateAppSummary">Îți place Showly? Lasă-ne un comentariu pe PlayStore. Mulțumim!</string>
     <string name="textSettingsDeleteCacheTitle">Șterge memoria cache a imaginilor</string>
     <string name="textSettingsDeleteCacheSummary">Selectează pentru a șterge memoria cache a imaginilor locale. Acest lucru poate fi util dacă imaginile nu se încarcă corect.</string>
     <string name="textSettingsLogoutTitle">Deconectare Trakt.tv</string>

@@ -41,8 +41,6 @@
   <string name="textSettingsMisc">Sekalaiset</string>
   <string name="textSettingsContactDevsTitle">Ota yhteyttä kehittäjiin</string>
   <string name="textSettingsContactDevsSummary">Onko ongelmia? Lähetä meille sähköpostia napauttamalla (showlyapp@gmail.com).</string>
-  <string name="textSettingsRateAppTitle">Anna palautetta</string>
-  <string name="textSettingsRateAppSummary">Nautitko Showlysta? Arvostele se Play Kaupassa, kiitos!</string>
   <string name="textSettingsDeleteCacheTitle">Tyhjennä kuvavälimuisti</string>
   <string name="textSettingsDeleteCacheSummary">Tyhjennä paikallinen kuvavälimuisti napauttamalla. Tämä saattaa auttaa, jos sarjojen kuvat eivät lataudu oikein.</string>
   <string name="textSettingsLogoutTitle">Trakt.tv-uloskirjaus</string>

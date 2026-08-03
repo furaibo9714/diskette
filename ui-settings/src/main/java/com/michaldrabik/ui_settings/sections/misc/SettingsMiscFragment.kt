@@ -16,7 +16,6 @@ import com.michaldrabik.ui_base.utilities.viewBinding
 import com.michaldrabik.ui_settings.BuildConfig
 import com.michaldrabik.ui_settings.R
 import com.michaldrabik.ui_settings.databinding.FragmentSettingsMiscBinding
-import com.michaldrabik.ui_settings.helpers.PlayStoreHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,7 +40,6 @@ class SettingsMiscFragment : BaseFragment<SettingsMiscViewModel>(R.layout.fragme
   private fun setupView() {
     with(binding) {
       settingsContactDevs.onClick { openMailMessage() }
-      settingsRateApp.onClick { PlayStoreHelper.openPlayStorePage(requireActivity()) }
       settingsDeleteCache.onClick { viewModel.deleteImagesCache(requireAppContext()) }
 
       settingsTwitterIcon.onClick { openWebLink(Config.TWITTER_URL) }
