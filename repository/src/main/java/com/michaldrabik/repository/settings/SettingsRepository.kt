@@ -1,5 +1,6 @@
 package com.michaldrabik.repository.settings
 
+import android.app.UiModeManager.MODE_NIGHT_YES
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.michaldrabik.common.Config.DEFAULT_COUNTRY
@@ -12,6 +13,7 @@ import com.michaldrabik.data_local.utilities.TransactionsProvider
 import com.michaldrabik.repository.mappers.Mappers
 import com.michaldrabik.repository.utilities.BooleanPreference
 import com.michaldrabik.repository.utilities.EnumPreference
+import com.michaldrabik.repository.utilities.IntPreference
 import com.michaldrabik.repository.utilities.LongPreference
 import com.michaldrabik.repository.utilities.StringPreference
 import com.michaldrabik.ui_model.ProgressDateSelectionType
@@ -55,6 +57,7 @@ class SettingsRepository @Inject constructor(
     private const val PROGRESS_UPCOMING_DAYS = "PROGRESS_UPCOMING_DAYS"
     private const val PROGRESS_ON_HOLD_COLLAPSED = "PROGRESS_ON_HOLD_COLLAPSED"
     private const val PROGRESS_NEXT_EPISODE_TYPE = "PROGRESS_NEXT_EPISODE_TYPE"
+    private const val APP_THEME = "KEY_APP_THEME"
     private const val PROGRESS_DATE_SELECTION_TYPE = "PROGRESS_DATE_SELECTION_TYPE"
     private const val LOCALE_INITIALISED = "LOCALE_INITIALISED"
     private const val FLOPPY_LISTS_BACKFILLED = "FLOPPY_LISTS_BACKFILLED"
@@ -104,6 +107,7 @@ class SettingsRepository @Inject constructor(
     ALWAYS_ASK,
     ProgressDateSelectionType::class.java,
   )
+  var appTheme by IntPreference(preferences, APP_THEME, MODE_NIGHT_YES)
   var isLocaleInitialised by BooleanPreference(preferences, LOCALE_INITIALISED, false)
   var isFloppyListsBackfilled by BooleanPreference(preferences, FLOPPY_LISTS_BACKFILLED, false)
 

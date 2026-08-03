@@ -1,53 +1,55 @@
 <resources>
 
   <!-- Base app theme -->
-  <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
-    <item name="android:windowBackground">@color/colorBackground</item>
+  <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <item name="android:windowBackground">@color/colorBackgroundLight</item>
     <item name="switchStyle">@style/ShowlySwitch</item>
+    <item name="toolbarStyle">@style/AppToolbar</item>
     <item name="enableEdgeToEdge">true</item>
 
-    <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorPrimary">@color/colorSurfaceLight</item>
+    <item name="colorPrimaryDark">@color/colorSurfaceLight</item>
+    <item name="colorOnPrimary">@color/colorTextPrimaryLight</item>
     <item name="colorAccent">@color/colorAccent</item>
 
-    <item name="android:textColorPrimary">@color/colorWhite</item>
-    <item name="android:textColorSecondary">@color/colorGrayLight</item>
-    <item name="textColorOnSurface">@color/colorWhite</item>
+    <item name="android:textColorPrimary">@color/colorTextPrimaryLight</item>
+    <item name="android:textColorSecondary">@color/colorTextSecondaryLight</item>
+    <item name="textColorOnSurface">@color/colorTextPrimaryLight</item>
     <item name="textColorGridTitle">@color/colorWhite</item>
-    <item name="textColorTab">#A1A1A1</item>
-    <item name="textColorTabSelected">@color/colorWhite</item>
+    <item name="textColorTab">#757575</item>
+    <item name="textColorTabSelected">@color/colorTextPrimaryLight</item>
     <item name="textColorChip">?android:textColorPrimary</item>
     <item name="textColorChipSelected">@color/colorAccent</item>
-    <item name="colorBackgroundChipSelected">@color/colorBackground</item>
+    <item name="colorBackgroundChipSelected">@color/colorBackgroundLight</item>
     <item name="colorBackgroundChipSelectedLight">?colorSearchViewBackground</item>
-    <item name="colorProgressTrack">#3C3C3C</item>
+    <item name="colorProgressTrack">#E0E0E0</item>
 
-    <item name="colorInfoSnackbar">@color/colorWhite</item>
-    <item name="textColorInfoSnackbar">@color/colorBlack</item>
+    <item name="colorInfoSnackbar">#323232</item>
+    <item name="textColorInfoSnackbar">@color/colorWhite</item>
     <item name="colorErrorSnackbar">@color/colorError</item>
     <item name="textColorErrorSnackbar">@color/colorWhite</item>
 
-    <item name="colorBottomMenuBackground">@color/colorPrimary</item>
-    <item name="colorBottomMenuItem">#838383</item>
-    <item name="colorBottomMenuItemChecked">@color/colorWhite</item>
-    <item name="colorBottomMenuSeparator">#464646</item>
-    <item name="colorBottomMenuIndicator">#E6323339</item>
+    <item name="colorBottomMenuBackground">@color/colorSurfaceLight</item>
+    <item name="colorBottomMenuItem">#757575</item>
+    <item name="colorBottomMenuItemChecked">@color/colorTextPrimaryLight</item>
+    <item name="colorBottomMenuSeparator">#E0E0E0</item>
+    <item name="colorBottomMenuIndicator">#26F44336</item>
 
-    <item name="colorSearchViewBackground">@color/colorPrimary</item>
-    <item name="colorSearchViewControl">@color/colorGrayLight</item>
+    <item name="colorSearchViewBackground">@color/colorSurfaceLight</item>
+    <item name="colorSearchViewControl">@color/colorTextSecondaryLight</item>
 
-    <item name="colorSearchLocalViewBackground">@color/colorGrayDark</item>
-    <item name="colorSearchLocalViewControl">@color/colorGrayLight</item>
+    <item name="colorSearchLocalViewBackground">@color/colorSurfaceVariantLight</item>
+    <item name="colorSearchLocalViewControl">@color/colorTextSecondaryLight</item>
 
-    <item name="colorPlaceholderBackground">#222222</item>
-    <item name="colorPlaceholderStroke">#6A6A6A</item>
-    <item name="colorPlaceholderIcon">#6A6A6A</item>
+    <item name="colorPlaceholderBackground">@color/colorSurfaceVariantLight</item>
+    <item name="colorPlaceholderStroke">#C4C4C4</item>
+    <item name="colorPlaceholderIcon">#9E9E9E</item>
 
-    <item name="colorSeparator">@color/colorGrayDark</item>
-    <item name="colorChipButtonStroke">#66AAAAAA</item>
-    <item name="colorCardBackground">#282828</item>
-    <item name="colorBadgeBackground">@color/colorGrayDark</item>
-    <item name="colorSheetBackground">@color/colorPrimary</item>
+    <item name="colorSeparator">#E0E0E0</item>
+    <item name="colorChipButtonStroke">#66888888</item>
+    <item name="colorCardBackground">@color/colorSurfaceLight</item>
+    <item name="colorBadgeBackground">@color/colorSurfaceVariantLight</item>
+    <item name="colorSheetBackground">@color/colorSurfaceLight</item>
     <item name="colorWidgetStatusBackground">@color/colorBlackTranslucent</item>
   </style>
 
@@ -111,14 +113,14 @@
 
   <!-- Dialogs -->
 
-  <style name="AlertDialog" parent="@style/Theme.Material3.Dark.Dialog">
+  <style name="AlertDialog" parent="@style/Theme.Material3.DayNight.Dialog">
     <item name="colorAccent">@color/colorAccent</item>
     <item name="colorPrimary">@color/colorAccent</item>
     <item name="buttonBarNegativeButtonStyle">@style/AlertDialog.NegativeButton</item>
   </style>
 
   <style name="AlertDialog.NegativeButton" parent="Widget.Material3.Button.TextButton.Dialog">
-    <item name="android:textColor">@color/colorGrayLight</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
     <item name="cornerRadius">100dp</item>
   </style>
 
@@ -126,6 +128,10 @@
 
   <style name="Toolbar.Button.Navigation.Tinted" parent="Widget.AppCompat.Toolbar.Button.Navigation">
     <item name="tint">?android:attr/textColorPrimary</item>
+  </style>
+
+  <style name="AppToolbar" parent="Widget.Material3.Toolbar">
+    <item name="navigationIconTint">?android:attr/textColorPrimary</item>
   </style>
 
   <style name="AlertDialog.SmallText" parent="AlertDialog">
@@ -270,6 +276,8 @@
     <item name="cornerRadius">100dp</item>
     <item name="android:textAllCaps">true</item>
     <item name="android:letterSpacing">0.05</item>
+    <item name="strokeColor">?attr/colorChipButtonStroke</item>
+    <item name="strokeWidth">1dp</item>
   </style>
 
   <style name="RoundTextButton" parent="Widget.Material3.Button.TextButton">
@@ -303,6 +311,7 @@
 
   <style name="ShowlySwitch" parent="Widget.Material3.CompoundButton.Switch">
     <item name="materialThemeOverlay">@style/ShowlySwitch.Overlay</item>
+    <item name="thumbTint">@color/selector_switch_thumb</item>
   </style>
 
   <style name="ShowlySwitch.Overlay" parent="">

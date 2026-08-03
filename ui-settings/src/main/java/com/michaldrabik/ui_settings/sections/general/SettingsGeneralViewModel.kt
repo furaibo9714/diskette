@@ -14,6 +14,7 @@ import com.michaldrabik.ui_model.ProgressDateSelectionType
 import com.michaldrabik.ui_model.ProgressNextEpisodeType
 import com.michaldrabik.ui_model.Settings
 import com.michaldrabik.ui_settings.helpers.AppLanguage
+import com.michaldrabik.ui_settings.helpers.AppTheme
 import com.michaldrabik.ui_settings.sections.general.cases.SettingsGeneralMainCase
 import com.michaldrabik.ui_settings.sections.general.cases.SettingsGeneralStreamingsCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,6 +42,7 @@ class SettingsGeneralViewModel @Inject constructor(
   private val progressDateSelectionState = MutableStateFlow<ProgressDateSelectionType?>(null)
   private val progressUpcomingDaysState = MutableStateFlow<Long?>(null)
   private val tabletsColumnsState = MutableStateFlow(Config.DEFAULT_LISTS_GRID_SPAN)
+  private val themeState = MutableStateFlow(AppTheme.DARK)
 
   fun loadSettings() {
     viewModelScope.launch {
@@ -59,6 +61,7 @@ class SettingsGeneralViewModel @Inject constructor(
     progressDateSelectionState.value = mainCase.getDateSelectionType()
     progressUpcomingDaysState.value = mainCase.getProgressUpcomingDays()
     tabletsColumnsState.value = mainCase.getTabletsColumns()
+    themeState.value = mainCase.getTheme()
     restartAppState.value = restartApp
   }
 
@@ -96,6 +99,14 @@ class SettingsGeneralViewModel @Inject constructor(
       mainCase.setLanguage(language)
       val locales = LocaleListCompat.forLanguageTags(language.code)
       AppCompatDelegate.setApplicationLocales(locales)
+    }
+  }
+
+  fun setTheme(theme: AppTheme) {
+    viewModelScope.launch {
+      mainCase.setTheme(theme)
+      AppCompatDelegate.setDefaultNightMode(theme.code)
+      refreshSettings()
     }
   }
 
@@ -157,7 +168,8 @@ class SettingsGeneralViewModel @Inject constructor(
     progressUpcomingDaysState,
     tabletsColumnsState,
     progressDateSelectionState,
-  ) { s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11 ->
+    themeState,
+  ) { s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12 ->
     SettingsGeneralUiState(
       settings = s1,
       language = s2,
@@ -170,6 +182,7 @@ class SettingsGeneralViewModel @Inject constructor(
       progressUpcomingDays = s9,
       tabletColumns = s10,
       progressDateSelectionType = s11,
+      theme = s12,
     )
   }.stateIn(
     scope = viewModelScope,

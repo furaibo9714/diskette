@@ -104,6 +104,7 @@ class SettingsGeneralFragment : BaseFragment<SettingsGeneralViewModel>(R.layout.
   private fun renderTheme(theme: AppTheme) {
     with(binding) {
       settingsThemeValue.setText(theme.displayName)
+      settingsTheme.onClick { showThemeDialog(theme) }
     }
   }
 
@@ -182,6 +183,20 @@ class SettingsGeneralFragment : BaseFragment<SettingsGeneralViewModel>(R.layout.
       .setSingleChoiceItems(options.map { getString(it.displayName) }.toTypedArray(), selected) { dialog, index ->
         if (index != selected) {
           viewModel.setLanguage(options[index])
+        }
+        dialog.dismiss()
+      }.show()
+  }
+
+  private fun showThemeDialog(theme: AppTheme) {
+    val options = AppTheme.values()
+    val selected = options.indexOf(theme)
+
+    MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialog)
+      .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.bg_dialog))
+      .setSingleChoiceItems(options.map { getString(it.displayName) }.toTypedArray(), selected) { dialog, index ->
+        if (index != selected) {
+          viewModel.setTheme(options[index])
         }
         dialog.dismiss()
       }.show()

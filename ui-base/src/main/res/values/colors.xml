@@ -12,6 +12,7 @@
   <color name="colorBlackTranslucent">#B2000000</color>
   <color name="colorBlackTranslucentMedium">#66000000</color>
   <color name="colorBlackTranslucentLight">#40000000</color>
+  <color name="colorWhiteTranslucentMedium">#66FFFFFF</color>
   <color name="colorWhite">#FFFFFF</color>
   <color name="colorGrayLight">#AAAAAA</color>
   <color name="colorGray">#636363</color>
@@ -20,6 +21,13 @@
   <color name="colorBlue">#17283A</color>
   <color name="colorBlueLight">#70767C</color>
   <color name="colorBlueLight2x">#91989F</color>
+
+  <!-- Light theme surfaces/text (dark theme reuses the palette above) -->
+  <color name="colorBackgroundLight">#F5F5F5</color>
+  <color name="colorSurfaceLight">#FFFFFF</color>
+  <color name="colorSurfaceVariantLight">#ECECEC</color>
+  <color name="colorTextPrimaryLight">#1A1A1A</color>
+  <color name="colorTextSecondaryLight">#5F6368</color>
 
   <color name="colorNotificationDark">#F44336</color>
   <color name="colorNotificationLight">#4B6383</color>

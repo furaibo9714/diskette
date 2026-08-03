@@ -1,0 +1,55 @@
+<resources>
+
+  <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <item name="android:windowBackground">@color/colorBackground</item>
+    <item name="switchStyle">@style/ShowlySwitch</item>
+    <item name="toolbarStyle">@style/AppToolbar</item>
+    <item name="enableEdgeToEdge">true</item>
+
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorOnPrimary">@color/colorWhite</item>
+    <item name="colorAccent">@color/colorAccent</item>
+
+    <item name="android:textColorPrimary">@color/colorWhite</item>
+    <item name="android:textColorSecondary">@color/colorGrayLight</item>
+    <item name="textColorOnSurface">@color/colorWhite</item>
+    <item name="textColorGridTitle">@color/colorWhite</item>
+    <item name="textColorTab">#A1A1A1</item>
+    <item name="textColorTabSelected">@color/colorWhite</item>
+    <item name="textColorChip">?android:textColorPrimary</item>
+    <item name="textColorChipSelected">@color/colorAccent</item>
+    <item name="colorBackgroundChipSelected">@color/colorBackground</item>
+    <item name="colorBackgroundChipSelectedLight">?colorSearchViewBackground</item>
+    <item name="colorProgressTrack">#3C3C3C</item>
+
+    <item name="colorInfoSnackbar">@color/colorWhite</item>
+    <item name="textColorInfoSnackbar">@color/colorBlack</item>
+    <item name="colorErrorSnackbar">@color/colorError</item>
+    <item name="textColorErrorSnackbar">@color/colorWhite</item>
+
+    <item name="colorBottomMenuBackground">@color/colorPrimary</item>
+    <item name="colorBottomMenuItem">#838383</item>
+    <item name="colorBottomMenuItemChecked">@color/colorWhite</item>
+    <item name="colorBottomMenuSeparator">#464646</item>
+    <item name="colorBottomMenuIndicator">#E6323339</item>
+
+    <item name="colorSearchViewBackground">@color/colorPrimary</item>
+    <item name="colorSearchViewControl">@color/colorGrayLight</item>
+
+    <item name="colorSearchLocalViewBackground">@color/colorGrayDark</item>
+    <item name="colorSearchLocalViewControl">@color/colorGrayLight</item>
+
+    <item name="colorPlaceholderBackground">#222222</item>
+    <item name="colorPlaceholderStroke">#6A6A6A</item>
+    <item name="colorPlaceholderIcon">#6A6A6A</item>
+
+    <item name="colorSeparator">@color/colorGrayDark</item>
+    <item name="colorChipButtonStroke">#66AAAAAA</item>
+    <item name="colorCardBackground">#282828</item>
+    <item name="colorBadgeBackground">@color/colorGrayDark</item>
+    <item name="colorSheetBackground">@color/colorPrimary</item>
+    <item name="colorWidgetStatusBackground">@color/colorBlackTranslucent</item>
+  </style>
+
+</resources>

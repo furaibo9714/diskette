@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.os.Build
 import android.os.StrictMode
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.jakewharton.processphoenix.ProcessPhoenix
@@ -49,6 +50,10 @@ class App :
           settingsRepository.update(Settings.createInitial())
         }
       }
+
+    fun setupTheme() {
+      AppCompatDelegate.setDefaultNightMode(settingsRepository.appTheme)
+    }
 
     fun setupStrictMode() {
       if (BuildConfig.DEBUG) {
@@ -104,6 +109,7 @@ class App :
     }
 
     setupSettings()
+    setupTheme()
     setupStrictMode()
     setupNotificationChannels()
   }
