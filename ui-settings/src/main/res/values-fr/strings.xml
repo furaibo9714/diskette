@@ -49,8 +49,6 @@
   <string name="textSettingsLogoutMessage">\nVoulez-vous vraiment vous déconnecter ?\n</string>
   <string name="textSettingsMoviesEnabledTitle">Films</string>
   <string name="textSettingsMoviesEnabledSummary">Activer/désactiver la prise en compte des films. L\'application va redémarrer.</string>
-  <string name="textSettingsManagePaymentsTitle">Gérer les abonnements</string>
-  <string name="textSettingsManagePaymentsSummary">Gérer les abonnements dans le Google Play Store.</string>
   <string name="textSettingsWidgets">Widgets</string>
   <string name="textSettingsWidgetsLabelsTitle">Titres</string>
   <string name="textSettingsWidgetsLabelsSummary">Afficher les titres translucides des widgets.</string>

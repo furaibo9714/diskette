@@ -49,10 +49,6 @@
   <string name="textSettingsLogoutMessage">\nEr du sikker på, at du gerne vil logge ud?\n</string>
   <string name="textSettingsMoviesEnabledTitle">Film</string>
   <string name="textSettingsMoviesEnabledSummary">Aktiver/deaktiver film support. Appen vil genstarte.</string>
-  <string name="textSettingsManagePaymentsTitle">Administrer Abonnementer</string>
-  <string name="textSettingsManagePaymentsSummary">Administrer abonnementer i Google Play Butik.</string>
-  <string name="textSettingsNewsEnabledTitle">Nyheder</string>
-  <string name="textSettingsNewsEnabledSummary">Aktiver/deaktiver nyhedssektionen. Appen vil genstarte.</string>
   <string name="textSettingsWidgets">Widgets</string>
   <string name="textSettingsWidgetsLabelsTitle">Titler</string>
   <string name="textSettingsWidgetsLabelsSummary">Vis gennemsigtige widget titler.</string>

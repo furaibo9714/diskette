@@ -49,10 +49,6 @@
     <string name="textSettingsLogoutMessage">\nEști sigur că dorești să te deconectezi?\n</string>
     <string name="textSettingsMoviesEnabledTitle">Filme</string>
     <string name="textSettingsMoviesEnabledSummary">Activează/dezactivează suportul pentru filme. Aplicația se va reporni.</string>
-    <string name="textSettingsManagePaymentsTitle">Gestionează abonamentele</string>
-    <string name="textSettingsManagePaymentsSummary">Gestionează abonamentele în Google Play Store.</string>
-    <string name="textSettingsNewsEnabledTitle">Știri</string>
-    <string name="textSettingsNewsEnabledSummary">Activează/dezactivează secțiunea de știri. Aplicația se va reporni.</string>
     <string name="textSettingsWidgets">Widgeturi</string>
     <string name="textSettingsWidgetsLabelsTitle">Titluri</string>
     <string name="textSettingsWidgetsLabelsSummary">Afișează titlurile widgeturilor translucide.</string>
@@ -65,11 +61,6 @@
     <string name="textSettingsDateSelectionMessage">Selectează opțiunea implicită de selectare a datei.</string>
     <string name="textSettingsTabletColumnsTitle">Liste Coloane Număr</string>
     <string name="textSettingsTabletColumnsSummary">Selectare numărul coloanelor preferate pentru liste.</string>
-    <string name="textSettingsPrivacy">Confidențialitate</string>
-    <string name="textSettingsCrashesTitle">Rapoarte de eroare</string>
-    <string name="textSettingsCrashesSummary">Permite rapoartele anonime de erori pentru a ajuta la crearea celei mai bune aplicații posibile.</string>
-    <string name="textSettingsAnalyticsTitle">Analitică</string>
-    <string name="textSettingsAnalyticsSummary">Permite utilizarea analizelor anonime pentru a crea cea mai bună aplicație posibilă.</string>
     <string name="textSettingsBackup">Copie de rezervă &amp; Restaurare</string>
     <string name="textSettingsBackupExportTitle">Export</string>
     <string name="textSettingsBackupExportDescription">Exportarea datelor pentru a crea o copie de rezervă sau pentru a le transfera pe un dispozitiv nou.</string>
