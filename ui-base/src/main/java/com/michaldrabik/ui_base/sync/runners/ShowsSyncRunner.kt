@@ -29,16 +29,6 @@ class ShowsSyncRunner @Inject constructor(
 
   companion object {
     private const val DELAY_MS = 100L
-
-    /**
-     * A Floppy full-library import can leave hundreds of shows never-synced (UNKNOWN status,
-     * see below) all at once. Backfilling every one of them - full show details + a full
-     * season/episode delete-and-reinsert each - in a single run has been observed to run the
-     * heap out of memory on large libraries (900+ shows queued in one run). Capping bounds each
-     * run's peak memory use; the rest gets picked up by the next run, since a full sync already
-     * fires on every app start and Progress pull-to-refresh.
-     */
-    private const val MAX_SHOWS_PER_RUN = 25
   }
 
   var progressListener: (suspend (count: Int, total: Int) -> Unit)? = null
@@ -62,7 +52,6 @@ class ShowsSyncRunner @Inject constructor(
       .filter { it.status !in arrayOf(ENDED, CANCELED) }
       .filter { nowUtcMillis() - lastSyncOf(it.traktId) >= SHOW_SYNC_COOLDOWN }
       .sortedBy { lastSyncOf(it.traktId) } // never-synced (0) and longest-stale shows first
-      .take(MAX_SHOWS_PER_RUN)
 
     Timber.i("Shows to sync: ${showsToSync.size}.")
     if (showsToSync.isEmpty()) {
