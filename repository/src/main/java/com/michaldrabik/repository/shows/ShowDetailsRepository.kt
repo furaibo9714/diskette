@@ -25,7 +25,8 @@ class ShowDetailsRepository @Inject constructor(
     force: Boolean = false,
   ): Show {
     val localShow = localSource.shows.getById(idTrakt.id)
-    if (force || localShow == null || nowUtcMillis() - localShow.updatedAt > Config.SHOW_DETAILS_CACHE_DURATION) {
+    val isIncomplete = localShow != null && localShow.runtime <= 0
+    if (force || localShow == null || isIncomplete || nowUtcMillis() - localShow.updatedAt > Config.SHOW_DETAILS_CACHE_DURATION) {
       val remoteShow = remoteSource.trakt.fetchShow(idTrakt.id, localShow?.idTmdb)
       val show = mappers.show.fromNetwork(remoteShow)
       localSource.shows.upsert(listOf(mappers.show.toDatabase(show)))

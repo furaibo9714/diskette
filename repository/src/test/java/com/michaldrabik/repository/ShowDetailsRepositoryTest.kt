@@ -43,6 +43,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
     runBlocking {
       val showDb = mockk<Show>(relaxed = true) {
         every { idTrakt } returns 1
+        every { runtime } returns 42
         every { updatedAt } returns nowUtcMillis() - 100
       }
       coEvery { showsDao.getById(any<Long>()) } returns showDb
