@@ -21,9 +21,13 @@ data class Show(
   val airedEpisodes: Int,
   val createdAt: Long,
   val updatedAt: Long,
+  val runtimeMax: Int = -1,
 ) {
 
   val traktId = ids.trakt.id
+
+  /** Only true when episode lengths genuinely vary (e.g. TMDB's per-show runtime was missing). */
+  val hasRuntimeRange = runtimeMax > 0 && runtimeMax != runtime
 
   val titleNoThe = title.removePrefix("The").trim()
 

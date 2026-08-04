@@ -5,7 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-const val DATABASE_VERSION = 47
+const val DATABASE_VERSION = 48
 const val DATABASE_NAME = "SHOWLY2_DB_2"
 
 class Migrations(
@@ -863,6 +863,12 @@ class Migrations(
     }
   }
 
+  private val migration48 = object : Migration(47, 48) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+      database.execSQL("ALTER TABLE shows ADD COLUMN runtime_max INTEGER NOT NULL DEFAULT -1")
+    }
+  }
+
   fun getAll() =
     listOf(
       migration2,
@@ -911,5 +917,6 @@ class Migrations(
       migration45,
       migration46,
       migration47,
+      migration48,
     )
 }

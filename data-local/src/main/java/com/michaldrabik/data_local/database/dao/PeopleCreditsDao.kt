@@ -41,6 +41,7 @@ interface PeopleCreditsDao : BaseDao<PersonCredits>, PeopleCreditsLocalDataSourc
     shows.comment_count,
     shows.genres,
     shows.aired_episodes,
+    shows.runtime_max,
     people_credits.created_at AS created_at,
     people_credits.updated_at AS updated_at
     FROM shows

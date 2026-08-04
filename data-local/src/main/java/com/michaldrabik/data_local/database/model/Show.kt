@@ -33,4 +33,5 @@ data class Show(
   @ColumnInfo(name = "aired_episodes", defaultValue = "-1") val airedEpisodes: Int,
   @ColumnInfo(name = "created_at", defaultValue = "-1") val createdAt: Long,
   @ColumnInfo(name = "updated_at", defaultValue = "-1") val updatedAt: Long,
+  @ColumnInfo(name = "runtime_max", defaultValue = "-1") val runtimeMax: Int,
 )

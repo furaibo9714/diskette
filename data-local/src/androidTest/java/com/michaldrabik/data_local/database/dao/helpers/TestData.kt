@@ -36,6 +36,7 @@ object TestData {
       airedEpisodes = 0,
       createdAt = 0,
       updatedAt = 0,
+      runtimeMax = -1,
     )
 
   fun createSettings() =

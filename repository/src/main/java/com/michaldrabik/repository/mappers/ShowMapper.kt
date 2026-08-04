@@ -39,6 +39,7 @@ class ShowMapper @Inject constructor(
       show.aired_episodes ?: -1,
       nowUtcMillis(),
       nowUtcMillis(),
+      show.runtime_max ?: -1,
     )
 
   fun toNetwork(show: Show) =
@@ -65,6 +66,7 @@ class ShowMapper @Inject constructor(
       show.commentCount,
       show.genres,
       show.airedEpisodes,
+      runtime_max = show.runtimeMax.takeIf { it > 0 },
     )
 
   fun fromDatabase(show: ShowDb) =
@@ -89,6 +91,7 @@ class ShowMapper @Inject constructor(
       show.airedEpisodes,
       show.createdAt,
       show.updatedAt,
+      show.runtimeMax,
     )
 
   fun toDatabase(show: Show) =
@@ -120,5 +123,6 @@ class ShowMapper @Inject constructor(
       show.airedEpisodes,
       show.createdAt,
       nowUtcMillis(),
+      show.runtimeMax,
     )
 }

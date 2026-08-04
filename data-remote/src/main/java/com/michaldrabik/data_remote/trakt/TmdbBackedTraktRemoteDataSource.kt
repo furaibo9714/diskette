@@ -59,7 +59,20 @@ internal class TmdbBackedTraktRemoteDataSource(
   ): Show {
     val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return legacyTrakt.fetchShow(traktId)
     val details = tmdbShows.fetchShowDetails(resolvedTmdbId)
-    return TmdbToTraktModelConverter.toShow(resolvedTmdbId, details)
+    val show = TmdbToTraktModelConverter.toShow(resolvedTmdbId, details)
+    if (!details.episode_run_time.isNullOrEmpty()) return show
+
+    val seasonNumbers = details.seasons.orEmpty().mapNotNull { it.season_number }
+    val episodeRuntimes = coroutineScope {
+      seasonNumbers
+        .map { seasonNumber -> async { tmdbShows.fetchSeasonDetails(resolvedTmdbId, seasonNumber) } }
+        .awaitAll()
+        .flatMap { it.episodes.orEmpty() }
+        .mapNotNull { it.runtime }
+    }
+    val runtime = episodeRuntimes.minOrNull() ?: return show
+    val runtimeMax = episodeRuntimes.maxOrNull()?.takeIf { it != runtime }
+    return show.copy(runtime = runtime, runtime_max = runtimeMax)
   }
 
   override suspend fun fetchMovie(

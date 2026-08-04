@@ -40,6 +40,7 @@ interface MyShowsDao : MyShowsLocalDataSource {
       "shows.comment_count, " +
       "shows.genres, " +
       "shows.aired_episodes, " +
+      "shows.runtime_max, " +
       "shows_my_shows.last_watched_at AS updated_at, " +
       "shows_my_shows.created_at " +
       "FROM shows " +
@@ -74,6 +75,7 @@ interface MyShowsDao : MyShowsLocalDataSource {
       "shows.comment_count, " +
       "shows.genres, " +
       "shows.aired_episodes, " +
+      "shows.runtime_max, " +
       "shows_my_shows.last_watched_at AS updated_at, " +
       "shows_my_shows.created_at " +
       "FROM shows " +

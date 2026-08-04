@@ -289,12 +289,18 @@ class ShowDetailsFragment : BaseFragment<ShowDetailsViewModel>(R.layout.fragment
       .mapNotNull { Genre.fromSlug(it) }
       .joinToString(", ") { getString(it.displayName) }
 
+    val runtimeText = if (show.hasRuntimeRange) {
+      "${show.runtime}-${show.runtimeMax}"
+    } else {
+      "${show.runtime}"
+    }
+
     var extraInfoText = getString(
       R.string.textShowExtraInfo,
       show.network,
       year,
       country.uppercase(),
-      "⏲ ${show.runtime}",
+      "⏲ $runtimeText",
       getString(R.string.textMinutesShort),
       genres,
     )

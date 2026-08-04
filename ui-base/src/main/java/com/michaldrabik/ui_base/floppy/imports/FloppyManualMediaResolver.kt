@@ -136,6 +136,7 @@ class FloppyManualMediaResolver @Inject constructor(
     airedEpisodes = -1,
     createdAt = -1,
     updatedAt = -1,
+    runtimeMax = -1,
   )
 
   private fun buildTmdbMovie(
@@ -200,6 +201,7 @@ class FloppyManualMediaResolver @Inject constructor(
     airedEpisodes = -1,
     createdAt = -1,
     updatedAt = -1,
+    runtimeMax = -1,
   )
 
   private fun buildManualMovie(

@@ -40,6 +40,7 @@ interface ArchiveShowsDao : ArchiveShowsLocalDataSource {
       "shows.comment_count, " +
       "shows.genres, " +
       "shows.aired_episodes, " +
+      "shows.runtime_max, " +
       "shows_archive.updated_at, " +
       "shows_archive.created_at " +
       "FROM shows " +
@@ -74,6 +75,7 @@ interface ArchiveShowsDao : ArchiveShowsLocalDataSource {
       "shows.comment_count, " +
       "shows.genres, " +
       "shows.aired_episodes, " +
+      "shows.runtime_max, " +
       "shows_archive.updated_at, " +
       "shows_archive.created_at " +
       "FROM shows " +

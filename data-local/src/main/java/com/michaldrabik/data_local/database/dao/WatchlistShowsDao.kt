@@ -40,6 +40,7 @@ interface WatchlistShowsDao : WatchlistShowsLocalDataSource {
       "shows.comment_count, " +
       "shows.genres, " +
       "shows.aired_episodes, " +
+      "shows.runtime_max, " +
       "shows_see_later.updated_at, " +
       "shows_see_later.created_at " +
       "FROM shows " +
