@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Floppy connections are to a user-supplied, typically self-hosted server address (often a bare
+  LAN IP) rather than a fixed HTTPS domain, so cleartext traffic can't be scoped to a domain
+  allowlist the way it can for Trakt/TMDB. Cleartext is permitted app-wide as a result.
+-->
+<network-security-config>
+  <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

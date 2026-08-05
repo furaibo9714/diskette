@@ -2,13 +2,6 @@
 ![Build](https://img.shields.io/github/actions/workflow/status/michaldrabik/showly-2.0/android.yml?branch=master)
 [![RB Shield](https://shields.rbtlog.dev/simple/com.michaldrabik.showly2)](https://shields.rbtlog.dev/com.michaldrabik.showly2)
 [![Crowdin](https://badges.crowdin.net/showly-android-app/localized.svg)](https://crowdin.com/project/showly-android-app)
-[![Crowdin](https://badges.crowdin.net/showly-ios-app/localized.svg)](https://crowdin.com/project/showly-ios-app)
-
-# Showly available on iOS 🍎
-
-I am happy to announce that starting Jan 2025, Showly is available on iOS!
-
-Check AppStore link below to jump straight into action.
 
 # Showly
 
@@ -22,11 +15,6 @@ The OSS version for Android available in this repo is completely free of all Goo
     alt="Get it at IzzyOnDroid"
     height="80"
     src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"/></a>
-&nbsp;&nbsp;
-<a href="https://apps.apple.com/us/app/6739016219"><img
-    alt="Get it on App Store"
-    height="80"
-    src="https://github.com/user-attachments/assets/f43c7c55-01d8-4ac3-99dd-ca8e0f574283"/></a>
 
 ## Screenshots
 
@@ -190,13 +178,8 @@ Want to help translating Showly into your native language? Spotted a mistake?<br
 Join the CrowdIn project which is used to manage translations:<br>
 
 Android: https://crowdin.com/project/showly-android-app <br>
-iOS: https://crowdin.com/project/showly-ios-app <br>
 
 Translations status for 20 Jan 2025:
-
-iOS:
-
-![image](https://github.com/user-attachments/assets/e09f6a03-6c90-43fa-8f91-f17de80e1d84)
 
 Android:
 
