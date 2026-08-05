@@ -4,8 +4,6 @@
 [![Crowdin](https://badges.crowdin.net/showly-android-app/localized.svg)](https://crowdin.com/project/showly-android-app)
 [![Crowdin](https://badges.crowdin.net/showly-ios-app/localized.svg)](https://crowdin.com/project/showly-ios-app)
 
-[![Twitter](https://img.shields.io/twitter/follow/AppShowly?style=social)](https://twitter.com/AppShowly)
-
 # Showly available on iOS 🍎
 
 I am happy to announce that starting Jan 2025, Showly is available on iOS!
@@ -20,11 +18,6 @@ Showly is a modern TV Shows and Movies tracking app.
 
 The OSS version for Android available in this repo is completely free of all Google services.
 
-<a href="https://play.google.com/store/apps/details?id=com.michaldrabik.showly2"><img
-    alt="Get it on Google Play"
-    height="80"
-    src="https://github.com/user-attachments/assets/3e49d1b3-1046-4e76-ad50-dfd859c23f3a"/></a>
-&nbsp;&nbsp;
 <a href="https://apt.izzysoft.de/packages/com.michaldrabik.showly2"><img
     alt="Get it at IzzyOnDroid"
     height="80"
@@ -47,6 +40,108 @@ The OSS version for Android available in this repo is completely free of all Goo
   <img src="https://github.com/user-attachments/assets/255505c5-ddc4-4ae6-b130-1ef47057e9b8" width="160" alt="Screenshot 4">
 </div>
 
+## About This Fork
+
+This fork diverges from upstream in two ways:
+
+1. **Trakt.tv, fully removed.** Trakt's API became partially paywalled, so this fork is now a phone
+   client built exclusively for [Floppy](https://github.com/dannyvfilms/Floppy), a self-hosted
+   tracker, with metadata/search/discovery served directly from TMDB instead of proxied through
+   Trakt. See [`TRAKT_MIGRATION.md`](TRAKT_MIGRATION.md) for the full milestone-by-milestone
+   writeup.
+2. **Premium/paywall system, removed.** The upstream premium gates had no billing backend behind
+   them in this fork (dead UI only) — they've been deleted and the three features they used to
+   lock (app theme, collection view mode, widget theme/transparency) rebuilt as normal, always-on
+   settings.
+
+## Roadmap
+
+Status of fork-specific work, grouped by theme. Upstream features/issues aren't tracked here.
+
+### Trakt → Floppy migration
+
+- [x] Metadata/Search/Discover → TMDB direct
+- [x] Surface Floppy manual/custom entries (no external provider id)
+- [x] Watchlist/watched sync → Floppy (auth, sync engine, import reconciliation)
+- [x] Remove Trakt from the watchlist/watched write path (dual-write → Floppy-only)
+- [x] External ratings strip → Floppy-sourced TMDB rating (OMDB dependency removed entirely)
+- [x] Personal rating sync (show/movie/season/episode) → Floppy
+- [x] Custom lists (create/rename/membership/delete) → Floppy
+- [x] Hidden/Archive → Floppy
+- [x] Comments feature — dropped (no Floppy equivalent, not migrated)
+- [x] Background full-sync engine (app start + pull-to-refresh) rebuilt on Floppy, old Trakt engine deleted
+- [x] Delete all remaining Trakt OAuth/account-linking code
+- [x] Cleartext networking support for self-hosted/LAN Floppy instances
+- [ ] Beyond migration: evaluate Floppy's own endpoints as replacements for local-only or TMDB-only features (not scoped yet)
+  - [ ] `/api/v1/discover/` — personalized recommendations from the user's own Floppy library, a different (arguably more relevant) signal than TMDB's generic trending/popular.
+  - [ ] `/api/v1/home/` — a ready-made "home feed," possibly a better fit than assembling one from separate TMDB calls.
+  - [ ] `/api/v1/statistics/`, `/api/v1/statistics/overview/` — Floppy-computed stats, an alternative to `ui-statistics`' local aggregation.
+  - [ ] `/api/v1/tags/` — user-defined tagging, no current Showly equivalent at all.
+  - [ ] Support other media types tracked in Floppy:
+    - [ ] Manga
+    - [ ] Games
+    - [ ] Books
+    - [ ] Comics
+    - [ ] Board Games
+    - [ ] Music
+    - [ ] Podcasts
+
+### Premium removal & free features
+
+- [x] Remove premium/paywall system (module, nav actions, dead UI, gating code)
+- [x] Widget settings — working Theme + Transparency pickers, persisted, live widget refresh
+- [x] Collection grid view mode (My Shows/Movies, Watchlist, Hidden, List Details)
+- [x] App theme — Light/Dark picker, new light Material3 palette, persists across restarts
+  - [x] Fix contrast regressions surfaced by the new light palette (button text, switch "off"
+        state, image-overlay title text, toolbar back arrow, button outlines)
+- [ ] Dracula theme
+- [x] Final verification & cleanup pass (repo-wide grep sweep, lint unused-resource pass,
+      translation coverage for new strings — all clean, no orphaned resources from this work)
+- [ ] Compact list view mode (third view mode: List → Grid → Compact)
+
+### Rebranding
+
+- [ ] Rebranding and renaming package name
+- [ ] Design a new app icon
+- [ ] Localization sweep (update strings across all supported languages via Crowdin)
+
+### Floppy Integration Enhancements
+
+- [ ] Offline mode & sync queuing (queue actions locally when Floppy is unreachable)
+- [ ] Floppy server health/status indicator in settings or main feed
+- [ ] New onboarding flow for connecting to a self-hosted Floppy instance
+- [ ] Local notifications for upcoming episodes/movies based on Floppy data
+
+### Tech Debt & App Modernization
+
+- [ ] Jetpack Compose migration (gradual rewrite of UI screens)
+- [ ] Edge-to-edge UI, transparent navigation bars, and predictive back gestures (Android 14+)
+
+### Open Source Sustainability
+
+- [ ] Add "Sponsor/Donate" links (GitHub Sponsors, Ko-fi, Patreon)
+
+### Advanced Data Management
+
+- [ ] Smart Lists & Advanced Filtering (build custom lists based on tags, rules, and scores)
+- [ ] Data Export/Backup (export local watch history to CSV/JSON for easy Floppy server migrations)
+
+### Next-Level UI Polish
+
+- [ ] Material You (Dynamic Colors) support for Android 12+
+- [ ] Shared Element Transitions for smoother navigation between lists and details
+- [ ] Additional Widgets (e.g., mini-calendar, "Continue Watching")
+
+### Distribution
+
+- [x] Remove all Google Play Store surface (README badge/link, in-app "Rate on Play Store"
+      settings row + helper, dead Play Store review-prompt/in-app-update strings). IzzyOnDroid
+      distribution (`fastlane/metadata`) is kept.
+- [x] Remove developer social-media promotion (Settings icons, "What's New" dialog button,
+      README badges/links, and the Discover-feed "Follow us on Twitter" promo card feature —
+      adapter/viewmodel/case/view/install-timestamp tracking all removed)
+- [ ] Publish/track releases via [Obtainium](https://github.com/ImranR98/Obtainium)
+
 ## Project Setup
 
 1. Clone repository and open project in the latest version of Android Studio.
@@ -59,14 +154,13 @@ The OSS version for Android available in this repo is completely free of all Goo
    storePassword=github
    ```
 
-4. Add your [Trakt.tv](https://trakt.tv/oauth/applications), [TMDB](https://developers.themoviedb.org/3/), [OMDB](http://www.omdbapi.com) API keys as
+4. Add your [Trakt.tv](https://trakt.tv/oauth/applications), [TMDB](https://developers.themoviedb.org/3/) API keys as
    following properties into your `local.properties` file located in the root directory of the project:
 
    ```ini
    traktClientId="your trakt client id"
    traktClientSecret="your trakt client secret"
    tmdbApiKey="your tmdb api key (v4)"
-   omdbApiKey="your omdb api key"
    ```
 
 5. Rebuild and start the app.
@@ -127,8 +221,6 @@ Android:
    It's also possible to contact Trakt.tv support about any related issue.
 
 ## Contact
-
-Twitter: https://twitter.com/AppShowly
 
 Landing Page: www.showlyapp.com
 
