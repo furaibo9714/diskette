@@ -5,12 +5,14 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.michaldrabik.ui_base.BaseMovieAdapter
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_COMPACT
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_model.SortOrder
 import com.michaldrabik.ui_model.SortType
 import com.michaldrabik.ui_my_movies.common.recycler.CollectionListItem.FiltersItem
 import com.michaldrabik.ui_my_movies.common.recycler.CollectionListItem.MovieItem
+import com.michaldrabik.ui_my_movies.common.views.CollectionMovieCompactView
 import com.michaldrabik.ui_my_movies.common.views.CollectionMovieFiltersView
 import com.michaldrabik.ui_my_movies.common.views.CollectionMovieGridView
 import com.michaldrabik.ui_my_movies.common.views.CollectionMovieView
@@ -51,6 +53,7 @@ class CollectionAdapter(
       when (listViewMode) {
         LIST_NORMAL -> CollectionMovieView(parent.context)
         LIST_GRID -> CollectionMovieGridView(parent.context)
+        LIST_COMPACT -> CollectionMovieCompactView(parent.context)
       }.apply {
         itemClickListener = this@CollectionAdapter.itemClickListener
         itemLongClickListener = this@CollectionAdapter.itemLongClickListener
@@ -82,6 +85,7 @@ class CollectionAdapter(
         when (listViewMode) {
           LIST_NORMAL -> (holder.itemView as CollectionMovieView).bind(item)
           LIST_GRID -> (holder.itemView as CollectionMovieGridView).bind(item)
+          LIST_COMPACT -> (holder.itemView as CollectionMovieCompactView).bind(item)
         }
       }
     }

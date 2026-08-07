@@ -5,14 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_COMPACT
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_lists.details.helpers.ListItemDragListener
 import com.michaldrabik.ui_lists.details.helpers.ListItemSwipeListener
 import com.michaldrabik.ui_lists.details.helpers.ReorderListCallbackAdapter
 import com.michaldrabik.ui_lists.details.views.ListDetailsItemView
+import com.michaldrabik.ui_lists.details.views.ListDetailsMovieCompactItemView
 import com.michaldrabik.ui_lists.details.views.ListDetailsMovieGridItemView
 import com.michaldrabik.ui_lists.details.views.ListDetailsMovieItemView
+import com.michaldrabik.ui_lists.details.views.ListDetailsShowCompactItemView
 import com.michaldrabik.ui_lists.details.views.ListDetailsShowGridItemView
 import com.michaldrabik.ui_lists.details.views.ListDetailsShowItemView
 import java.util.Collections
@@ -72,6 +75,7 @@ class ListDetailsAdapter(
       val view = when (listViewMode) {
         LIST_NORMAL -> ListDetailsShowItemView(parent.context)
         LIST_GRID -> ListDetailsShowGridItemView(parent.context)
+        LIST_COMPACT -> ListDetailsShowCompactItemView(parent.context)
       }.apply {
         itemClickListener = { item -> this@ListDetailsAdapter.itemClickListener(item) }
         missingImageListener = { item, force -> this@ListDetailsAdapter.missingImageListener(item, force) }
@@ -87,6 +91,7 @@ class ListDetailsAdapter(
       val view = when (listViewMode) {
         LIST_NORMAL -> ListDetailsMovieItemView(parent.context)
         LIST_GRID -> ListDetailsMovieGridItemView(parent.context)
+        LIST_COMPACT -> ListDetailsMovieCompactItemView(parent.context)
       }.apply {
         itemClickListener = { item -> this@ListDetailsAdapter.itemClickListener(item) }
         missingImageListener = { item, force -> this@ListDetailsAdapter.missingImageListener(item, force) }
@@ -112,10 +117,12 @@ class ListDetailsAdapter(
       VIEW_TYPE_SHOW -> when (listViewMode) {
         LIST_NORMAL -> (holder.itemView as ListDetailsShowItemView).bind(item)
         LIST_GRID -> (holder.itemView as ListDetailsShowGridItemView).bind(item)
+        LIST_COMPACT -> (holder.itemView as ListDetailsShowCompactItemView).bind(item)
       }
       VIEW_TYPE_MOVIE -> when (listViewMode) {
         LIST_NORMAL -> (holder.itemView as ListDetailsMovieItemView).bind(item)
         LIST_GRID -> (holder.itemView as ListDetailsMovieGridItemView).bind(item)
+        LIST_COMPACT -> (holder.itemView as ListDetailsMovieCompactItemView).bind(item)
       }
       else -> throw IllegalStateException()
     }

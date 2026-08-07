@@ -8,6 +8,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_COMPACT
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_base.utilities.extensions.onClick
@@ -51,7 +52,8 @@ class MyMovieHeaderView : FrameLayout {
       with(myMoviesSortListViewChip) {
         when (viewMode) {
           LIST_NORMAL -> setChipIconResource(R.drawable.ic_view_grid)
-          LIST_GRID -> setChipIconResource(R.drawable.ic_view_list)
+          LIST_GRID -> setChipIconResource(R.drawable.ic_view_compact)
+          LIST_COMPACT -> setChipIconResource(R.drawable.ic_view_list)
         }
         onClick { listModeClickListener?.invoke() }
       }

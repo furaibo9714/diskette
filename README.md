@@ -85,7 +85,18 @@ Status of fork-specific work, grouped by theme. Upstream features/issues aren't 
 - [ ] Dracula theme
 - [x] Final verification & cleanup pass (repo-wide grep sweep, lint unused-resource pass,
       translation coverage for new strings — all clean, no orphaned resources from this work)
-- [ ] Compact list view mode (third view mode: List → Grid → Compact)
+- [x] Compact list view mode (third view mode, cycling List → Grid → Compact on the same chip
+      across all 7 collection screens)
+
+### Metadata & data quality
+
+- [x] Fix "-1 min" runtime on every movie/show detail screen — the details cache was considered
+      fresh even when the row had only ever been populated by a Discover/search/related list
+      response (TMDB's compact list shape carries no runtime), so the real `/movie|tv/{id}` fetch
+      never ran. Both detail repositories now refetch when a cached row looks incomplete.
+- [x] Show runtime falls back to real episode runtimes when TMDB's `episode_run_time` aggregate is
+      empty (increasingly common on newer shows), and displays the true min-max spread across all
+      seasons (e.g. "40-53 min") rather than a single arbitrary episode's length.
 
 ### Rebranding
 

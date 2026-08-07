@@ -31,4 +31,7 @@
   <dimen name="collectionImageTitleSize">11sp</dimen>
   <dimen name="collectionFiltersPaddingHorizontal">3dp</dimen>
   <dimen name="collectionFiltersPaddingBottom">5dp</dimen>
+
+  <dimen name="compactImageHeight">60dp</dimen>
+  <dimen name="compactImageWidth">40dp</dimen>
 </resources>

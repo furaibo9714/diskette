@@ -8,6 +8,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_COMPACT
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_base.utilities.extensions.onClick
@@ -67,7 +68,8 @@ class CollectionMovieFiltersView : FrameLayout {
       followedMoviesListViewChip.setChipIconResource(
         when (viewMode) {
           LIST_NORMAL -> R.drawable.ic_view_grid
-          LIST_GRID -> R.drawable.ic_view_list
+          LIST_GRID -> R.drawable.ic_view_compact
+          LIST_COMPACT -> R.drawable.ic_view_list
         },
       )
 

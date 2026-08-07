@@ -23,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.michaldrabik.common.Mode
 import com.michaldrabik.repository.settings.SettingsViewModeRepository
 import com.michaldrabik.ui_base.BaseFragment
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_COMPACT
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_base.common.sheets.sort_order.SortOrderBottomSheet
@@ -327,7 +328,8 @@ class ListDetailsFragment :
             fragmentListDetailsViewModeButton.setImageResource(
               when (it) {
                 LIST_NORMAL -> R.drawable.ic_view_grid
-                LIST_GRID -> R.drawable.ic_view_list
+                LIST_GRID -> R.drawable.ic_view_compact
+                LIST_COMPACT -> R.drawable.ic_view_list
               },
             )
           }

@@ -6,13 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.michaldrabik.ui_base.BaseAdapter
 import com.michaldrabik.ui_base.common.ListItem
 import com.michaldrabik.ui_base.common.ListViewMode
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_COMPACT
+import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_base.common.ListViewMode.LIST_NORMAL
 import com.michaldrabik.ui_model.MyShowsSection
 import com.michaldrabik.ui_model.SortOrder
 import com.michaldrabik.ui_model.SortType
-import com.michaldrabik.ui_base.common.ListViewMode.LIST_GRID
 import com.michaldrabik.ui_my_shows.myshows.recycler.MyShowsItem.Type
 import com.michaldrabik.ui_my_shows.myshows.views.MyShowAllView
+import com.michaldrabik.ui_my_shows.myshows.views.MyShowCompactView
 import com.michaldrabik.ui_my_shows.myshows.views.MyShowGridView
 import com.michaldrabik.ui_my_shows.myshows.views.MyShowHeaderView
 import com.michaldrabik.ui_my_shows.myshows.views.MyShowsRecentsView
@@ -64,6 +66,7 @@ class MyShowsAdapter(
       when (listViewMode) {
         LIST_NORMAL -> MyShowAllView(parent.context)
         LIST_GRID -> MyShowGridView(parent.context)
+        LIST_COMPACT -> MyShowCompactView(parent.context)
       }.apply {
         itemClickListener = this@MyShowsAdapter.itemClickListener
         itemLongClickListener = this@MyShowsAdapter.itemLongClickListener
@@ -102,6 +105,7 @@ class MyShowsAdapter(
         when (listViewMode) {
           LIST_NORMAL -> (holder.itemView as MyShowAllView).bind(item)
           LIST_GRID -> (holder.itemView as MyShowGridView).bind(item)
+          LIST_COMPACT -> (holder.itemView as MyShowCompactView).bind(item)
         }
       }
     }

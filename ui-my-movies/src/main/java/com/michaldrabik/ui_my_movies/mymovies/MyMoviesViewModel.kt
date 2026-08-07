@@ -73,7 +73,7 @@ class MyMoviesViewModel @Inject constructor(
   }
 
   fun toggleViewMode() {
-    val newMode = if (viewModeState.value == ListViewMode.LIST_NORMAL) ListViewMode.LIST_GRID else ListViewMode.LIST_NORMAL
+    val newMode = viewModeState.value.next()
     settingsRepository.viewMode.myMoviesViewMode = newMode.name
     viewModeState.value = newMode
   }
