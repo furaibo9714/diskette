@@ -1,0 +1,97 @@
+name: Bug report
+description: Something in the app is broken or behaves unexpectedly
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If you have an idea rather than a bug, post it as a
+        [Discussion](https://github.com/furaibo9714/diskette/discussions) instead.
+
+        Diskette is a fork of [Showly](https://github.com/michaldrabik/showly-2.0) and tracks
+        against a self-hosted [Floppy](https://github.com/dannyvfilms/Floppy) server. Report bugs
+        here rather than upstream, unless you can reproduce them in Showly too.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: What went wrong, and what you expected instead.
+      placeholder: |
+        Opening a movie's details shows "-1 min" for the runtime.
+        I expected the real runtime, which Floppy has.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact sequence that triggers it, starting from a fresh app launch.
+      placeholder: |
+        1. Open the Discover tab
+        2. Tap any movie
+        3. Look at the runtime under the title
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: Diskette version
+      description: Settings → Misc, at the bottom of the screen.
+      placeholder: "v1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install-source
+    attributes:
+      label: Where did you install it from
+      options:
+        - IzzyOnDroid
+        - Obtainium
+        - GitHub release APK
+        - Built it myself from source
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: "Pixel 7, Android 15"
+    validations:
+      required: true
+
+  - type: input
+    id: floppy-version
+    attributes:
+      label: Floppy server version
+      description: >-
+        Leave blank if the bug has nothing to do with syncing. A lot of sync problems turn out
+        to be the server rather than the app.
+      placeholder: "v1.4.0, self-hosted via Docker"
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or logs
+      description: >-
+        Drag images straight into this box. If the app crashed, include a logcat trace
+        (`adb logcat -d | grep -i diskette`).
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this isn't a duplicate
+          required: true
+        - label: I'm on the latest version of Diskette
+          required: true
