@@ -1,0 +1,101 @@
+package io.github.furaibo9714.diskette.utilities.deeplink
+
+import android.content.Intent
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.github.furaibo9714.diskette.R
+import io.github.furaibo9714.diskette.utilities.deeplink.resolvers.ImdbSourceResolver
+import io.github.furaibo9714.diskette.utilities.deeplink.resolvers.TmdbSourceResolver
+import io.github.furaibo9714.diskette.ui_base.Logger
+import io.github.furaibo9714.diskette.ui_model.Movie
+import io.github.furaibo9714.diskette.ui_model.Show
+import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class DeepLinkResolver @Inject constructor() {
+
+  companion object {
+    const val TMDB_TYPE_TV = "tv"
+    const val TMDB_TYPE_MOVIE = "movie"
+  }
+
+  private val sourceResolvers = setOf(
+    ImdbSourceResolver(),
+    TmdbSourceResolver(),
+  )
+
+  private val progressDestinations = arrayOf(
+    R.id.progressMainFragment,
+    R.id.progressMoviesMainFragment,
+  )
+
+  private val mainDestinations = arrayOf(
+    *progressDestinations,
+    R.id.discoverFragment,
+    R.id.discoverMoviesFragment,
+    R.id.followedShowsFragment,
+    R.id.followedMoviesFragment,
+    R.id.listsFragment,
+  )
+
+  fun findSource(intent: Intent?): DeepLinkSource? {
+    val path = intent?.data?.pathSegments ?: emptyList()
+    return sourceResolvers.firstNotNullOfOrNull { it.resolve(path) }
+  }
+
+  fun resolveDestination(
+    navController: NavController,
+    navigationView: BottomNavigationView,
+    show: Show,
+  ) {
+    try {
+      resetNavigation(navController, navigationView)
+
+      val navBundle = bundleOf(NavigationArgs.ARG_SHOW_ID to show.traktId)
+      val actionId = when (navController.currentDestination?.id) {
+        R.id.progressMainFragment -> R.id.actionProgressFragmentToShowDetailsFragment
+        R.id.progressMoviesMainFragment -> R.id.actionProgressMoviesFragmentToShowDetailsFragment
+        else -> error("Unknown actionId. ActionId: ${navController.currentDestination?.id}")
+      }
+      navController.navigate(actionId, navBundle)
+    } catch (error: Throwable) {
+      Logger.record(error, "DeepLinkResolver::resolveDestination(show:${show.traktId})")
+    }
+  }
+
+  fun resolveDestination(
+    navController: NavController,
+    navigationView: BottomNavigationView,
+    movie: Movie,
+  ) {
+    try {
+      resetNavigation(navController, navigationView)
+
+      val navBundle = bundleOf(NavigationArgs.ARG_MOVIE_ID to movie.traktId)
+      val actionId = when (navController.currentDestination?.id) {
+        R.id.progressMainFragment -> R.id.actionProgressFragmentToMovieDetailsFragment
+        R.id.progressMoviesMainFragment -> R.id.actionProgressMoviesFragmentToMovieDetailsFragment
+        else -> error("Unknown actionId. ActionId: $navController.currentDestination?.id")
+      }
+      navController.navigate(actionId, navBundle)
+    } catch (error: Throwable) {
+      Logger.record(error, "DeepLinkResolver::resolveDestination(movie:${movie.traktId})")
+    }
+  }
+
+  private fun resetNavigation(
+    navController: NavController,
+    navigationView: BottomNavigationView,
+  ) {
+    while (navController.currentDestination?.id !in mainDestinations) {
+      navController.popBackStack()
+    }
+
+    if (navController.currentDestination?.id !in progressDestinations) {
+      navigationView.selectedItemId = R.id.menuProgress
+    }
+  }
+}

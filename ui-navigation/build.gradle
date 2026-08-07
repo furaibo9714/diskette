@@ -26,7 +26,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.ui_navigation'
+  namespace 'io.github.furaibo9714.diskette.ui_navigation'
 }
 
 dependencies {

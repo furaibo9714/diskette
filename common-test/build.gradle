@@ -31,7 +31,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.test_base'
+  namespace 'io.github.furaibo9714.diskette.test_base'
 }
 
 dependencies {

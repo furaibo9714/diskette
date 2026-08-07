@@ -27,7 +27,7 @@ android {
   compileSdkVersion versions.compileSdk
 
   defaultConfig {
-    applicationId "com.michaldrabik.showly2"
+    applicationId "io.github.furaibo9714.diskette"
     minSdkVersion versions.minSdk
     targetSdkVersion versions.targetSdk
     compileSdkVersion versions.compileSdk
@@ -54,7 +54,7 @@ android {
 
   buildTypes {
     debug {
-      applicationIdSuffix '.debugoss'
+      applicationIdSuffix '.debug'
       versionNameSuffix '-debug'
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -86,7 +86,7 @@ android {
     includeInBundle = false
   }
 
-  namespace 'com.michaldrabik.showly2'
+  namespace 'io.github.furaibo9714.diskette'
 }
 
 dependencies {

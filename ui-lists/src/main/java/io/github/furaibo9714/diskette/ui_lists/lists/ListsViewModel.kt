@@ -1,0 +1,147 @@
+package io.github.furaibo9714.diskette.ui_lists.lists
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import io.github.furaibo9714.diskette.repository.images.MovieImagesProvider
+import io.github.furaibo9714.diskette.repository.images.ShowImagesProvider
+import io.github.furaibo9714.diskette.ui_base.events.EventsManager
+import io.github.furaibo9714.diskette.ui_base.events.FloppySyncError
+import io.github.furaibo9714.diskette.ui_base.events.FloppySyncProgress
+import io.github.furaibo9714.diskette.ui_base.events.FloppySyncSuccess
+import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncWorker
+import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncProgressState
+import io.github.furaibo9714.diskette.ui_base.floppy.floppySyncProgressState
+import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.findReplace
+import io.github.furaibo9714.diskette.ui_lists.lists.cases.MainListsCase
+import io.github.furaibo9714.diskette.ui_lists.lists.cases.SortOrderListsCase
+import io.github.furaibo9714.diskette.ui_lists.lists.helpers.ListsItemImage
+import io.github.furaibo9714.diskette.ui_lists.lists.recycler.ListsItem
+import io.github.furaibo9714.diskette.ui_model.Image
+import io.github.furaibo9714.diskette.ui_model.SortOrder
+import io.github.furaibo9714.diskette.ui_model.SortType
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+import io.github.furaibo9714.diskette.ui_base.events.Event as EventSync
+
+@HiltViewModel
+class ListsViewModel @Inject constructor(
+  private val mainCase: MainListsCase,
+  private val sortCase: SortOrderListsCase,
+  private val showImagesProvider: ShowImagesProvider,
+  private val movieImagesProvider: MovieImagesProvider,
+  private val eventsManager: EventsManager,
+  workManager: WorkManager,
+) : ViewModel() {
+
+  private var loadItemsJob: Job? = null
+
+  private val itemsState = MutableStateFlow<List<ListsItem>?>(null)
+  private val scrollState = MutableStateFlow(Event(false))
+  private val sortOrderState = MutableStateFlow<Pair<SortOrder, SortType>?>(null)
+  private val syncingState = MutableStateFlow(false)
+  private val syncPhaseState = MutableStateFlow<FloppySyncProgressState?>(null)
+
+  init {
+    viewModelScope.launch {
+      eventsManager.events.collect { onEvent(it) }
+    }
+    workManager.getWorkInfosByTagLiveData(FloppySyncWorker.TAG_ID).observeForever { work ->
+      val running = work.find { it.state == WorkInfo.State.RUNNING }
+      syncingState.value = running != null
+      syncPhaseState.value = running?.floppySyncProgressState()
+    }
+  }
+
+  fun loadItems(
+    resetScroll: Boolean,
+    searchQuery: String? = null,
+  ) {
+    loadItemsJob?.cancel()
+    loadItemsJob = viewModelScope.launch {
+      sortOrderState.value = sortCase.loadSortOrder()
+      itemsState.value = mainCase.loadLists(searchQuery)
+      scrollState.value = Event(resetScroll)
+    }
+  }
+
+  fun setSortOrder(
+    sortOrder: SortOrder,
+    sortType: SortType,
+  ) {
+    viewModelScope.launch {
+      sortCase.setSortOrder(sortOrder, sortType)
+      loadItems(resetScroll = true)
+    }
+  }
+
+  fun loadMissingImage(
+    item: ListsItem,
+    itemImage: ListsItemImage,
+    force: Boolean,
+  ) {
+    viewModelScope.launch {
+      try {
+        val imageType = itemImage.image.type
+
+        val image =
+          when {
+            itemImage.isShow() -> showImagesProvider.loadRemoteImage(itemImage.show!!, imageType, force)
+            itemImage.isMovie() -> movieImagesProvider.loadRemoteImage(itemImage.movie!!, imageType, force)
+            else -> throw IllegalStateException()
+          }
+
+        val updateItemImage = itemImage.copy(image = image)
+        val updateImages = item.images.toMutableList()
+        updateImages.findReplace(updateItemImage) { it.getIds()?.trakt == updateItemImage.getIds()?.trakt }
+        updateItem(item.copy(images = updateImages))
+      } catch (t: Throwable) {
+        val updateItemImage = itemImage.copy(image = Image.createUnavailable(itemImage.image.type))
+        val updateImages = item.images.toMutableList()
+        updateImages.findReplace(updateItemImage) { it.getIds()?.trakt == updateItemImage.getIds()?.trakt }
+        updateItem(item.copy(images = updateImages))
+      }
+    }
+  }
+
+  private fun updateItem(newItem: ListsItem) {
+    val currentItems = uiState.value.items?.toMutableList() ?: mutableListOf()
+    currentItems.findReplace(newItem) { it.list.id == newItem.list.id }
+    itemsState.value = currentItems
+  }
+
+  private fun onEvent(event: EventSync) {
+    if (event in arrayOf(FloppySyncError, FloppySyncSuccess, FloppySyncProgress)) {
+      loadItems(resetScroll = true)
+    }
+  }
+
+  val uiState = combine(
+    itemsState,
+    scrollState,
+    sortOrderState,
+    syncingState,
+    syncPhaseState,
+  ) { s1, s2, s3, s4, s5 ->
+    ListsUiState(
+      items = s1,
+      resetScroll = s2,
+      sortOrder = s3,
+      isSyncing = s4,
+      syncPhaseState = s5,
+    )
+  }.stateIn(
+    scope = viewModelScope,
+    started = SharingStarted.WhileSubscribed(SUBSCRIBE_STOP_TIMEOUT),
+    initialValue = ListsUiState(),
+  )
+}

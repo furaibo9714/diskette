@@ -31,7 +31,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.ui_streamings'
+  namespace 'io.github.furaibo9714.diskette.ui_streamings'
 }
 
 dependencies {

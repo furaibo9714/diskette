@@ -38,7 +38,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.ui_settings'
+  namespace 'io.github.furaibo9714.diskette.ui_settings'
 }
 
 dependencies {

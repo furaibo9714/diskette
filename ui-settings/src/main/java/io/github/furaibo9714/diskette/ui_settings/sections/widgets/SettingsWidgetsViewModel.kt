@@ -1,0 +1,85 @@
+package io.github.furaibo9714.diskette.ui_settings.sections.widgets
+
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
+import io.github.furaibo9714.diskette.ui_model.Settings
+import io.github.furaibo9714.diskette.ui_settings.helpers.AppTheme
+import io.github.furaibo9714.diskette.ui_settings.helpers.WidgetTransparency
+import io.github.furaibo9714.diskette.ui_settings.sections.widgets.cases.SettingsWidgetsMainCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class SettingsWidgetsViewModel @Inject constructor(
+  private val mainCase: SettingsWidgetsMainCase,
+) : ViewModel() {
+
+  private val settingsState = MutableStateFlow<Settings?>(null)
+  private val widgetThemeState = MutableStateFlow(AppTheme.DARK)
+  private val widgetTransparencyState = MutableStateFlow(WidgetTransparency.SOLID)
+
+  fun loadSettings() {
+    viewModelScope.launch {
+      refreshSettings()
+    }
+  }
+
+  fun enableWidgetsTitles(
+    enable: Boolean,
+    context: Context,
+  ) {
+    viewModelScope.launch {
+      mainCase.enableWidgetsTitles(enable, context)
+      refreshSettings()
+    }
+  }
+
+  fun setWidgetTheme(
+    theme: AppTheme,
+    context: Context,
+  ) {
+    viewModelScope.launch {
+      mainCase.setWidgetTheme(theme, context)
+      refreshSettings()
+    }
+  }
+
+  fun setWidgetTransparency(
+    transparency: WidgetTransparency,
+    context: Context,
+  ) {
+    viewModelScope.launch {
+      mainCase.setWidgetTransparency(transparency, context)
+      refreshSettings()
+    }
+  }
+
+  private suspend fun refreshSettings() {
+    settingsState.value = mainCase.getSettings()
+    widgetThemeState.value = mainCase.getWidgetTheme()
+    widgetTransparencyState.value = mainCase.getWidgetTransparency()
+  }
+
+  val uiState = combine(
+    settingsState,
+    widgetThemeState,
+    widgetTransparencyState,
+  ) { s1, s2, s3 ->
+    SettingsWidgetsUiState(
+      settings = s1,
+      themeWidgets = s2,
+      widgetsTransparency = s3,
+    )
+  }.stateIn(
+    scope = viewModelScope,
+    started = SharingStarted.WhileSubscribed(SUBSCRIBE_STOP_TIMEOUT),
+    initialValue = SettingsWidgetsUiState(),
+  )
+}

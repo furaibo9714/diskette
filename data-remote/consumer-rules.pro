@@ -97,10 +97,9 @@
 -if interface * { @retrofit2.http.* <methods>; }
 -keep,allowobfuscation interface <1>
 
--keep class com.michaldrabik.data_remote.tmdb.model.** { *; }
--keep class com.michaldrabik.data_remote.trakt.model.** { *; }
--keep class com.michaldrabik.data_remote.aws.model.** { *; }
--keep class com.michaldrabik.data_remote.gcloud.model.** { *; }
+-keep class io.github.furaibo9714.diskette.data_remote.tmdb.model.** { *; }
+-keep class io.github.furaibo9714.diskette.data_remote.trakt.model.** { *; }
+-keep class io.github.furaibo9714.diskette.data_remote.gcloud.model.** { *; }
 
 ### OkHttp
 

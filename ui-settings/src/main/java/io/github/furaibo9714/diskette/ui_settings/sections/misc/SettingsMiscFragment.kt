@@ -1,0 +1,61 @@
+package io.github.furaibo9714.diskette.ui_settings.sections.misc
+
+import android.annotation.SuppressLint
+import android.os.Bundle
+import android.view.View
+import androidx.fragment.app.viewModels
+import io.github.furaibo9714.diskette.common.Config
+import io.github.furaibo9714.diskette.ui_base.BaseFragment
+import io.github.furaibo9714.diskette.ui_base.utilities.events.MessageEvent
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.launchAndRepeatStarted
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onClick
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.openWebUrl
+import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
+import io.github.furaibo9714.diskette.ui_settings.BuildConfig
+import io.github.furaibo9714.diskette.ui_settings.R
+import io.github.furaibo9714.diskette.ui_settings.databinding.FragmentSettingsMiscBinding
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class SettingsMiscFragment : BaseFragment<SettingsMiscViewModel>(R.layout.fragment_settings_misc) {
+
+  override val viewModel by viewModels<SettingsMiscViewModel>()
+  private val binding by viewBinding(FragmentSettingsMiscBinding::bind)
+
+  override fun onViewCreated(
+    view: View,
+    savedInstanceState: Bundle?,
+  ) {
+    super.onViewCreated(view, savedInstanceState)
+    setupView()
+    launchAndRepeatStarted(
+      { viewModel.uiState.collect { render(it) } },
+      { viewModel.messageFlow.collect { showSnack(it) } },
+      doAfterLaunch = { viewModel.loadSettings() },
+    )
+  }
+
+  private fun setupView() {
+    with(binding) {
+      settingsContactDevs.onClick { openWebLink(Config.ISSUES_URL) }
+      settingsDeleteCache.onClick { viewModel.deleteImagesCache(requireAppContext()) }
+
+      settingsTmdbIcon.onClick { openWebLink(Config.TMDB_URL) }
+      settingsJustWatchIcon.onClick { openWebLink(Config.JUST_WATCH_URL) }
+    }
+  }
+
+  @SuppressLint("SetTextI18n")
+  private fun render(uiState: SettingsMiscUiState) {
+    uiState.run {
+      with(binding) {
+        userId.let { settingsUserId.text = it }
+        settingsVersion.text = "v${BuildConfig.VER_NAME} (${BuildConfig.VER_CODE})"
+      }
+    }
+  }
+
+  private fun openWebLink(url: String) {
+    openWebUrl(url) ?: showSnack(MessageEvent.Info(R.string.errorCouldNotFindApp))
+  }
+}

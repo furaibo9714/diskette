@@ -27,7 +27,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.data_local'
+  namespace 'io.github.furaibo9714.diskette.data_local'
 }
 
 dependencies {

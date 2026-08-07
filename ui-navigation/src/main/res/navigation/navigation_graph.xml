@@ -76,7 +76,7 @@
 
   <fragment
     android:id="@+id/discoverFragment"
-    android:name="com.michaldrabik.ui_discover.DiscoverFragment"
+    android:name="io.github.furaibo9714.diskette.ui_discover.DiscoverFragment"
     android:label="fragmentDiscover"
     >
     <action
@@ -120,7 +120,7 @@
 
   <fragment
     android:id="@+id/discoverMoviesFragment"
-    android:name="com.michaldrabik.ui_discover_movies.DiscoverMoviesFragment"
+    android:name="io.github.furaibo9714.diskette.ui_discover_movies.DiscoverMoviesFragment"
     android:label="fragmentDiscoverMovies"
     >
     <action
@@ -159,7 +159,7 @@
 
   <fragment
     android:id="@+id/progressMainFragment"
-    android:name="com.michaldrabik.ui_progress.main.ProgressMainFragment"
+    android:name="io.github.furaibo9714.diskette.ui_progress.main.ProgressMainFragment"
     android:label="fragmentProgressMain"
     >
     <action
@@ -222,7 +222,7 @@
 
   <fragment
     android:id="@+id/progressMoviesMainFragment"
-    android:name="com.michaldrabik.ui_progress_movies.main.ProgressMoviesMainFragment"
+    android:name="io.github.furaibo9714.diskette.ui_progress_movies.main.ProgressMoviesMainFragment"
     android:label="fragmentProgressMain"
     >
     <action
@@ -275,7 +275,7 @@
 
   <fragment
     android:id="@+id/showDetailsFragment"
-    android:name="com.michaldrabik.ui_show.ShowDetailsFragment"
+    android:name="io.github.furaibo9714.diskette.ui_show.ShowDetailsFragment"
     android:label="fragmentShowDetails"
     >
     <action
@@ -351,7 +351,7 @@
 
   <fragment
     android:id="@+id/showDetailsEpisodesFragment"
-    android:name="com.michaldrabik.ui_show.episodes.ShowDetailsEpisodesFragment"
+    android:name="io.github.furaibo9714.diskette.ui_show.episodes.ShowDetailsEpisodesFragment"
     android:label="fragmentEpisodes"
     >
     <action
@@ -373,7 +373,7 @@
 
   <fragment
     android:id="@+id/movieDetailsFragment"
-    android:name="com.michaldrabik.ui_movie.MovieDetailsFragment"
+    android:name="io.github.furaibo9714.diskette.ui_movie.MovieDetailsFragment"
     android:label="fragmentMovieDetails"
     >
     <action
@@ -435,19 +435,19 @@
 
   <fragment
     android:id="@+id/artGalleryFragment"
-    android:name="com.michaldrabik.ui_gallery.fanart.ArtGalleryFragment"
+    android:name="io.github.furaibo9714.diskette.ui_gallery.fanart.ArtGalleryFragment"
     android:label="fragmentArtGallery"
     />
 
   <fragment
     android:id="@+id/personGalleryFragment"
-    android:name="com.michaldrabik.ui_people.gallery.PersonGalleryFragment"
+    android:name="io.github.furaibo9714.diskette.ui_people.gallery.PersonGalleryFragment"
     android:label="fragmentPersonGallery"
     />
 
   <fragment
     android:id="@+id/followedShowsFragment"
-    android:name="com.michaldrabik.ui_my_shows.main.FollowedShowsFragment"
+    android:name="io.github.furaibo9714.diskette.ui_my_shows.main.FollowedShowsFragment"
     android:label="fragmentFollowedShows"
     >
     <action
@@ -505,7 +505,7 @@
 
   <fragment
     android:id="@+id/followedMoviesFragment"
-    android:name="com.michaldrabik.ui_my_movies.main.FollowedMoviesFragment"
+    android:name="io.github.furaibo9714.diskette.ui_my_movies.main.FollowedMoviesFragment"
     android:label="fragmentFollowedMovies"
     >
     <action
@@ -553,7 +553,7 @@
 
   <fragment
     android:id="@+id/listsFragment"
-    android:name="com.michaldrabik.ui_lists.lists.ListsFragment"
+    android:name="io.github.furaibo9714.diskette.ui_lists.lists.ListsFragment"
     android:label="fragmentLists"
     >
     <action
@@ -589,7 +589,7 @@
 
   <fragment
     android:id="@+id/listDetailsFragment"
-    android:name="com.michaldrabik.ui_lists.details.ListDetailsFragment"
+    android:name="io.github.furaibo9714.diskette.ui_lists.details.ListDetailsFragment"
     android:label="fragmentListDetails"
     >
     <action
@@ -620,7 +620,7 @@
 
   <fragment
     android:id="@+id/searchFragment"
-    android:name="com.michaldrabik.ui_search.SearchFragment"
+    android:name="io.github.furaibo9714.diskette.ui_search.SearchFragment"
     android:label="fragmentSearch"
     >
     <action
@@ -656,7 +656,7 @@
 
   <fragment
     android:id="@+id/settingsFragment"
-    android:name="com.michaldrabik.ui_settings.SettingsFragment"
+    android:name="io.github.furaibo9714.diskette.ui_settings.SettingsFragment"
     android:label="fragmentSettings"
     >
     <action
@@ -692,7 +692,7 @@
 
   <fragment
     android:id="@+id/statisticsFragment"
-    android:name="com.michaldrabik.ui_statistics.StatisticsFragment"
+    android:name="io.github.furaibo9714.diskette.ui_statistics.StatisticsFragment"
     android:label="fragmentStatistics"
     >
     <action
@@ -706,7 +706,7 @@
 
   <fragment
     android:id="@+id/statisticsMoviesFragment"
-    android:name="com.michaldrabik.ui_statistics_movies.StatisticsMoviesFragment"
+    android:name="io.github.furaibo9714.diskette.ui_statistics_movies.StatisticsMoviesFragment"
     android:label="fragmentStatisticsMovies"
     >
     <action
@@ -721,19 +721,19 @@
 
   <fragment
     android:id="@+id/backupExportFragment"
-    android:name="com.michaldrabik.ui_backup.features.export.BackupExportFragment"
+    android:name="io.github.furaibo9714.diskette.ui_backup.features.export.BackupExportFragment"
     android:label="fragmentBackupExport"
     />
 
   <fragment
     android:id="@+id/backupImportFragment"
-    android:name="com.michaldrabik.ui_backup.features.import_.BackupImportFragment"
+    android:name="io.github.furaibo9714.diskette.ui_backup.features.import_.BackupImportFragment"
     android:label="fragmentBackupImport"
     />
 
   <dialog
     android:id="@+id/personDetailsDialog"
-    android:name="com.michaldrabik.ui_people.details.PersonDetailsBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_people.details.PersonDetailsBottomSheet"
     android:label="dialogPersonDetails"
     >
     <action
@@ -764,7 +764,7 @@
 
   <dialog
     android:id="@+id/peopleListDialog"
-    android:name="com.michaldrabik.ui_people.list.PeopleListBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_people.list.PeopleListBottomSheet"
     android:label="dialogPeopleList"
     >
     <action
@@ -778,7 +778,7 @@
 
   <dialog
     android:id="@+id/episodeDetailsDialog"
-    android:name="com.michaldrabik.ui_episodes.details.EpisodeDetailsBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_episodes.details.EpisodeDetailsBottomSheet"
     android:label="dialogEpisodeDetails"
     >
     <action
@@ -795,13 +795,13 @@
 
   <dialog
     android:id="@+id/createListDialog"
-    android:name="com.michaldrabik.ui_lists.create.CreateListBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_lists.create.CreateListBottomSheet"
     android:label="dialogCreateList"
     />
 
   <dialog
     android:id="@+id/manageListsDialog"
-    android:name="com.michaldrabik.ui_lists.manage.ManageListsBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_lists.manage.ManageListsBottomSheet"
     android:label="dialogManageLists"
     >
     <action
@@ -813,37 +813,37 @@
 
   <dialog
     android:id="@+id/sortOrderDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.sort_order.SortOrderBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_base.common.sheets.sort_order.SortOrderBottomSheet"
     android:label="dialogSortOrder"
     />
 
   <dialog
     android:id="@+id/historyDatesDialog"
-    android:name="com.michaldrabik.ui_progress.history.filters.HistoryPeriodFilterBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_progress.history.filters.HistoryPeriodFilterBottomSheet"
     android:label="dialogHistoryDates"
     />
 
   <dialog
     android:id="@+id/linksDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.links.LinksBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_base.common.sheets.links.LinksBottomSheet"
     android:label="dialogLinks"
     />
 
   <dialog
     android:id="@+id/personLinksDialog"
-    android:name="com.michaldrabik.ui_people.details.links.PersonLinksBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_people.details.links.PersonLinksBottomSheet"
     android:label="dialogPersonLinks"
     />
 
   <dialog
     android:id="@+id/episodeLinksDialog"
-    android:name="com.michaldrabik.ui_episodes.details.links.EpisodeLinksBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_episodes.details.links.EpisodeLinksBottomSheet"
     android:label="dialogEpisodeLinks"
     />
 
   <dialog
     android:id="@+id/showItemContextDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.context_menu.show.ShowContextMenuBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.show.ShowContextMenuBottomSheet"
     android:label="dialogShowItemContext"
     >
     <action
@@ -855,7 +855,7 @@
 
   <dialog
     android:id="@+id/movieItemContextDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.context_menu.movie.MovieContextMenuBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.movie.MovieContextMenuBottomSheet"
     android:label="dialogMovieItemContext"
     >
     <action
@@ -872,85 +872,85 @@
 
   <dialog
     android:id="@+id/ratingDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.ratings.RatingsBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_base.common.sheets.ratings.RatingsBottomSheet"
     android:label="dialogRating"
     />
 
   <dialog
     android:id="@+id/discoverFiltersFeedDialog"
-    android:name="com.michaldrabik.ui_discover.filters.feed.DiscoverFiltersFeedBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_discover.filters.feed.DiscoverFiltersFeedBottomSheet"
     android:label="dialogMoviesFilters"
     />
 
   <dialog
     android:id="@+id/discoverMoviesFiltersFeedDialog"
-    android:name="com.michaldrabik.ui_discover_movies.filters.feed.DiscoverMoviesFiltersFeedBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_discover_movies.filters.feed.DiscoverMoviesFiltersFeedBottomSheet"
     android:label="dialogDiscoverMoviesFilters"
     />
 
   <dialog
     android:id="@+id/discoverFiltersGenresDialog"
-    android:name="com.michaldrabik.ui_discover.filters.genres.DiscoverFiltersGenresBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_discover.filters.genres.DiscoverFiltersGenresBottomSheet"
     android:label="dialogDiscoverFiltersGenres"
     />
 
   <dialog
     android:id="@+id/discoverFiltersNetworksDialog"
-    android:name="com.michaldrabik.ui_discover.filters.networks.DiscoverFiltersNetworksBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_discover.filters.networks.DiscoverFiltersNetworksBottomSheet"
     android:label="dialogDiscoverFiltersNetworks"
     />
 
   <dialog
     android:id="@+id/discoverMoviesFiltersGenresDialog"
-    android:name="com.michaldrabik.ui_discover_movies.filters.genres.DiscoverMoviesFiltersGenresBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_discover_movies.filters.genres.DiscoverMoviesFiltersGenresBottomSheet"
     android:label="dialogDiscoverMoviesFiltersGenres"
     />
 
   <dialog
     android:id="@+id/myShowsFiltersDialog"
-    android:name="com.michaldrabik.ui_my_shows.myshows.filters.MyShowsFiltersBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_my_shows.myshows.filters.MyShowsFiltersBottomSheet"
     android:label="dialogMyShowsFilters"
     />
 
   <dialog
     android:id="@+id/collectionFiltersNetworkDialog"
-    android:name="com.michaldrabik.ui_my_shows.common.filters.network.CollectionFiltersNetworkBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_my_shows.common.filters.network.CollectionFiltersNetworkBottomSheet"
     android:label="dialogCollectionFiltersNetwork"
     />
 
   <dialog
     android:id="@+id/collectionFiltersGenreDialog"
-    android:name="com.michaldrabik.ui_my_shows.common.filters.genre.CollectionFiltersGenreBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_my_shows.common.filters.genre.CollectionFiltersGenreBottomSheet"
     android:label="dialogCollectionFiltersGenre"
     />
 
   <dialog
     android:id="@+id/collectionMoviesFiltersGenreDialog"
-    android:name="com.michaldrabik.ui_my_movies.filters.genre.CollectionFiltersGenreBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_my_movies.filters.genre.CollectionFiltersGenreBottomSheet"
     android:label="dialogCollectionFiltersGenre"
     />
 
   <dialog
     android:id="@+id/settingsSpoilersShowsDialog"
-    android:name="com.michaldrabik.ui_settings.sections.spoilers.shows.SpoilersShowsBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_settings.sections.spoilers.shows.SpoilersShowsBottomSheet"
     android:label="dialogSettingsSpoilersShows"
     />
 
   <dialog
     android:id="@+id/settingsSpoilersMoviesDialog"
-    android:name="com.michaldrabik.ui_settings.sections.spoilers.movies.SpoilersMoviesBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_settings.sections.spoilers.movies.SpoilersMoviesBottomSheet"
     android:label="dialogSettingsSpoilersMovies"
     />
 
   <dialog
     android:id="@+id/settingsSpoilersEpisodesDialog"
-    android:name="com.michaldrabik.ui_settings.sections.spoilers.episodes.SpoilersEpisodesBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_settings.sections.spoilers.episodes.SpoilersEpisodesBottomSheet"
     android:label="dialogSettingsSpoilersEpisodes"
     />
 
   <dialog
     android:id="@+id/movieCollectionDialog"
-    android:name="com.michaldrabik.ui_movie.sections.collections.details.MovieDetailsCollectionBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_movie.sections.collections.details.MovieDetailsCollectionBottomSheet"
     android:label="dialogMovieCollection"
     >
     <action
@@ -968,7 +968,7 @@
 
   <dialog
     android:id="@+id/dateSelectionDialog"
-    android:name="com.michaldrabik.ui_base.common.sheets.date_selection.DateSelectionBottomSheet"
+    android:name="io.github.furaibo9714.diskette.ui_base.common.sheets.date_selection.DateSelectionBottomSheet"
     android:label="dialogDateSelection"
     />
 

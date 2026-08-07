@@ -32,7 +32,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.ui_people'
+  namespace 'io.github.furaibo9714.diskette.ui_people'
 }
 
 dependencies {

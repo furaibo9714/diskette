@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-If you have an idea for a new feature or how to improve the app please use [Discussions](https://github.com/michaldrabik/showly-2.0/discussions) for
+If you have an idea for a new feature or how to improve the app please use [Discussions](https://github.com/furaibo9714/diskette/discussions) for
 that purpose.
 
 **Describe the bug**

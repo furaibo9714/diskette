@@ -33,7 +33,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.ui_backup'
+  namespace 'io.github.furaibo9714.diskette.ui_backup'
 }
 
 dependencies {

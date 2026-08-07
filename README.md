@@ -1,17 +1,14 @@
-![Version](https://img.shields.io/github/v/tag/michaldrabik/showly-2.0?label=version)
-![Build](https://img.shields.io/github/actions/workflow/status/michaldrabik/showly-2.0/android.yml?branch=master)
-[![RB Shield](https://shields.rbtlog.dev/simple/com.michaldrabik.showly2)](https://shields.rbtlog.dev/com.michaldrabik.showly2)
-[![Crowdin](https://badges.crowdin.net/showly-android-app/localized.svg)](https://crowdin.com/project/showly-android-app)
 
-# Showly
+# Diskette
 
 <img src="https://github.com/user-attachments/assets/b31c6ce6-7257-4c90-a13b-b12603e105a9" align="left" width="180" hspace="0" vspace="80" />
 
-Showly is a modern TV Shows and Movies tracking app.
+Diskette is a modern TV Shows and Movies tracking app for [Floppy](https://github.com/dannyvfilms/Floppy).
 
-The OSS version for Android available in this repo is completely free of all Google services.
+Diskette is a fork of [Showly](https://github.com/michaldrabik/showly-2.0) by [michaldrabik](https://github.com/michaldrabik), rebuilt
+around a self-hosted Floppy backend instead of Trakt.tv. It is completely free of all Google services.
 
-<a href="https://apt.izzysoft.de/packages/com.michaldrabik.showly2"><img
+<a href="https://apt.izzysoft.de/packages/io.github.furaibo9714.diskette"><img
     alt="Get it at IzzyOnDroid"
     height="80"
     src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"/></a>
@@ -64,7 +61,7 @@ Status of fork-specific work, grouped by theme. Upstream features/issues aren't 
   - [ ] `/api/v1/discover/` — personalized recommendations from the user's own Floppy library, a different (arguably more relevant) signal than TMDB's generic trending/popular.
   - [ ] `/api/v1/home/` — a ready-made "home feed," possibly a better fit than assembling one from separate TMDB calls.
   - [ ] `/api/v1/statistics/`, `/api/v1/statistics/overview/` — Floppy-computed stats, an alternative to `ui-statistics`' local aggregation.
-  - [ ] `/api/v1/tags/` — user-defined tagging, no current Showly equivalent at all.
+  - [ ] `/api/v1/tags/` — user-defined tagging, no current Diskette equivalent at all.
   - [ ] Support other media types tracked in Floppy:
     - [ ] Manga
     - [ ] Games
@@ -97,11 +94,17 @@ Status of fork-specific work, grouped by theme. Upstream features/issues aren't 
 - [x] Show runtime falls back to real episode runtimes when TMDB's `episode_run_time` aggregate is
       empty (increasingly common on newer shows), and displays the true min-max spread across all
       seasons (e.g. "40-53 min") rather than a single arbitrary episode's length.
+- [x] Remove the upstream AWS/S3 image fallback (`data-remote/aws`, its Retrofit/OkHttp clients,
+      `ImageSource.AWS`). That bucket is maintained by the Showly project, so the fork shouldn't
+      depend on it. TMDB is now the only remote image source; posters still fall back to
+      backdrops, and fanarts still fall back to an episode still.
 
 ### Rebranding
 
-- [ ] Rebranding and renaming package name
-- [ ] Design a new app icon
+- [x] Rebranding and renaming package name (`com.michaldrabik.*` → `io.github.furaibo9714.diskette`,
+      app name, user agent, DB filename, backup export prefix, launcher icon resource names,
+      internal `Showly*` class/view names, docs)
+- [x] New app icon
 - [ ] Localization sweep (update strings across all supported languages via Crowdin)
 
 ### Floppy Integration Enhancements
@@ -166,9 +169,9 @@ Status of fork-specific work, grouped by theme. Upstream features/issues aren't 
 
 ## Issues & Contributions
 
-Feel free to post problems with the app as Github [Issues](https://github.com/michaldrabik/showly-2.0/issues).
+Feel free to post problems with the app as Github [Issues](https://github.com/furaibo9714/diskette/issues).
 
-Features ideas should be posted as new GIthub [Discussion](https://github.com/michaldrabik/showly-2.0/discussions).
+Features ideas should be posted as new Github [Discussion](https://github.com/furaibo9714/diskette/discussions).
 
 Pull requests are welcome. Remember about leaving a comment in the relevant issue if you are working on something.
 
@@ -185,37 +188,9 @@ A few things surely could be addressed:
 
 ## Translations
 
-Want to help translating Showly into your native language? Spotted a mistake?<br>
-Join the CrowdIn project which is used to manage translations:<br>
-
-Android: https://crowdin.com/project/showly-android-app <br>
-
-Translations status for 20 Jan 2025:
-
-Android:
-
-![image](https://github.com/user-attachments/assets/24736105-a9be-49ef-864e-b4f2624671f6)
-
-## FAQ
-
-1. **Can I watch/stream/download shows and movies with the Showly app?**
-
-   No, that is not possible. Showly is a progress tracking type of app - not a streaming service.
-
-2. **I'm a user from India. I can't see any images and also encounter errors!**
-
-   There is a known issue with TMDB API being blocked by Indian gov.
-   For more details and a possible solution please see the thread here:
-   [https://www.themoviedb.org/talk/65d226e5c433ea0187b5b958#65d2dd5128d7fe017c34e9b5](https://www.themoviedb.org/talk/65d226e5c433ea0187b5b958#65d2dd5128d7fe017c34e9b5)
-
-3. **The Show/Episode/Movie I'm looking for seems to be missing. What can I do?**
-
-   Showly uses [Trakt.tv](https://trakt.tv) as its main data source.
-   If something is missing please use "Import Show" / "Import Movie" option located at the bottom of Trakt.tv website.
-   It's also possible to contact Trakt.tv support about any related issue.
+Diskette inherits its translations from Showly. Strings added by this fork are English-only for now.
+Translation contributions are welcome via pull request until the translation process is fully established.
 
 ## Contact
 
-Landing Page: www.showlyapp.com
-
-Email: showlyapp@gmail.com
+Issues & discussions: https://github.com/furaibo9714/diskette

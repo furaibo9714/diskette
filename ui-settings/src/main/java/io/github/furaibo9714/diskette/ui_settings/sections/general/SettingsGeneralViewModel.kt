@@ -1,0 +1,192 @@
+package io.github.furaibo9714.diskette.ui_settings.sections.general
+
+import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import io.github.furaibo9714.diskette.common.Config
+import io.github.furaibo9714.diskette.ui_base.common.AppCountry
+import io.github.furaibo9714.diskette.ui_base.dates.AppDateFormat
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.combine
+import io.github.furaibo9714.diskette.ui_model.ProgressDateSelectionType
+import io.github.furaibo9714.diskette.ui_model.ProgressNextEpisodeType
+import io.github.furaibo9714.diskette.ui_model.Settings
+import io.github.furaibo9714.diskette.ui_settings.helpers.AppLanguage
+import io.github.furaibo9714.diskette.ui_settings.helpers.AppTheme
+import io.github.furaibo9714.diskette.ui_settings.sections.general.cases.SettingsGeneralMainCase
+import io.github.furaibo9714.diskette.ui_settings.sections.general.cases.SettingsGeneralStreamingsCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class SettingsGeneralViewModel @Inject constructor(
+  private val mainCase: SettingsGeneralMainCase,
+  private val streamingsCase: SettingsGeneralStreamingsCase,
+) : ViewModel() {
+
+  private val settingsState = MutableStateFlow<Settings?>(null)
+  private val languageState = MutableStateFlow(AppLanguage.ENGLISH)
+  private val countryState = MutableStateFlow<AppCountry?>(null)
+  private val dateFormatState = MutableStateFlow<AppDateFormat?>(null)
+  private val moviesEnabledState = MutableStateFlow(true)
+  private val streamingsEnabledState = MutableStateFlow(true)
+  private val restartAppState = MutableStateFlow(false)
+  private val progressTypeState = MutableStateFlow<ProgressNextEpisodeType?>(null)
+  private val progressDateSelectionState = MutableStateFlow<ProgressDateSelectionType?>(null)
+  private val progressUpcomingDaysState = MutableStateFlow<Long?>(null)
+  private val tabletsColumnsState = MutableStateFlow(Config.DEFAULT_LISTS_GRID_SPAN)
+  private val themeState = MutableStateFlow(AppTheme.DARK)
+
+  fun loadSettings() {
+    viewModelScope.launch {
+      refreshSettings()
+    }
+  }
+
+  private suspend fun refreshSettings(restartApp: Boolean = false) {
+    settingsState.value = mainCase.getSettings()
+    languageState.value = mainCase.getLanguage()
+    countryState.value = mainCase.getCountry()
+    dateFormatState.value = mainCase.getDateFormat()
+    moviesEnabledState.value = mainCase.isMoviesEnabled()
+    streamingsEnabledState.value = mainCase.isStreamingsEnabled()
+    progressTypeState.value = mainCase.getProgressType()
+    progressDateSelectionState.value = mainCase.getDateSelectionType()
+    progressUpcomingDaysState.value = mainCase.getProgressUpcomingDays()
+    tabletsColumnsState.value = mainCase.getTabletsColumns()
+    themeState.value = mainCase.getTheme()
+    restartAppState.value = restartApp
+  }
+
+  fun setRecentShowsAmount(amount: Int) {
+    viewModelScope.launch {
+      mainCase.setRecentShowsAmount(amount)
+      refreshSettings()
+    }
+  }
+
+  fun enableSpecialSeasons(enable: Boolean) {
+    viewModelScope.launch {
+      mainCase.enableSpecialSeasons(enable)
+      refreshSettings()
+    }
+  }
+
+  fun enableMovies(enable: Boolean) {
+    viewModelScope.launch {
+      mainCase.enableMovies(enable)
+      delay(300)
+      refreshSettings(restartApp = true)
+    }
+  }
+
+  fun enableStreamings(enable: Boolean) {
+    viewModelScope.launch {
+      mainCase.enableStreamings(enable)
+      refreshSettings()
+    }
+  }
+
+  fun setLanguage(language: AppLanguage) {
+    viewModelScope.launch {
+      mainCase.setLanguage(language)
+      val locales = LocaleListCompat.forLanguageTags(language.code)
+      AppCompatDelegate.setApplicationLocales(locales)
+    }
+  }
+
+  fun setTheme(theme: AppTheme) {
+    viewModelScope.launch {
+      mainCase.setTheme(theme)
+      AppCompatDelegate.setDefaultNightMode(theme.code)
+      refreshSettings()
+    }
+  }
+
+  fun setTabletColumns(columns: Int) {
+    viewModelScope.launch {
+      mainCase.setTabletsColumns(columns)
+      refreshSettings()
+    }
+  }
+
+  fun setCountry(country: AppCountry) {
+    viewModelScope.launch {
+      mainCase.setCountry(country)
+      streamingsCase.deleteCache()
+      refreshSettings()
+    }
+  }
+
+  fun setProgressType(type: ProgressNextEpisodeType) {
+    viewModelScope.launch {
+      mainCase.setProgressType(type)
+      refreshSettings()
+    }
+  }
+
+  fun setDateSelectionType(type: ProgressDateSelectionType) {
+    viewModelScope.launch {
+      mainCase.setDateSelectionType(type)
+      refreshSettings()
+    }
+  }
+
+  fun setProgressUpcomingDays(days: Long) {
+    viewModelScope.launch {
+      mainCase.setProgressUpcomingDays(days)
+      refreshSettings()
+    }
+  }
+
+  fun setDateFormat(
+    format: AppDateFormat,
+    context: Context,
+  ) {
+    viewModelScope.launch {
+      mainCase.setDateFormat(format, context)
+      refreshSettings()
+    }
+  }
+
+  val uiState = combine(
+    settingsState,
+    languageState,
+    countryState,
+    dateFormatState,
+    moviesEnabledState,
+    streamingsEnabledState,
+    progressTypeState,
+    restartAppState,
+    progressUpcomingDaysState,
+    tabletsColumnsState,
+    progressDateSelectionState,
+    themeState,
+  ) { s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12 ->
+    SettingsGeneralUiState(
+      settings = s1,
+      language = s2,
+      country = s3,
+      dateFormat = s4,
+      moviesEnabled = s5,
+      streamingsEnabled = s6,
+      progressNextType = s7,
+      restartApp = s8,
+      progressUpcomingDays = s9,
+      tabletColumns = s10,
+      progressDateSelectionType = s11,
+      theme = s12,
+    )
+  }.stateIn(
+    scope = viewModelScope,
+    started = SharingStarted.WhileSubscribed(SUBSCRIBE_STOP_TIMEOUT),
+    initialValue = SettingsGeneralUiState(),
+  )
+}

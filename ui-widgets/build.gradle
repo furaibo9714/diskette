@@ -27,7 +27,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.ui_widgets'
+  namespace 'io.github.furaibo9714.diskette.ui_widgets'
 }
 
 dependencies {

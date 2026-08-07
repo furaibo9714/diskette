@@ -35,7 +35,7 @@
       app:title="@string/textSettings"
       />
 
-    <com.michaldrabik.ui_settings.views.SettingsFiltersView
+    <io.github.furaibo9714.diskette.ui_settings.views.SettingsFiltersView
       android:id="@+id/settingsFilters"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/settingsCategoryTrakt"
-      android:name="com.michaldrabik.ui_settings.sections.floppy.SettingsFloppyFragment"
+      android:name="io.github.furaibo9714.diskette.ui_settings.sections.floppy.SettingsFloppyFragment"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/spaceTiny"
@@ -67,7 +67,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/settingsCategoryGeneral"
-      android:name="com.michaldrabik.ui_settings.sections.general.SettingsGeneralFragment"
+      android:name="io.github.furaibo9714.diskette.ui_settings.sections.general.SettingsGeneralFragment"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       app:layout_constraintBottom_toTopOf="@+id/settingsCategoryNotifications"
@@ -79,7 +79,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/settingsCategorySpoilers"
-      android:name="com.michaldrabik.ui_settings.sections.spoilers.SettingsSpoilersFragment"
+      android:name="io.github.furaibo9714.diskette.ui_settings.sections.spoilers.SettingsSpoilersFragment"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       app:layout_constraintBottom_toTopOf="@id/settingsCategoryWidgets"
@@ -91,7 +91,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/settingsCategoryNotifications"
-      android:name="com.michaldrabik.ui_settings.sections.notifications.SettingsNotificationsFragment"
+      android:name="io.github.furaibo9714.diskette.ui_settings.sections.notifications.SettingsNotificationsFragment"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       app:layout_constraintBottom_toTopOf="@id/settingsCategorySpoilers"
@@ -103,7 +103,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/settingsCategoryWidgets"
-      android:name="com.michaldrabik.ui_settings.sections.widgets.SettingsWidgetsFragment"
+      android:name="io.github.furaibo9714.diskette.ui_settings.sections.widgets.SettingsWidgetsFragment"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       app:layout_constraintBottom_toTopOf="@id/settingsCategoryBackup"
@@ -115,7 +115,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/settingsCategoryBackup"
-      android:name="com.michaldrabik.ui_settings.sections.backup.SettingsBackupFragment"
+      android:name="io.github.furaibo9714.diskette.ui_settings.sections.backup.SettingsBackupFragment"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       app:layout_constraintBottom_toTopOf="@id/settingsCategoryMisc"
@@ -127,7 +127,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/settingsCategoryMisc"
-      android:name="com.michaldrabik.ui_settings.sections.misc.SettingsMiscFragment"
+      android:name="io.github.furaibo9714.diskette.ui_settings.sections.misc.SettingsMiscFragment"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       app:layout_constraintEnd_toEndOf="parent"

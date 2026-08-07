@@ -65,4 +65,4 @@
     public <methods>;
 }
 
--keep class com.michaldrabik.ui_backup.model.** { *; }
+-keep class io.github.furaibo9714.diskette.ui_backup.model.** { *; }

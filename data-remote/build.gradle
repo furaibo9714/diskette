@@ -48,7 +48,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.data_remote'
+  namespace 'io.github.furaibo9714.diskette.data_remote'
 }
 
 dependencies {

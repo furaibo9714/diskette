@@ -1,0 +1,12 @@
+package io.github.furaibo9714.diskette.ui_my_shows.myshows
+
+import io.github.furaibo9714.diskette.ui_base.common.ListViewMode
+import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
+import io.github.furaibo9714.diskette.ui_my_shows.myshows.recycler.MyShowsItem
+
+data class MyShowsUiState(
+  val items: List<MyShowsItem>? = null,
+  val showEmptyView: Boolean = false,
+  val viewMode: ListViewMode = ListViewMode.LIST_NORMAL,
+  val resetScrollMap: Event<List<MyShowsItem.Type>?>? = null,
+)

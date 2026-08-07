@@ -55,20 +55,20 @@
 
         <com.google.android.material.chip.Chip
           android:id="@+id/followedMoviesSortingChip"
-          style="@style/ShowlyChip.Sort"
+          style="@style/DisketteChip.Sort"
           android:text="@string/textSortName"
           />
 
         <com.google.android.material.chip.Chip
           android:id="@+id/followedMoviesGenresChip"
-          style="@style/ShowlyChip.Filter"
+          style="@style/DisketteChip.Filter"
           android:checkable="false"
           android:text="@string/textGenres"
           />
 
         <com.google.android.material.chip.Chip
           android:id="@+id/followedMoviesUpcomingChip"
-          style="@style/ShowlyChip.Filter"
+          style="@style/DisketteChip.Filter"
           android:text="@string/textWatchlistIncoming"
           android:visibility="gone"
           tools:visibility="visible"
@@ -76,7 +76,7 @@
 
         <com.google.android.material.chip.Chip
           android:id="@+id/followedMoviesListViewChip"
-          style="@style/ShowlyChip.Filter"
+          style="@style/DisketteChip.Filter"
           android:checkable="false"
           app:chipIcon="@drawable/ic_view_grid"
           app:chipIconEnabled="true"

@@ -32,7 +32,7 @@ android {
     }
   }
 
-  namespace 'com.michaldrabik.ui_episodes'
+  namespace 'io.github.furaibo9714.diskette.ui_episodes'
 }
 
 dependencies {

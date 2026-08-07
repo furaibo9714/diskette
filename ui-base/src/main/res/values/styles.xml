@@ -3,7 +3,7 @@
   <!-- Base app theme -->
   <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
     <item name="android:windowBackground">@color/colorBackgroundLight</item>
-    <item name="switchStyle">@style/ShowlySwitch</item>
+    <item name="switchStyle">@style/DisketteSwitch</item>
     <item name="toolbarStyle">@style/AppToolbar</item>
     <item name="enableEdgeToEdge">true</item>
 
@@ -296,36 +296,36 @@
     <item name="strokeColor">@color/colorGrayLight</item>
   </style>
 
-  <style name="ShowlyBottomBar" parent="Widget.MaterialComponents.BottomNavigationView">
-    <item name="itemTextAppearanceInactive">@style/ShowlyBottomBar.Text</item>
-    <item name="itemTextAppearanceActive">@style/ShowlyBottomBar.Text</item>
+  <style name="DisketteBottomBar" parent="Widget.MaterialComponents.BottomNavigationView">
+    <item name="itemTextAppearanceInactive">@style/DisketteBottomBar.Text</item>
+    <item name="itemTextAppearanceActive">@style/DisketteBottomBar.Text</item>
   </style>
 
-  <style name="ShowlyBottomBar.Text" parent="TextAppearance.Material3.LabelMedium">
+  <style name="DisketteBottomBar.Text" parent="TextAppearance.Material3.LabelMedium">
     <item name="android:textSize">12sp</item>
   </style>
 
-  <style name="ShowlyBottomBar.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+  <style name="DisketteBottomBar.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
     <item name="android:color">?colorBottomMenuIndicator</item>
   </style>
 
-  <style name="ShowlySwitch" parent="Widget.Material3.CompoundButton.Switch">
-    <item name="materialThemeOverlay">@style/ShowlySwitch.Overlay</item>
+  <style name="DisketteSwitch" parent="Widget.Material3.CompoundButton.Switch">
+    <item name="materialThemeOverlay">@style/DisketteSwitch.Overlay</item>
     <item name="thumbTint">@color/selector_switch_thumb</item>
   </style>
 
-  <style name="ShowlySwitch.Overlay" parent="">
+  <style name="DisketteSwitch.Overlay" parent="">
     <item name="colorPrimary">@color/colorAccent</item>
     <item name="colorPrimaryContainer">#4DF44336</item>
   </style>
 
-  <style name="ShowlyChip" parent="Widget.Material3.Chip.Suggestion">
+  <style name="DisketteChip" parent="Widget.Material3.Chip.Suggestion">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">32dp</item>
     <item name="chipMinTouchTargetSize">0dp</item>
   </style>
 
-  <style name="ShowlyChip.Sort" parent="ShowlyChip">
+  <style name="DisketteChip.Sort" parent="DisketteChip">
     <item name="android:textColor">?android:textColorPrimary</item>
     <item name="chipBackgroundColor">?android:windowBackground</item>
     <item name="chipStrokeColor">?colorChipButtonStroke</item>
@@ -336,14 +336,14 @@
     <item name="textStartPadding">@dimen/spaceSmall</item>
   </style>
 
-  <style name="ShowlyChip.Filter" parent="ShowlyChip">
+  <style name="DisketteChip.Filter" parent="DisketteChip">
     <item name="android:textColor">@color/selector_chip_text</item>
     <item name="chipBackgroundColor">@color/selector_chip_background</item>
     <item name="chipStrokeColor">@color/selector_chip_stroke</item>
     <item name="closeIconVisible">false</item>
   </style>
 
-  <style name="ShowlyChip.Button" parent="Widget.Material3.Chip.Suggestion">
+  <style name="DisketteChip.Button" parent="Widget.Material3.Chip.Suggestion">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">38dp</item>
     <item name="chipMinTouchTargetSize">0dp</item>
@@ -357,59 +357,59 @@
     <item name="android:textColor">?android:textColorPrimary</item>
   </style>
 
-  <style name="ShowlyCheckbox" parent="Widget.Material3.CompoundButton.CheckBox">
+  <style name="DisketteCheckbox" parent="Widget.Material3.CompoundButton.CheckBox">
     <item name="buttonTint">@color/selector_main_checkbox</item>
     <item name="buttonIconTint">@color/colorBackground</item>
     <item name="android:textColor">?android:textColorPrimary</item>
   </style>
 
-  <style name="ShowlyCheckbox.Secondary" parent="ShowlyCheckbox">
+  <style name="DisketteCheckbox.Secondary" parent="DisketteCheckbox">
     <item name="buttonIconTint">?attr/colorBottomMenuBackground</item>
     <item name="android:textColor">?android:textColorSecondary</item>
   </style>
 
-  <style name="ShowlyDatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+  <style name="DisketteDatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
     <item name="colorOnPrimary">@color/colorWhite</item>
     <item name="colorSurface">@color/colorBackground</item>
     <item name="colorOnSurface">@color/colorWhite</item>
-    <item name="buttonBarPositiveButtonStyle">@style/ShowlyDatePicker.Button</item>
-    <item name="buttonBarNegativeButtonStyle">@style/ShowlyDatePicker.Button</item>
+    <item name="buttonBarPositiveButtonStyle">@style/DisketteDatePicker.Button</item>
+    <item name="buttonBarNegativeButtonStyle">@style/DisketteDatePicker.Button</item>
   </style>
 
-  <style name="ShowlyDatePicker.Button" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+  <style name="DisketteDatePicker.Button" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
     <item name="android:textColor">?android:textColorPrimary</item>
   </style>
 
-  <style name="ShowlyTimePicker" parent="ThemeOverlay.MaterialComponents.TimePicker">
+  <style name="DisketteTimePicker" parent="ThemeOverlay.MaterialComponents.TimePicker">
     <item name="colorSurface">@color/colorBackground</item>
     <item name="colorOnSurface">@color/colorGrayLight</item>
     <item name="colorPrimary">?attr/colorBottomMenuBackground</item>
     <item name="colorOnPrimary">?android:textColorPrimary</item>
-    <item name="materialClockStyle">@style/ShowlyTimePicker.Clock</item>
-    <item name="materialButtonOutlinedStyle">@style/ShowlyTimePicker.Button</item>
-    <item name="borderlessButtonStyle">@style/ShowlyTimePicker.Button.Positive</item>
-    <item name="chipStyle">@style/ShowlyTimePicker.Chip</item>
+    <item name="materialClockStyle">@style/DisketteTimePicker.Clock</item>
+    <item name="materialButtonOutlinedStyle">@style/DisketteTimePicker.Button</item>
+    <item name="borderlessButtonStyle">@style/DisketteTimePicker.Button.Positive</item>
+    <item name="chipStyle">@style/DisketteTimePicker.Chip</item>
   </style>
 
-  <style name="ShowlyTimePicker.Clock" parent="Widget.MaterialComponents.TimePicker.Clock">
+  <style name="DisketteTimePicker.Clock" parent="Widget.MaterialComponents.TimePicker.Clock">
     <item name="clockHandColor">?colorAccent</item>
   </style>
 
-  <style name="ShowlyTimePicker.Chip" parent="Widget.MaterialComponents.TimePicker.Display">
+  <style name="DisketteTimePicker.Chip" parent="Widget.MaterialComponents.TimePicker.Display">
     <item name="chipBackgroundColor">@color/selector_timepicker_chip_background</item>
     <item name="android:textColor">@color/selector_timepicker_chip_text</item>
   </style>
 
-  <style name="ShowlyTimePicker.Button" parent="Widget.MaterialComponents.TimePicker.Button">
+  <style name="DisketteTimePicker.Button" parent="Widget.MaterialComponents.TimePicker.Button">
     <item name="backgroundTint">@color/colorBackground</item>
     <item name="android:textColor">@color/selector_timepicker_button_text</item>
   </style>
 
-  <style name="ShowlyTimePicker.Button.Positive" parent="Widget.MaterialComponents.Button.TextButton">
+  <style name="DisketteTimePicker.Button.Positive" parent="Widget.MaterialComponents.Button.TextButton">
     <item name="android:textColor">?android:textColorPrimary</item>
   </style>
 
-  <style name="ShowlyTimePicker.Button.Negative" parent="Widget.MaterialComponents.Button.TextButton">
+  <style name="DisketteTimePicker.Button.Negative" parent="Widget.MaterialComponents.Button.TextButton">
     <item name="android:textColor">?android:textColorSecondary</item>
   </style>
 </resources>

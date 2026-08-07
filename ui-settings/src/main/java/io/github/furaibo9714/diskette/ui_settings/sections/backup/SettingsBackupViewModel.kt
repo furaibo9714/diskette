@@ -1,0 +1,8 @@
+package io.github.furaibo9714.diskette.ui_settings.sections.backup
+
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class SettingsBackupViewModel @Inject constructor() : ViewModel()

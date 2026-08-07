@@ -53,7 +53,7 @@
       android:layout_marginTop="@dimen/backupTopMargin"
       android:padding="18dp"
       app:layout_constraintBottom_toTopOf="@id/titleText"
-      app:layout_constraintEnd_toStartOf="@id/showlyIcon"
+      app:layout_constraintEnd_toStartOf="@id/disketteIcon"
       app:layout_constraintHorizontal_chainStyle="packed"
       app:layout_constraintStart_toEndOf="@id/phoneIcon"
       app:layout_constraintTop_toBottomOf="@id/toolbar"
@@ -64,7 +64,7 @@
       />
 
     <ImageView
-      android:id="@+id/showlyIcon"
+      android:id="@+id/disketteIcon"
       android:layout_width="74dp"
       android:layout_height="0dp"
       android:layout_marginStart="@dimen/spaceSmall"
@@ -73,7 +73,7 @@
       app:layout_constraintHorizontal_chainStyle="packed"
       app:layout_constraintStart_toEndOf="@id/arrowIcon"
       app:layout_constraintTop_toTopOf="@id/arrowIcon"
-      app:srcCompat="@drawable/ic_showly"
+      app:srcCompat="@drawable/ic_diskette"
       />
 
     <TextView
