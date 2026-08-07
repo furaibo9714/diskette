@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" role="img" aria-label="Diskette">
+  <rect width="108" height="108" rx="24" fill="#FFFFFF"/>
+  <path d="M25 20 H74 L88 34 V83 Q88 88 83 88 H25 Q20 88 20 83 V25 Q20 20 25 20 Z" fill="#2E3350"/>
+  <path d="M46 20 H72 V46 H46 Z" fill="#EFDCC0"/>
+  <path d="M64 24 H70 V42 H64 Z" fill="#3A4062"/>
+  <path d="M32 52 H76 Q78 52 78 54 V84 H30 V54 Q30 52 32 52 Z" fill="#FBE7D2"/>
+  <path d="M42 60 H47 V68 H42 Z" fill="#23253C"/>
+  <path d="M61 60 H66 V68 H61 Z" fill="#23253C"/>
+  <path d="M34 69 H41 V73 H34 Z" fill="#F3A6AA"/>
+  <path d="M67 69 H74 V73 H67 Z" fill="#F3A6AA"/>
+  <path d="M48 71 H60 V75 Q60 78 54 78 Q48 78 48 75 Z" fill="#D94F5C"/>
+  <path d="M51 75 H57 V78 H51 Z" fill="#F2848D"/>
+  <path d="M28.5 83 H33.5 Q35 83 35 84.5 V88.5 Q35 90 33.5 90 H28.5 Q27 90 27 88.5 V84.5 Q27 83 28.5 83 Z" fill="#23253C"/>
+  <path d="M74.5 83 H79.5 Q81 83 81 84.5 V88.5 Q81 90 79.5 90 H74.5 Q73 90 73 88.5 V84.5 Q73 83 74.5 83 Z" fill="#23253C"/>
+</svg>

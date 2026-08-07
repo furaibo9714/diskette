@@ -1,17 +1,15 @@
 
 # Diskette
 
-<img src="https://github.com/user-attachments/assets/b31c6ce6-7257-4c90-a13b-b12603e105a9" align="left" width="180" hspace="0" vspace="80" />
+<img src="assets/graphics/logo.svg" alt="Diskette logo" align="left" width="180" hspace="0" vspace="30" />
 
 Diskette is a modern TV Shows and Movies tracking app for [Floppy](https://github.com/dannyvfilms/Floppy).
 
 Diskette is a fork of [Showly](https://github.com/michaldrabik/showly-2.0) by [michaldrabik](https://github.com/michaldrabik), rebuilt
 around a self-hosted Floppy backend instead of Trakt.tv. It is completely free of all Google services.
 
-<a href="https://apt.izzysoft.de/packages/io.github.furaibo9714.diskette"><img
-    alt="Get it at IzzyOnDroid"
-    height="80"
-    src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"/></a>
+Releases are published on this repository and are meant to be installed and kept up to date with
+[Obtainium](https://github.com/ImranR98/Obtainium).
 
 ## Screenshots
 
@@ -137,8 +135,10 @@ Status of fork-specific work, grouped by theme. Upstream features/issues aren't 
 ### Distribution
 
 - [x] Remove all Google Play Store surface (README badge/link, in-app "Rate on Play Store"
-      settings row + helper, dead Play Store review-prompt/in-app-update strings). IzzyOnDroid
-      distribution (`fastlane/metadata`) is kept.
+      settings row + helper, dead Play Store review-prompt/in-app-update strings)
+- [x] Remove IzzyOnDroid distribution (README badge/link and the whole `fastlane/metadata` tree:
+      store descriptions, listing icon/banner, phone screenshots). GitHub releases consumed via
+      Obtainium are the only distribution channel.
 - [x] Remove developer social-media promotion (Settings icons, "What's New" dialog button,
       README badges/links, and the Discover-feed "Follow us on Twitter" promo card feature —
       adapter/viewmodel/case/view/install-timestamp tracking all removed)
