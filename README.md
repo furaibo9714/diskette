@@ -30,8 +30,7 @@ This fork diverges from upstream in two ways:
 1. **Trakt.tv, fully removed.** Trakt's API became partially paywalled, so this fork is now a phone
    client built exclusively for [Floppy](https://github.com/dannyvfilms/Floppy), a self-hosted
    tracker, with metadata/search/discovery served directly from TMDB instead of proxied through
-   Trakt. See [`TRAKT_MIGRATION.md`](TRAKT_MIGRATION.md) for the full milestone-by-milestone
-   writeup.
+   Trakt.
 2. **Premium/paywall system, removed.** The upstream premium gates had no billing backend behind
    them in this fork (dead UI only) — they've been deleted and the three features they used to
    lock (app theme, collection view mode, widget theme/transparency) rebuilt as normal, always-on
