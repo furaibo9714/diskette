@@ -19,10 +19,6 @@ class ImdbDeepLinkCase @Inject constructor(
   private val mappers: Mappers,
 ) {
 
-  companion object {
-    private const val SEARCH_ID_TYPE = "imdb"
-  }
-
   suspend fun findById(imdbId: IdImdb): DeepLinkBundle {
     val show = showDetailsRepository.find(imdbId)
     if (show != null) {
@@ -34,24 +30,21 @@ class ImdbDeepLinkCase @Inject constructor(
       return DeepLinkBundle(movie = movie)
     }
 
-    val searchResult = traktRemoteSource.fetchSearchId(SEARCH_ID_TYPE, imdbId.id)
-    if (searchResult.size == 1) {
-      val showSearch = searchResult[0].show
-      val movieSearch = searchResult[0].movie
-      when {
-        showSearch != null -> {
-          val uiShow = mappers.show.fromNetwork(showSearch)
-          showsLocalSource.upsert(listOf(mappers.show.toDatabase(uiShow)))
-          return DeepLinkBundle(show = uiShow)
-        }
-        movieSearch != null -> {
-          val uiMovie = mappers.movie.fromNetwork(movieSearch)
-          moviesLocalSource.upsert(listOf(mappers.movie.toDatabase(uiMovie)))
-          return DeepLinkBundle(movie = uiMovie)
-        }
+    val searchResult = traktRemoteSource.findByImdbId(imdbId.id) ?: return DeepLinkBundle.EMPTY
+    val showSearch = searchResult.show
+    val movieSearch = searchResult.movie
+    return when {
+      showSearch != null -> {
+        val uiShow = mappers.show.fromNetwork(showSearch)
+        showsLocalSource.upsert(listOf(mappers.show.toDatabase(uiShow)))
+        DeepLinkBundle(show = uiShow)
       }
+      movieSearch != null -> {
+        val uiMovie = mappers.movie.fromNetwork(movieSearch)
+        moviesLocalSource.upsert(listOf(mappers.movie.toDatabase(uiMovie)))
+        DeepLinkBundle(movie = uiMovie)
+      }
+      else -> DeepLinkBundle.EMPTY
     }
-
-    return DeepLinkBundle.EMPTY
   }
 }

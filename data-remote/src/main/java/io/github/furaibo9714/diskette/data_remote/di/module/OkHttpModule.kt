@@ -3,8 +3,6 @@ package io.github.furaibo9714.diskette.data_remote.di.module
 import io.github.furaibo9714.diskette.data_remote.BuildConfig
 import io.github.furaibo9714.diskette.data_remote.tmdb.TmdbInterceptor
 import io.github.furaibo9714.diskette.data_remote.tmdb.interceptors.TmdbRetryInterceptor
-import io.github.furaibo9714.diskette.data_remote.trakt.interceptors.TraktHeadersInterceptor
-import io.github.furaibo9714.diskette.data_remote.trakt.interceptors.TraktRetryInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,20 +23,6 @@ object OkHttpModule {
   @Singleton
   @Named("okHttpBase")
   fun providesBaseOkHttp(): OkHttpClient = createBaseOkHttpClient().build()
-
-  @Provides
-  @Singleton
-  @Named("okHttpTrakt")
-  fun providesTraktOkHttp(
-    httpLoggingInterceptor: HttpLoggingInterceptor,
-    traktHeadersInterceptor: TraktHeadersInterceptor,
-    traktRetryInterceptor: TraktRetryInterceptor,
-  ): OkHttpClient =
-    createBaseOkHttpClient()
-      .addInterceptor(traktHeadersInterceptor)
-      .addInterceptor(traktRetryInterceptor)
-      .addInterceptor(httpLoggingInterceptor)
-      .build()
 
   @Provides
   @Singleton

@@ -25,6 +25,7 @@ interface TmdbShowsService {
   suspend fun fetchSeasonDetails(
     @Path("tmdbId") tmdbId: Long,
     @Path("seasonNumber") seasonNumber: Int,
+    @Query("language") language: String? = null,
   ): TmdbSeasonDetails
 
   @GET("tv/{tmdbId}/similar")

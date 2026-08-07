@@ -1,5 +1,6 @@
 package io.github.furaibo9714.diskette.data_remote.tmdb.api
 
+import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbCollectionDetails
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbMovieDetails
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbSearchMultiResponse
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbTranslationsResponse
@@ -19,6 +20,11 @@ interface TmdbMoviesService {
   suspend fun fetchMovieTranslations(
     @Path("tmdbId") tmdbId: Long,
   ): TmdbTranslationsResponse
+
+  @GET("collection/{collectionId}")
+  suspend fun fetchCollection(
+    @Path("collectionId") collectionId: Long,
+  ): TmdbCollectionDetails
 
   @GET("movie/{tmdbId}/similar")
   suspend fun fetchSimilarMovies(

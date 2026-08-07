@@ -2,7 +2,6 @@ package io.github.furaibo9714.diskette.data_remote.trakt
 
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbPerson
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Episode
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Ids
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Movie
 import io.github.furaibo9714.diskette.data_remote.trakt.model.MovieCollection
 import io.github.furaibo9714.diskette.data_remote.trakt.model.PersonCredit
@@ -13,7 +12,8 @@ import io.github.furaibo9714.diskette.data_remote.trakt.model.Show
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Translation
 
 /**
- * Fetch/post remote resources via unauthorized Trakt API
+ * Fetch remote show/movie metadata, search and discovery. Named for the Trakt API it was
+ * originally shaped around; it is served entirely from TMDB now.
  */
 interface TraktRemoteDataSource {
 
@@ -23,8 +23,6 @@ interface TraktRemoteDataSource {
     traktId: Long,
     tmdbId: Long? = null,
   ): Show
-
-  suspend fun fetchShow(traktSlug: String): Show
 
   suspend fun fetchPopularShows(
     genres: String,
@@ -76,8 +74,6 @@ interface TraktRemoteDataSource {
     tmdbId: Long? = null,
   ): Movie
 
-  suspend fun fetchMovie(traktSlug: String): Movie
-
   suspend fun fetchPopularMovies(
     genres: String,
     limit: Int,
@@ -111,11 +107,6 @@ interface TraktRemoteDataSource {
 
   // People
 
-  suspend fun fetchPersonIds(
-    idType: String,
-    id: String,
-  ): Ids?
-
   suspend fun fetchPersonShowsCredits(
     traktId: Long,
     type: TmdbPerson.Type,
@@ -135,8 +126,6 @@ interface TraktRemoteDataSource {
     withMovies: Boolean,
   ): List<SearchResult>
 
-  suspend fun fetchSearchId(
-    idType: String,
-    id: String,
-  ): List<SearchResult>
+  /** Resolves an external IMDb id to whichever show or movie it refers to, if any. */
+  suspend fun findByImdbId(imdbId: String): SearchResult?
 }

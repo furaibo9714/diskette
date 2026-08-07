@@ -21,6 +21,7 @@ data class TmdbShowDetails(
   val videos: TmdbVideosResponse?,
   val content_ratings: TmdbContentRatingsResponse?,
   val seasons: List<TmdbSeasonSummary>?,
+  val next_episode_to_air: TmdbEpisodeDetails?,
 )
 
 @JsonClass(generateAdapter = true)

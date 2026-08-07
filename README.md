@@ -54,6 +54,14 @@ Status of fork-specific work, grouped by theme. Upstream features/issues aren't 
 - [x] Background full-sync engine (app start + pull-to-refresh) rebuilt on Floppy, old Trakt engine deleted
 - [x] Delete all remaining Trakt OAuth/account-linking code
 - [x] Cleartext networking support for self-hosted/LAN Floppy instances
+- [x] Delete the dead Trakt HTTP layer (API client, Retrofit services, interceptors, base URL and
+      client credentials). No request reaches trakt.tv any more. Six features that had been
+      silently failing against the paywalled API were rebuilt on TMDB along the way: next episode,
+      season/episode translations, movie collections and their items, and IMDb/TMDB deep links.
+- [ ] Rename the Trakt-shaped DTO layer to neutral names
+- [ ] Replace `IdTrakt` with Floppy's `(source, mediaId)` addressing, deleting all three
+      synthetic-ID schemes
+- [ ] Re-key the Room schema on `(source, media_id)` and move per-title metadata to Floppy
 - [ ] Beyond migration: evaluate Floppy's own endpoints as replacements for local-only or TMDB-only features (not scoped yet)
   - [ ] `/api/v1/discover/` — personalized recommendations from the user's own Floppy library, a different (arguably more relevant) signal than TMDB's generic trending/popular.
   - [ ] `/api/v1/home/` — a ready-made "home feed," possibly a better fit than assembling one from separate TMDB calls.
@@ -155,12 +163,10 @@ Status of fork-specific work, grouped by theme. Upstream features/issues aren't 
    storePassword=github
    ```
 
-4. Add your [Trakt.tv](https://trakt.tv/oauth/applications), [TMDB](https://developers.themoviedb.org/3/) API keys as
-   following properties into your `local.properties` file located in the root directory of the project:
+4. Add your [TMDB](https://developers.themoviedb.org/3/) API key as a property in your
+   `local.properties` file, located in the root directory of the project:
 
    ```ini
-   traktClientId="your trakt client id"
-   traktClientSecret="your trakt client secret"
    tmdbApiKey="your tmdb api key (v4)"
    ```
 

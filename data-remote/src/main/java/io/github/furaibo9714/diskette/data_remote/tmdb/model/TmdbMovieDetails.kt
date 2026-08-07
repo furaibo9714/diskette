@@ -19,6 +19,22 @@ data class TmdbMovieDetails(
   val original_language: String?,
   val videos: TmdbVideosResponse?,
   val release_dates: TmdbReleaseDatesResponse?,
+  val belongs_to_collection: TmdbCollectionSummary?,
+)
+
+@JsonClass(generateAdapter = true)
+data class TmdbCollectionSummary(
+  val id: Long?,
+  val name: String?,
+  val overview: String?,
+)
+
+@JsonClass(generateAdapter = true)
+data class TmdbCollectionDetails(
+  val id: Long?,
+  val name: String?,
+  val overview: String?,
+  val parts: List<TmdbMovieDetails>?,
 )
 
 @JsonClass(generateAdapter = true)

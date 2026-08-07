@@ -9,10 +9,13 @@ import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbService
 import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbShowsService
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbPerson
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbSearchMultiResponse
+import io.github.furaibo9714.diskette.data_remote.trakt.model.Episode
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Movie
+import io.github.furaibo9714.diskette.data_remote.trakt.model.MovieCollection
 import io.github.furaibo9714.diskette.data_remote.trakt.model.PersonCredit
 import io.github.furaibo9714.diskette.data_remote.trakt.model.SearchResult
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Season
+import io.github.furaibo9714.diskette.data_remote.trakt.model.SeasonTranslation
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Show
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Translation
 import kotlinx.coroutines.async
@@ -21,23 +24,24 @@ import kotlinx.coroutines.coroutineScope
 import java.time.LocalDate
 
 /**
- * Decorates the existing (now-paywalled) [TraktRemoteDataSource] with TMDB-backed implementations
- * of the metadata/search/discovery methods, via Kotlin interface delegation. Every method NOT
- * overridden here (comments, public collections, OAuth, slug/id lookups, etc.) is forwarded to
- * [legacyTrakt] unchanged - compiler-enforced "not in scope" rather than a hand-maintained list.
+ * Serves the whole [TraktRemoteDataSource] surface from TMDB. Trakt's API is paywalled and is no
+ * longer called at all; the interface keeps its Trakt-shaped DTOs only because the repository
+ * layer still consumes them.
  */
 internal class TmdbBackedTraktRemoteDataSource(
-  private val legacyTrakt: TraktRemoteDataSource,
   private val tmdbSearch: TmdbSearchService,
   private val tmdbShows: TmdbShowsService,
   private val tmdbMovies: TmdbMoviesService,
   private val tmdbPeople: TmdbService,
-) : TraktRemoteDataSource by legacyTrakt {
+) : TraktRemoteDataSource {
 
   companion object {
     private const val RELATED_PAGES = 2
     private const val PAGE_SIZE = 20
     private const val MAX_PAGES = 5
+    private const val IMDB_EXTERNAL_SOURCE = "imdb_id"
+    private const val MEDIA_TYPE_MOVIE = "movie"
+    private const val MEDIA_TYPE_TV = "tv"
   }
 
   override suspend fun fetchSearch(
@@ -57,7 +61,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     traktId: Long,
     tmdbId: Long?,
   ): Show {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return legacyTrakt.fetchShow(traktId)
+    val resolvedTmdbId = requireTmdbId(traktId, tmdbId)
     val details = tmdbShows.fetchShowDetails(resolvedTmdbId)
     val show = TmdbToTraktModelConverter.toShow(resolvedTmdbId, details)
     if (!details.episode_run_time.isNullOrEmpty()) return show
@@ -79,7 +83,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     traktId: Long,
     tmdbId: Long?,
   ): Movie {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return legacyTrakt.fetchMovie(traktId)
+    val resolvedTmdbId = requireTmdbId(traktId, tmdbId)
     val details = tmdbMovies.fetchMovieDetails(resolvedTmdbId)
     return TmdbToTraktModelConverter.toMovie(resolvedTmdbId, details)
   }
@@ -89,8 +93,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     code: String,
     tmdbId: Long?,
   ): List<Translation> {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId)
-      ?: return legacyTrakt.fetchShowTranslations(traktId, code)
+    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return emptyList()
     val response = tmdbShows.fetchShowTranslations(resolvedTmdbId)
     return TmdbToTraktModelConverter.toShowTranslations(response).filter { it.language == code }
   }
@@ -100,8 +103,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     code: String,
     tmdbId: Long?,
   ): List<Translation> {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId)
-      ?: return legacyTrakt.fetchMovieTranslations(traktId, code)
+    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return emptyList()
     val response = tmdbMovies.fetchMovieTranslations(resolvedTmdbId)
     return TmdbToTraktModelConverter.toMovieTranslations(response).filter { it.language == code }
   }
@@ -110,7 +112,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     traktId: Long,
     tmdbId: Long?,
   ): List<Season> {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return legacyTrakt.fetchSeasons(traktId)
+    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return emptyList()
     val showDetails = tmdbShows.fetchShowDetails(resolvedTmdbId)
     val seasonNumbers = showDetails.seasons.orEmpty().mapNotNull { it.season_number }
     return coroutineScope {
@@ -122,13 +124,59 @@ internal class TmdbBackedTraktRemoteDataSource(
     }
   }
 
+  override suspend fun findByImdbId(imdbId: String): SearchResult? {
+    val response = tmdbSearch.findByExternalId(imdbId, externalSource = IMDB_EXTERNAL_SOURCE)
+    response.tv_results.orEmpty().firstOrNull()?.let { item ->
+      return TmdbToTraktModelConverter.toSearchResult(item.copy(media_type = MEDIA_TYPE_TV), order = 1)
+    }
+    response.movie_results.orEmpty().firstOrNull()?.let { item ->
+      return TmdbToTraktModelConverter.toSearchResult(item.copy(media_type = MEDIA_TYPE_MOVIE), order = 1)
+    }
+    return null
+  }
+
+  override suspend fun fetchNextEpisode(traktId: Long): Episode? {
+    val resolvedTmdbId = resolveTmdbId(traktId, null) ?: return null
+    val details = tmdbShows.fetchShowDetails(resolvedTmdbId)
+    return details.next_episode_to_air?.let { TmdbToTraktModelConverter.toEpisode(it) }
+  }
+
+  /** TMDB returns a season's episodes already localised when the request carries a `language`. */
+  override suspend fun fetchSeasonTranslations(
+    showTraktId: Long,
+    seasonNumber: Int,
+    code: String,
+  ): List<SeasonTranslation> {
+    val resolvedTmdbId = resolveTmdbId(showTraktId, null) ?: return emptyList()
+    val details = tmdbShows.fetchSeasonDetails(resolvedTmdbId, seasonNumber, language = code)
+    return TmdbToTraktModelConverter.toSeasonTranslations(details, code)
+  }
+
+  /**
+   * A TMDB movie belongs to at most one collection, so this returns either zero or one entry
+   * where Trakt could return many.
+   */
+  override suspend fun fetchMovieCollections(traktId: Long): List<MovieCollection> {
+    val resolvedTmdbId = resolveTmdbId(traktId, null) ?: return emptyList()
+    val details = tmdbMovies.fetchMovieDetails(resolvedTmdbId)
+    val collection = details.belongs_to_collection ?: return emptyList()
+    return listOfNotNull(TmdbToTraktModelConverter.toMovieCollection(collection))
+  }
+
+  override suspend fun fetchMovieCollectionItems(collectionId: Long): List<Movie> {
+    val resolvedTmdbId = resolveTmdbId(collectionId, null) ?: return emptyList()
+    val details = tmdbMovies.fetchCollection(resolvedTmdbId)
+    return details.parts.orEmpty().mapNotNull { part ->
+      part.id?.let { TmdbToTraktModelConverter.toMovie(it, part) }
+    }
+  }
+
   override suspend fun fetchRelatedShows(
     traktId: Long,
     addToLimit: Int,
     tmdbId: Long?,
   ): List<Show> {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId)
-      ?: return legacyTrakt.fetchRelatedShows(traktId, addToLimit)
+    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return emptyList()
     return fetchPages(RELATED_PAGES) { page -> tmdbShows.fetchSimilarShows(resolvedTmdbId, page) }
       .mapNotNull { TmdbToTraktModelConverter.toShowSummary(it) }
   }
@@ -138,8 +186,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     addToLimit: Int,
     tmdbId: Long?,
   ): List<Movie> {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId)
-      ?: return legacyTrakt.fetchRelatedMovies(traktId, addToLimit)
+    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return emptyList()
     return fetchPages(RELATED_PAGES) { page -> tmdbMovies.fetchSimilarMovies(resolvedTmdbId, page) }
       .mapNotNull { TmdbToTraktModelConverter.toMovieSummary(it) }
   }
@@ -149,8 +196,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     type: TmdbPerson.Type,
     tmdbId: Long?,
   ): List<PersonCredit> {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId)
-      ?: return legacyTrakt.fetchPersonShowsCredits(traktId, type)
+    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return emptyList()
     val response = tmdbPeople.fetchPersonTvCredits(resolvedTmdbId)
     return TmdbToTraktModelConverter.toPersonShowCredits(response, isCast = type == TmdbPerson.Type.CAST)
   }
@@ -160,8 +206,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     type: TmdbPerson.Type,
     tmdbId: Long?,
   ): List<PersonCredit> {
-    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId)
-      ?: return legacyTrakt.fetchPersonMoviesCredits(traktId, type)
+    val resolvedTmdbId = resolveTmdbId(traktId, tmdbId) ?: return emptyList()
     val response = tmdbPeople.fetchPersonMovieCredits(resolvedTmdbId)
     return TmdbToTraktModelConverter.toPersonMovieCredits(response, isCast = type == TmdbPerson.Type.CAST)
   }
@@ -273,4 +318,11 @@ internal class TmdbBackedTraktRemoteDataSource(
     if (TmdbSyntheticIds.isSynthetic(traktId)) return TmdbSyntheticIds.toTmdbId(traktId)
     return null
   }
+
+  private fun requireTmdbId(
+    traktId: Long,
+    tmdbId: Long?,
+  ): Long =
+    resolveTmdbId(traktId, tmdbId)
+      ?: error("No TMDB id available for id=$traktId. Cannot fetch details.")
 }

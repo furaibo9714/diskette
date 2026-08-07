@@ -1,5 +1,6 @@
 package io.github.furaibo9714.diskette.data_remote.tmdb
 
+import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbCollectionSummary
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbEpisodeDetails
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbMovieDetails
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbPersonCreditsResponse
@@ -11,9 +12,11 @@ import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbVideosResponse
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Episode
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Ids
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Movie
+import io.github.furaibo9714.diskette.data_remote.trakt.model.MovieCollection
 import io.github.furaibo9714.diskette.data_remote.trakt.model.PersonCredit
 import io.github.furaibo9714.diskette.data_remote.trakt.model.SearchResult
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Season
+import io.github.furaibo9714.diskette.data_remote.trakt.model.SeasonTranslation
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Show
 import io.github.furaibo9714.diskette.data_remote.trakt.model.Translation
 
@@ -165,6 +168,46 @@ object TmdbToTraktModelConverter {
         country = it.iso_3166_1,
       )
     }
+
+  /**
+   * TMDB returns a season's episodes already translated when the request carries a `language`, so
+   * each episode's localised name/overview becomes one [SeasonTranslation] entry keyed by that
+   * episode's ids - which is how callers match a translation back to the episode it belongs to.
+   */
+  fun toSeasonTranslations(
+    details: TmdbSeasonDetails,
+    language: String,
+  ): List<SeasonTranslation> =
+    details.episodes.orEmpty().mapNotNull { episode ->
+      val episodeId = episode.id ?: return@mapNotNull null
+      SeasonTranslation(
+        season = episode.season_number ?: details.season_number ?: -1,
+        number = episode.episode_number ?: -1,
+        ids = toIds(episodeId),
+        translations = listOf(
+          Translation(
+            title = episode.name,
+            overview = episode.overview,
+            language = language,
+            country = null,
+          ),
+        ),
+      )
+    }
+
+  fun toMovieCollection(
+    collection: TmdbCollectionSummary,
+  ): MovieCollection? {
+    val collectionId = collection.id ?: return null
+    return MovieCollection(
+      ids = toIds(collectionId),
+      name = collection.name ?: "",
+      description = collection.overview ?: "",
+      privacy = "",
+      item_count = 0,
+      likes = 0,
+    )
+  }
 
   fun toSeason(details: TmdbSeasonDetails): Season =
     Season(
