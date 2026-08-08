@@ -18,7 +18,7 @@ class SeasonsDaoTest : BaseDaoTest() {
       val season = TestData.createSeason()
 
       database.seasonsDao().upsert(listOf(season))
-      val result = database.seasonsDao().getAllByShowId(1)
+      val result = database.seasonsDao().getAllByShowId("tmdb:1")
       assertThat(result).containsExactlyElementsIn(listOf(season))
     }
   }
@@ -26,11 +26,11 @@ class SeasonsDaoTest : BaseDaoTest() {
   @Test
   fun shouldInsertAndStoreMultipleEntities() {
     runBlocking {
-      val season1 = TestData.createSeason().copy(idTrakt = 1)
-      val season2 = TestData.createSeason().copy(idTrakt = 2)
+      val season1 = TestData.createSeason().copy(mediaId = "tmdb:1")
+      val season2 = TestData.createSeason().copy(mediaId = "tmdb:2")
 
       database.seasonsDao().upsert(listOf(season1, season2))
-      val result = database.seasonsDao().getAllByShowId(1)
+      val result = database.seasonsDao().getAllByShowId("tmdb:1")
       assertThat(result).containsExactlyElementsIn(listOf(season1, season2))
     }
   }
@@ -38,11 +38,11 @@ class SeasonsDaoTest : BaseDaoTest() {
   @Test
   fun shouldReturnEntityById() {
     runBlocking {
-      val season1 = TestData.createSeason().copy(idTrakt = 1)
-      val season2 = TestData.createSeason().copy(idTrakt = 2)
+      val season1 = TestData.createSeason().copy(mediaId = "tmdb:1")
+      val season2 = TestData.createSeason().copy(mediaId = "tmdb:2")
 
       database.seasonsDao().upsert(listOf(season1, season2))
-      val result = database.seasonsDao().getById(2)
+      val result = database.seasonsDao().getById("tmdb:2")
       assertThat(result).isEqualTo(season2)
     }
   }
@@ -50,12 +50,12 @@ class SeasonsDaoTest : BaseDaoTest() {
   @Test
   fun shouldReturnEntitiesByIds() {
     runBlocking {
-      val season1 = TestData.createSeason().copy(idTrakt = 1)
-      val season2 = TestData.createSeason().copy(idTrakt = 2, idShowTrakt = 2)
-      val season3 = TestData.createSeason().copy(idTrakt = 3)
+      val season1 = TestData.createSeason().copy(mediaId = "tmdb:1")
+      val season2 = TestData.createSeason().copy(mediaId = "tmdb:2", showMediaId = "tmdb:2")
+      val season3 = TestData.createSeason().copy(mediaId = "tmdb:3")
 
       database.seasonsDao().upsert(listOf(season1, season2, season3))
-      val result = database.seasonsDao().getAllByShowId(1)
+      val result = database.seasonsDao().getAllByShowId("tmdb:1")
       assertThat(result).containsExactlyElementsIn(listOf(season1, season3))
     }
   }
@@ -63,14 +63,14 @@ class SeasonsDaoTest : BaseDaoTest() {
   @Test
   fun shouldOnlyReturnWatchedSeasons() {
     runBlocking {
-      val season1 = TestData.createSeason().copy(idTrakt = 1)
-      val season2 = TestData.createSeason().copy(idTrakt = 2)
-      val season3 = TestData.createSeason().copy(idTrakt = 3, isWatched = true)
+      val season1 = TestData.createSeason().copy(mediaId = "tmdb:1")
+      val season2 = TestData.createSeason().copy(mediaId = "tmdb:2")
+      val season3 = TestData.createSeason().copy(mediaId = "tmdb:3", isWatched = true)
 
       database.seasonsDao().upsert(listOf(season1, season2, season3))
-      val result = database.seasonsDao().getAllWatchedIdsForShows(listOf(1))
+      val result = database.seasonsDao().getAllWatchedIdsForShows(listOf("tmdb:1"))
       assertThat(result).hasSize(1)
-      assertThat(result[0]).isEqualTo(3)
+      assertThat(result[0]).isEqualTo("tmdb:3")
     }
   }
 
@@ -80,7 +80,7 @@ class SeasonsDaoTest : BaseDaoTest() {
       val season1 = TestData.createSeason()
 
       database.seasonsDao().upsert(listOf(season1))
-      val result = database.seasonsDao().getById(2)
+      val result = database.seasonsDao().getById("tmdb:2")
       assertThat(result).isNull()
     }
   }

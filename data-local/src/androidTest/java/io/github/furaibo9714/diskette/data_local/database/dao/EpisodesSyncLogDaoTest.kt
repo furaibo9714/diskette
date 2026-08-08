@@ -15,7 +15,7 @@ class EpisodesSyncLogDaoTest : BaseDaoTest() {
   @Test
   fun shouldInsertAndSaveData() {
     runBlocking {
-      val testLog = EpisodesSyncLog(1, 999)
+      val testLog = EpisodesSyncLog("tmdb:1", 999)
       database.episodesSyncLogDao().upsert(testLog)
       val result = database.episodesSyncLogDao().getAll().first()
       assertThat(result).isEqualTo(testLog)
@@ -25,7 +25,7 @@ class EpisodesSyncLogDaoTest : BaseDaoTest() {
   @Test
   fun shouldUpdateRowIfAlreadyExists() {
     runBlocking {
-      val testLog = EpisodesSyncLog(1, 999)
+      val testLog = EpisodesSyncLog("tmdb:1", 999)
 
       database.episodesSyncLogDao().upsert(testLog)
       val result = database.episodesSyncLogDao().getAll().first()

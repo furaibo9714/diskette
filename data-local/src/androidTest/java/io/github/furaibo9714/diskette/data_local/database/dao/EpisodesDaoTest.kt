@@ -16,13 +16,13 @@ class EpisodesDaoTest : BaseDaoTest() {
   fun shouldStoreEpisodesForSeason() {
     runBlocking {
       val season = TestData.createSeason()
-      val episode1 = TestData.createEpisode().copy(idTrakt = 1)
-      val episode2 = TestData.createEpisode().copy(idTrakt = 2)
+      val episode1 = TestData.createEpisode().copy(mediaId = "tmdb:1")
+      val episode2 = TestData.createEpisode().copy(mediaId = "tmdb:2")
 
       database.seasonsDao().upsert(listOf(season))
       database.episodesDao().upsert(listOf(episode1, episode2))
 
-      val result = database.episodesDao().getAllForSeason(1)
+      val result = database.episodesDao().getAllForSeason("tmdb:1")
       assertThat(result).containsExactlyElementsIn(listOf(episode1, episode2))
     }
   }
@@ -31,19 +31,19 @@ class EpisodesDaoTest : BaseDaoTest() {
   fun shouldUpdateEpisodeIfAlreadyExists() {
     runBlocking {
       val season = TestData.createSeason()
-      val episode1 = TestData.createEpisode().copy(idTrakt = 1)
-      val episode2 = TestData.createEpisode().copy(idTrakt = 2)
+      val episode1 = TestData.createEpisode().copy(mediaId = "tmdb:1")
+      val episode2 = TestData.createEpisode().copy(mediaId = "tmdb:2")
 
       database.seasonsDao().upsert(listOf(season))
       database.episodesDao().upsert(listOf(episode1, episode2))
 
-      val result = database.episodesDao().getAllForSeason(1)
+      val result = database.episodesDao().getAllForSeason("tmdb:1")
       assertThat(result).containsExactlyElementsIn(listOf(episode1, episode2))
 
       val updated = episode2.copy(title = "Updated")
       database.episodesDao().upsert(listOf(episode1, updated))
 
-      val result2 = database.episodesDao().getAllForSeason(1)
+      val result2 = database.episodesDao().getAllForSeason("tmdb:1")
       assertThat(result2).containsExactlyElementsIn(listOf(episode1, updated))
     }
   }
@@ -51,28 +51,28 @@ class EpisodesDaoTest : BaseDaoTest() {
   @Test
   fun shouldStoreEpisodesForShows() {
     runBlocking {
-      val show1 = TestData.createShow().copy(idTrakt = 1)
-      val show2 = TestData.createShow().copy(idTrakt = 2)
+      val show1 = TestData.createShow().copy(mediaId = "tmdb:1")
+      val show2 = TestData.createShow().copy(mediaId = "tmdb:2")
 
-      val season1 = TestData.createSeason().copy(idShowTrakt = show1.idTrakt)
-      val season2 = TestData.createSeason().copy(idShowTrakt = show2.idTrakt)
+      val season1 = TestData.createSeason().copy(showMediaId = show1.mediaId)
+      val season2 = TestData.createSeason().copy(showMediaId = show2.mediaId)
 
       val episode1 = TestData.createEpisode().copy(
-        idTrakt = 1,
-        idShowTrakt = show1.idTrakt,
-        idSeason = season1.idTrakt,
+        mediaId = "tmdb:1",
+        showMediaId = show1.mediaId,
+        idSeason = season1.mediaId,
       )
       val episode2 = TestData.createEpisode().copy(
-        idTrakt = 2,
-        idShowTrakt = show2.idTrakt,
-        idSeason = season2.idTrakt,
+        mediaId = "tmdb:2",
+        showMediaId = show2.mediaId,
+        idSeason = season2.mediaId,
       )
 
       database.showsDao().upsert(listOf(show1, show2))
       database.seasonsDao().upsert(listOf(season1, season2))
       database.episodesDao().upsert(listOf(episode1, episode2))
 
-      val result2 = database.episodesDao().getAllByShowId(2)
+      val result2 = database.episodesDao().getAllByShowId("tmdb:2")
       assertThat(result2).containsExactlyElementsIn(listOf(episode2))
     }
   }
@@ -80,21 +80,21 @@ class EpisodesDaoTest : BaseDaoTest() {
   @Test
   fun shouldReturnWatchedIdsForShow() {
     runBlocking {
-      val show = TestData.createShow().copy(idTrakt = 1)
+      val show = TestData.createShow().copy(mediaId = "tmdb:1")
 
-      val season1 = TestData.createSeason().copy(idShowTrakt = show.idTrakt)
-      val season2 = TestData.createSeason().copy(idShowTrakt = show.idTrakt)
+      val season1 = TestData.createSeason().copy(showMediaId = show.mediaId)
+      val season2 = TestData.createSeason().copy(showMediaId = show.mediaId)
 
       val episode1 = TestData.createEpisode().copy(
-        idTrakt = 1,
-        idShowTrakt = show.idTrakt,
-        idSeason = season1.idTrakt,
+        mediaId = "tmdb:1",
+        showMediaId = show.mediaId,
+        idSeason = season1.mediaId,
         isWatched = true,
       )
       val episode2 = TestData.createEpisode().copy(
-        idTrakt = 2,
-        idShowTrakt = show.idTrakt,
-        idSeason = season2.idTrakt,
+        mediaId = "tmdb:2",
+        showMediaId = show.mediaId,
+        idSeason = season2.mediaId,
         isWatched = false,
       )
 
@@ -102,29 +102,29 @@ class EpisodesDaoTest : BaseDaoTest() {
       database.seasonsDao().upsert(listOf(season1, season2))
       database.episodesDao().upsert(listOf(episode1, episode2))
 
-      val result = database.episodesDao().getAllWatchedIdsForShows(listOf(show.idTrakt))
-      assertThat(result).containsExactlyElementsIn(listOf(episode1.idTrakt))
+      val result = database.episodesDao().getAllWatchedIdsForShows(listOf(show.mediaId))
+      assertThat(result).containsExactlyElementsIn(listOf(episode1.mediaId))
     }
   }
 
   @Test
   fun shouldDeleteAllUnwatchedForShow() {
     runBlocking {
-      val show = TestData.createShow().copy(idTrakt = 1)
+      val show = TestData.createShow().copy(mediaId = "tmdb:1")
 
-      val season1 = TestData.createSeason().copy(idShowTrakt = show.idTrakt)
-      val season2 = TestData.createSeason().copy(idShowTrakt = show.idTrakt)
+      val season1 = TestData.createSeason().copy(showMediaId = show.mediaId)
+      val season2 = TestData.createSeason().copy(showMediaId = show.mediaId)
 
       val episode1 = TestData.createEpisode().copy(
-        idTrakt = 1,
-        idShowTrakt = show.idTrakt,
-        idSeason = season1.idTrakt,
+        mediaId = "tmdb:1",
+        showMediaId = show.mediaId,
+        idSeason = season1.mediaId,
         isWatched = true,
       )
       val episode2 = TestData.createEpisode().copy(
-        idTrakt = 2,
-        idShowTrakt = show.idTrakt,
-        idSeason = season2.idTrakt,
+        mediaId = "tmdb:2",
+        showMediaId = show.mediaId,
+        idSeason = season2.mediaId,
         isWatched = false,
       )
 
@@ -132,12 +132,12 @@ class EpisodesDaoTest : BaseDaoTest() {
       database.seasonsDao().upsert(listOf(season1, season2))
       database.episodesDao().upsert(listOf(episode1, episode2))
 
-      val result = database.episodesDao().getAllByShowId(show.idTrakt)
+      val result = database.episodesDao().getAllByShowId(show.mediaId)
       assertThat(result).containsExactlyElementsIn(listOf(episode1, episode2))
 
-      database.episodesDao().deleteAllUnwatchedForShow(show.idTrakt)
+      database.episodesDao().deleteAllUnwatchedForShow(show.mediaId)
 
-      val result2 = database.episodesDao().getAllByShowId(show.idTrakt)
+      val result2 = database.episodesDao().getAllByShowId(show.mediaId)
       assertThat(result2).containsExactlyElementsIn(listOf(episode1))
     }
   }

@@ -27,8 +27,8 @@ class ShowsDaoTest : BaseDaoTest() {
   @Test
   fun shouldInsertAndStoreMultipleEntities() {
     runBlocking {
-      val show1 = TestData.createShow().copy(idTrakt = 1)
-      val show2 = TestData.createShow().copy(idTrakt = 2)
+      val show1 = TestData.createShow().copy(mediaId = "tmdb:1")
+      val show2 = TestData.createShow().copy(mediaId = "tmdb:2")
 
       database.showsDao().upsert(listOf(show1, show2))
       val result = database.showsDao().getAll()
@@ -41,11 +41,11 @@ class ShowsDaoTest : BaseDaoTest() {
   @Test
   fun shouldReturnEntityById() {
     runBlocking {
-      val show1 = TestData.createShow().copy(idTrakt = 1)
-      val show2 = TestData.createShow().copy(idTrakt = 2)
+      val show1 = TestData.createShow().copy(mediaId = "tmdb:1")
+      val show2 = TestData.createShow().copy(mediaId = "tmdb:2")
 
       database.showsDao().upsert(listOf(show1, show2))
-      val result = database.showsDao().getById(2)
+      val result = database.showsDao().getById("tmdb:2")
       assertThat(result).isEqualTo(show2)
     }
   }
@@ -53,12 +53,12 @@ class ShowsDaoTest : BaseDaoTest() {
   @Test
   fun shouldReturnEntitiesByIds() {
     runBlocking {
-      val show1 = TestData.createShow().copy(idTrakt = 1)
-      val show2 = TestData.createShow().copy(idTrakt = 2)
-      val show3 = TestData.createShow().copy(idTrakt = 3)
+      val show1 = TestData.createShow().copy(mediaId = "tmdb:1")
+      val show2 = TestData.createShow().copy(mediaId = "tmdb:2")
+      val show3 = TestData.createShow().copy(mediaId = "tmdb:3")
 
       database.showsDao().upsert(listOf(show1, show2, show3))
-      val result = database.showsDao().getAll(listOf(1, 3))
+      val result = database.showsDao().getAll(listOf("tmdb:1", "tmdb:3"))
       assertThat(result).containsExactlyElementsIn(listOf(show1, show3))
     }
   }
@@ -69,7 +69,7 @@ class ShowsDaoTest : BaseDaoTest() {
       val show1 = TestData.createShow()
 
       database.showsDao().upsert(listOf(show1))
-      val result = database.showsDao().getById(2)
+      val result = database.showsDao().getById("tmdb:2")
       assertThat(result).isNull()
     }
   }

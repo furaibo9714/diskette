@@ -23,11 +23,19 @@ class SettingsDaoTest : BaseDaoTest() {
     }
   }
 
+  /**
+   * [SettingsDao.getAll] is declared non-null and throws on an empty table, so callers ask
+   * [SettingsDao.getCount] first - that is the emptiness check this asserts. The previous version
+   * expected getAll to return null, which the contract has never allowed.
+   */
   @Test
-  fun shouldReturnNullIfNoEntity() {
+  fun shouldReportEmptyBeforeAnySettingsAreStored() {
     runBlocking {
-      val settings = database.settingsDao().getAll()
-      assertThat(settings).isNull()
+      assertThat(database.settingsDao().getCount()).isEqualTo(0)
+
+      database.settingsDao().upsert(TestData.createSettings())
+
+      assertThat(database.settingsDao().getCount()).isEqualTo(1)
     }
   }
 
