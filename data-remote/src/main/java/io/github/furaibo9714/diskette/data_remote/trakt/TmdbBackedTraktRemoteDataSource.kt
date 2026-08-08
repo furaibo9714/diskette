@@ -39,6 +39,7 @@ internal class TmdbBackedTraktRemoteDataSource(
     private const val RELATED_PAGES = 2
     private const val PAGE_SIZE = 20
     private const val MAX_PAGES = 5
+    private const val SPECIALS_SEASON = 0
     private const val IMDB_EXTERNAL_SOURCE = "imdb_id"
     private const val MEDIA_TYPE_MOVIE = "movie"
     private const val MEDIA_TYPE_TV = "tv"
@@ -66,13 +67,22 @@ internal class TmdbBackedTraktRemoteDataSource(
     val show = TmdbToTraktModelConverter.toShow(resolvedTmdbId, details)
     if (!details.episode_run_time.isNullOrEmpty()) return show
 
-    val seasonNumbers = details.seasons.orEmpty().mapNotNull { it.season_number }
+    /**
+     * Season 0 holds specials - recaps, minisodes, behind-the-scenes - whose lengths say nothing
+     * about how long a normal episode runs, and which would otherwise drag the low end of the
+     * range down to a couple of minutes.
+     */
+    val seasonNumbers = details.seasons
+      .orEmpty()
+      .mapNotNull { it.season_number }
+      .filter { it != SPECIALS_SEASON }
     val episodeRuntimes = coroutineScope {
       seasonNumbers
         .map { seasonNumber -> async { tmdbShows.fetchSeasonDetails(resolvedTmdbId, seasonNumber) } }
         .awaitAll()
         .flatMap { it.episodes.orEmpty() }
         .mapNotNull { it.runtime }
+        .filter { it > 0 }
     }
     val runtime = episodeRuntimes.minOrNull() ?: return show
     val runtimeMax = episodeRuntimes.maxOrNull()?.takeIf { it != runtime }
