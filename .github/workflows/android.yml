@@ -1,9 +1,12 @@
-name: Master Flow
+name: Verify
 
 on:
   push:
     branches:
       - master
+      - floppy
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   verify-lint:
@@ -27,24 +30,35 @@ jobs:
           java-version: 21
           distribution: temurin
 
-      - name: Decrypt secrets
-        run: ./.github/scripts/decrypt_secrets.sh
-        env:
-          KEYSTORE_PASSPHRASE: ${{ secrets.KEYSTORE_PASSPHRASE }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Run Unit Tests (app)
-        run: ./gradlew :app:testDebugUnitTest
-      - name: Run Unit Tests (ui-repository)
-        run: ./gradlew :repository:testDebugUnitTest
-      - name: Run Unit Tests (ui-discover)
-        run: ./gradlew :ui-discover:testDebugUnitTest
-      - name: Run Unit Tests (ui-trakt-sync)
-        run: ./gradlew :ui-trakt-sync:testDebugUnitTest
-      - name: Run Unit Tests (ui-statistics)
-        run: ./gradlew :ui-statistics:testDebugUnitTest
-      - name: Run Unit Tests (ui-statistics-movies)
-        run: ./gradlew :ui-statistics-movies:testDebugUnitTest
-      - name: Run Unit Tests (ui-search)
-        run: ./gradlew :ui-search:testDebugUnitTest
-      - name: Run Unit Tests (ui-progress-movies)
-        run: ./gradlew :ui-progress-movies:testDebugUnitTest
+      # Verification only has to compile and run tests, so a placeholder key is enough. Keeping
+      # real secrets out means this also runs on pull requests from forks, which cannot read them.
+      # keystore.properties is read at configuration time by every task, but only needs to exist;
+      # the keystore itself is required solely to sign a release.
+      - name: Write placeholder build properties
+        run: |
+          echo 'tmdbApiKey="ci-placeholder"' > local.properties
+          touch app/keystore.properties
+
+      - name: Compile debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      # Instrumented tests need a device, but compiling them does not. This is the cheap half, and
+      # without it the androidTest source set can rot unnoticed - it once drifted 168 errors behind
+      # the schema because no task in CI or the local build ever compiled it. data-local is the
+      # only module with androidTest sources; the project-wide task fails on an unrelated
+      # resource-linking problem in ui-movie's (empty) androidTest variant.
+      - name: Compile instrumented tests
+        run: ./gradlew :data-local:compileDebugAndroidTestKotlin
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: '**/build/reports/tests/'
