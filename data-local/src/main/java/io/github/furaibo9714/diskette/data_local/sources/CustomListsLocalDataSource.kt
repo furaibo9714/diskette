@@ -14,7 +14,6 @@ interface CustomListsLocalDataSource {
 
   suspend fun updateMediaId(
     id: Long,
-    mediaId: String,
     idSlug: String,
     timestamp: Long,
   )

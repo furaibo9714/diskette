@@ -19,5 +19,5 @@ data class EpisodeListItem(
   val spoilers: SpoilersSettings,
 ) {
 
-  val id = episode.ids.media.id
+  val id = episode.ids.media.key
 }

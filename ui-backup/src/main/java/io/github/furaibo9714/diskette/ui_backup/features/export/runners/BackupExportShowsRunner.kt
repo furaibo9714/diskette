@@ -157,13 +157,13 @@ internal class BackupExportShowsRunner @Inject constructor(
     withContext(dispatchers.IO) {
       val ratings = ratingsRepository.loadShowsRatings()
 
-      val showsIds = ratings.map { it.mediaId.id }
+      val showsIds = ratings.map { it.mediaId.key }
       val showsTmdbIds = localSource.shows.getAllTmdbIds(traktIds = showsIds)
 
       val showsRatings = ratings.map {
         BackupShowRating(
-          mediaId = it.mediaId.id,
-          tmdbId = showsTmdbIds.getOrDefault(it.mediaId.id, -1),
+          mediaId = it.mediaId.key,
+          tmdbId = showsTmdbIds.getOrDefault(it.mediaId.key, -1),
           rating = it.rating,
           ratedAt = dateIsoStringFromMillis(it.ratedAt.toMillis()),
         )

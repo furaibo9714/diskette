@@ -60,12 +60,12 @@ class ShowDetailsMyShowsCase @Inject constructor(
       val episodesToAdd = mutableListOf<EpisodeDb>()
 
       seasons.forEach { season ->
-        if (localSeasons.none { it.mediaId == season.ids.media.id }) {
+        if (localSeasons.none { it.mediaId == season.ids.media.key }) {
           seasonsToAdd.add(mappers.season.toDatabase(season, show.ids.media, false))
         }
       }
       episodes.forEach { episode ->
-        if (localEpisodes.none { it.mediaId == episode.ids.media.id }) {
+        if (localEpisodes.none { it.mediaId == episode.ids.media.key }) {
           val season = seasons.find { it.number == episode.season }!!
           episodesToAdd.add(mappers.episode.toDatabase(episode, season, show.ids.media, false, null, null))
         }

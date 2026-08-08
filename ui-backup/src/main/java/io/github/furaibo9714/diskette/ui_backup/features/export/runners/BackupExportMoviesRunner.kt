@@ -100,13 +100,13 @@ internal class BackupExportMoviesRunner @Inject constructor(
     withContext(dispatchers.IO) {
       val ratings = ratingsRepository.loadMoviesRatings()
 
-      val moviesIds = ratings.map { it.mediaId.id }
+      val moviesIds = ratings.map { it.mediaId.key }
       val moviesTmdbIds = localSource.movies.getAllTmdbIds(traktIds = moviesIds)
 
       val ratingsMovies = ratings.map {
         BackupMovieRating(
-          mediaId = it.mediaId.id,
-          tmdbId = moviesTmdbIds.getOrDefault(it.mediaId.id, -1),
+          mediaId = it.mediaId.key,
+          tmdbId = moviesTmdbIds.getOrDefault(it.mediaId.key, -1),
           rating = it.rating,
           ratedAt = dateIsoStringFromMillis(it.ratedAt.toMillis()),
         )

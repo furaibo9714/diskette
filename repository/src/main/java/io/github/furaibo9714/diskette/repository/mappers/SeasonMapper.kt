@@ -44,7 +44,7 @@ class SeasonMapper @Inject constructor(
     seasonDb: SeasonDb,
     episodes: List<Episode> = emptyList(),
   ) = Season(
-    Ids.EMPTY.copy(trakt = MediaId.parse(seasonDb.mediaId)),
+    Ids.EMPTY.copy(media = MediaId.parse(seasonDb.mediaId)),
     seasonDb.seasonNumber,
     seasonDb.episodesCount,
     seasonDb.episodesAiredCount,
@@ -61,7 +61,7 @@ class SeasonMapper @Inject constructor(
     isWatched: Boolean,
   ): SeasonDb =
     SeasonDb(
-      season.ids.media.id,
+      season.ids.media.key,
       showId.id,
       season.number,
       season.title,

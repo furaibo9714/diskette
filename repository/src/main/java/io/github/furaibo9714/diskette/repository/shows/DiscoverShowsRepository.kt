@@ -137,7 +137,7 @@ class DiscoverShowsRepository @Inject constructor(
       localSource.discoverShows.replace(
         shows.map {
           DiscoverShow(
-            mediaId = it.ids.media.id,
+            mediaId = it.ids.media.key,
             createdAt = timestamp,
             updatedAt = timestamp,
           )

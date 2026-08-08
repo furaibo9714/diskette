@@ -41,11 +41,11 @@ interface MovieCollectionsItemsDao :
     WHERE collection_media_id == :collectionId
     ORDER BY rank ASC""",
   )
-  override suspend fun getById(collectionId: Long): List<Movie>
+  override suspend fun getById(collectionId: String): List<Movie>
 
   @Transaction
   override suspend fun replace(
-    collectionId: Long,
+    collectionId: String,
     items: List<MovieCollectionItem>,
   ) {
     deleteById(collectionId)
@@ -53,5 +53,5 @@ interface MovieCollectionsItemsDao :
   }
 
   @Query("DELETE FROM movies_collections_items WHERE collection_media_id == :collectionId")
-  override suspend fun deleteById(collectionId: Long)
+  override suspend fun deleteById(collectionId: String)
 }

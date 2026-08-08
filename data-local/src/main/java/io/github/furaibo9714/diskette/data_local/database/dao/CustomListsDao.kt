@@ -23,10 +23,9 @@ interface CustomListsDao : CustomListsLocalDataSource {
   @Query("SELECT * FROM custom_lists WHERE id == :id")
   override suspend fun getById(id: Long): CustomList?
 
-  @Query("UPDATE custom_lists SET media_id = :mediaId, id_slug = :idSlug, updated_at = :timestamp WHERE id == :id")
+  @Query("UPDATE custom_lists SET id_slug = :idSlug, updated_at = :timestamp WHERE id == :id")
   override suspend fun updateMediaId(
     id: Long,
-    mediaId: String,
     idSlug: String,
     timestamp: Long,
   )

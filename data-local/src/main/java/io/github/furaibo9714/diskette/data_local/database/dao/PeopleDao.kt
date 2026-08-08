@@ -30,7 +30,6 @@ interface PeopleDao : BaseDao<Person>, PeopleLocalDataSource {
     """
     SELECT
     people.id_tmdb,
-    people.media_id,
     people.id_imdb,
     people.name,
     people.biography,
@@ -58,7 +57,6 @@ interface PeopleDao : BaseDao<Person>, PeopleLocalDataSource {
     """
     SELECT
     people.id_tmdb,
-    people.media_id,
     people.id_imdb,
     people.name,
     people.biography,
@@ -84,9 +82,6 @@ interface PeopleDao : BaseDao<Person>, PeopleLocalDataSource {
 
   @Query("SELECT * FROM people")
   override suspend fun getAll(): List<Person>
-
-  @Query("UPDATE people SET media_id = :mediaId WHERE id_tmdb = :idTmdb")
-  override suspend fun updateMediaId(mediaId: String, idTmdb: Long)
 
   @Query("UPDATE people SET biography_translation = NULL, details_updated_at = NULL")
   override suspend fun deleteTranslations()

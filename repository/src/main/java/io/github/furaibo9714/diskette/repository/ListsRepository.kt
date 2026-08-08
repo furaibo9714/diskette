@@ -20,12 +20,10 @@ class ListsRepository @Inject constructor(
   suspend fun createList(
     name: String,
     description: String?,
-    mediaId: Long?,
     idFloppy: Long?,
     idSlug: String?,
   ): CustomList {
     val list = CustomList.create().copy(
-      mediaId = mediaId,
       idFloppy = idFloppy,
       idSlug = idSlug ?: "",
       name = name.trim(),
@@ -38,7 +36,6 @@ class ListsRepository @Inject constructor(
 
   suspend fun updateList(
     id: Long,
-    mediaId: Long?,
     idFloppy: Long?,
     idSlug: String?,
     name: String,
@@ -47,7 +44,6 @@ class ListsRepository @Inject constructor(
     val listDb = localSource.customLists.getById(id)!!
     val updated = listDb.copy(
       name = name,
-      mediaId = mediaId ?: listDb.mediaId,
       idFloppy = idFloppy ?: listDb.idFloppy,
       idSlug = idSlug ?: listDb.idSlug,
       description = description,

@@ -11,14 +11,12 @@ import java.time.ZonedDateTime
 @Entity(
   tableName = "people",
   indices = [
-    Index(value = ["media_id"]),
     Index(value = ["id_tmdb"], unique = true),
   ],
 )
 @TypeConverters(DateConverter::class)
 data class Person(
   @PrimaryKey @ColumnInfo(name = "id_tmdb") val idTmdb: Long,
-  @ColumnInfo(name = "media_id") val mediaId: String?,
   @ColumnInfo(name = "id_imdb") val idImdb: String?,
   @ColumnInfo(name = "name") val name: String,
   @ColumnInfo(name = "department") val department: String,

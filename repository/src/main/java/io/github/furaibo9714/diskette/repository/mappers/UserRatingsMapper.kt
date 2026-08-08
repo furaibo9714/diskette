@@ -55,7 +55,7 @@ class UserRatingsMapper @Inject constructor() {
     rating: Int,
     ratedAt: ZonedDateTime,
   ) = Rating(
-    mediaId = episode.ids.media.id,
+    mediaId = episode.ids.media.key,
     type = "episode",
     rating = rating,
     seasonNumber = episode.season,
@@ -70,7 +70,7 @@ class UserRatingsMapper @Inject constructor() {
     rating: Int,
     ratedAt: ZonedDateTime,
   ) = Rating(
-    mediaId = season.ids.media.id,
+    mediaId = season.ids.media.key,
     type = "season",
     rating = rating,
     seasonNumber = season.number,

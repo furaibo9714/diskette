@@ -73,10 +73,10 @@ class MyShowsRepository @Inject constructor(
   suspend fun exists(id: MediaId) = myShowsLocalSource.checkExists(id.id)
 
   suspend fun updateWatchedAt(
-    mediaId: Long,
+    mediaId: MediaId,
     watchedAt: Long,
   ) {
-    myShowsLocalSource.updateWatchedAt(mediaId, watchedAt)
+    myShowsLocalSource.updateWatchedAt(mediaId.key, watchedAt)
     cache.invalidate()
   }
 }

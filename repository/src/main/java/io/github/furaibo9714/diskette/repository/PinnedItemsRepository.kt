@@ -14,18 +14,18 @@ class PinnedItemsRepository @Inject constructor(
   @Named("progressMoviesPreferences") private val sharedPreferencesMovies: SharedPreferences,
 ) {
 
-  fun addPinnedItem(show: Show) = addShowPinnedItem(MediaId.parse(show.mediaId.key))
+  fun addPinnedItem(show: Show) = addShowPinnedItem(show.mediaId)
 
-  fun addPinnedItem(movie: Movie) = addMoviePinnedItem(MediaId.parse(movie.mediaId.key))
+  fun addPinnedItem(movie: Movie) = addMoviePinnedItem(movie.mediaId)
 
-  fun addShowPinnedItem(showId: MediaId) = sharedPreferences.edit().putLong(showId.id.toString(), showId.id).apply()
+  fun addShowPinnedItem(showId: MediaId) = sharedPreferences.edit().putString(showId.key, showId.key).apply()
 
   fun addMoviePinnedItem(movieId: MediaId) =
-    sharedPreferencesMovies.edit().putLong(movieId.id.toString(), movieId.id).apply()
+    sharedPreferencesMovies.edit().putString(movieId.key, movieId.key).apply()
 
-  fun removePinnedItem(show: Show) = sharedPreferences.edit().remove(show.mediaId.toString()).apply()
+  fun removePinnedItem(show: Show) = sharedPreferences.edit().remove(show.mediaId.key).apply()
 
-  fun removePinnedItem(movie: Movie) = sharedPreferencesMovies.edit().remove(movie.mediaId.toString()).apply()
+  fun removePinnedItem(movie: Movie) = sharedPreferencesMovies.edit().remove(movie.mediaId.key).apply()
 
   fun isItemPinned(show: Show) = sharedPreferences.contains(show.mediaId.toString())
 

@@ -37,7 +37,7 @@ class ShowContextMenuMyShowsCase @Inject constructor(
       val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(mediaId))
 
       val seasons = remoteSource.media
-        .fetchSeasons(mediaId.id)
+        .fetchSeasons(mediaId.key)
         .map { mappers.season.fromNetwork(it) }
         .filter { it.episodes.isNotEmpty() }
         .filter { if (!showSpecials()) !it.isSpecial() else true }
@@ -45,8 +45,8 @@ class ShowContextMenuMyShowsCase @Inject constructor(
       val episodes = seasons.flatMap { it.episodes }
 
       transactions.withTransaction {
-        val localSeasons = localSource.seasons.getAllByShowId(mediaId.id)
-        val localEpisodes = localSource.episodes.getAllByShowId(mediaId.id)
+        val localSeasons = localSource.seasons.getAllByShowId(mediaId.key)
+        val localEpisodes = localSource.episodes.getAllByShowId(mediaId.key)
         val lastWatchedAt = localEpisodes.maxByOrNull { it.lastWatchedAt != null }?.lastWatchedAt?.toMillis() ?: 0L
 
         showsRepository.myShows.insert(mediaId, lastWatchedAt)
@@ -55,12 +55,12 @@ class ShowContextMenuMyShowsCase @Inject constructor(
         val episodesToAdd = mutableListOf<EpisodeDb>()
 
         seasons.forEach { season ->
-          if (localSeasons.none { it.mediaId == season.ids.media.id }) {
+          if (localSeasons.none { it.mediaId == season.ids.media.key }) {
             seasonsToAdd.add(mappers.season.toDatabase(season, mediaId, false))
           }
         }
         episodes.forEach { episode ->
-          if (localEpisodes.none { it.mediaId == episode.ids.media.id }) {
+          if (localEpisodes.none { it.mediaId == episode.ids.media.key }) {
             val season = seasons.find { it.number == episode.season }!!
             episodesToAdd.add(mappers.episode.toDatabase(episode, season, mediaId, false, null, null))
           }

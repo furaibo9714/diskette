@@ -20,7 +20,7 @@ class RelatedMoviesRepository @Inject constructor(
 ) {
 
   suspend fun loadAll(movie: Movie): List<Movie> {
-    val related = localSource.relatedMovies.getAllById(movie.ids.media.id)
+    val related = localSource.relatedMovies.getAllById(movie.ids.media.key)
     val latest = related.maxByOrNull { it.updatedAt }
 
     if (latest != null && nowUtcMillis() - latest.updatedAt < Config.RELATED_CACHE_DURATION) {
@@ -31,7 +31,7 @@ class RelatedMoviesRepository @Inject constructor(
     }
 
     val remote = remoteSource.media
-      .fetchRelatedMovies(movie.ids.media.id, min(0, 15), movie.ids.tmdb.id)
+      .fetchRelatedMovies(movie.ids.tmdb.id, min(0, 15))
       .map { mappers.movie.fromNetwork(it) }
 
     cacheRelated(remote, movie.ids.media)
@@ -49,7 +49,7 @@ class RelatedMoviesRepository @Inject constructor(
       localSource.relatedMovies.deleteById(movieId.id)
       localSource.relatedMovies.insert(
         movies.map {
-          RelatedMovie.fromMediaId(it.ids.media.id, movieId.id, timestamp)
+          RelatedMovie.fromMediaId(it.ids.media.key, movieId.id, timestamp)
         },
       )
     }

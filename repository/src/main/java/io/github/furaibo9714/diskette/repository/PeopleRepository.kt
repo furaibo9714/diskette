@@ -65,23 +65,14 @@ class PeopleRepository @Inject constructor(
   suspend fun loadCredits(person: Person) =
     coroutineScope {
       val idTmdb = person.ids.tmdb.id
-      var mediaId: Long?
-
-      val localPerson = localSource.people.getById(idTmdb)
-      mediaId = localPerson?.mediaId
-      if (mediaId == null) {
-        // TMDB credits endpoints take the tmdb id directly - no id-resolution network call needed.
-        mediaId = idTmdb
-        localSource.people.updateTraktId(idTmdb, idTmdb)
-      }
 
       // Return locally cached data if available
-      val timestamp = localSource.peopleCredits.getTimestampForPerson(mediaId!!)
+      val timestamp = localSource.peopleCredits.getTimestampForPerson(idTmdb)
       if (timestamp != null && nowUtcMillis() - timestamp < Config.PEOPLE_CREDITS_CACHE_DURATION) {
         val localCredits = mutableListOf<PersonCredit>()
 
-        val showsCreditsAsync = async { localSource.peopleCredits.getAllShowsForPerson(mediaId!!) }
-        val moviesCreditsAsync = async { localSource.peopleCredits.getAllMoviesForPerson(mediaId!!) }
+        val showsCreditsAsync = async { localSource.peopleCredits.getAllShowsForPerson(idTmdb) }
+        val moviesCreditsAsync = async { localSource.peopleCredits.getAllMoviesForPerson(idTmdb) }
         val shows = showsCreditsAsync.await()
         val movies = moviesCreditsAsync.await()
 
@@ -123,7 +114,7 @@ class PeopleRepository @Inject constructor(
       val localCredits = remoteCredits.map {
         PersonCredits(
           id = 0,
-          personMediaId = mediaId!!,
+          personTmdbId = idTmdb,
           showMediaId = it.show?.mediaId?.key,
           movieMediaId = it.movie?.mediaId?.key,
           type = if (it.show != null) Mode.SHOWS.type else Mode.MOVIES.type,
@@ -139,7 +130,7 @@ class PeopleRepository @Inject constructor(
         transactions.withTransaction {
           shows.upsert(remoteShows.map { mappers.show.toDatabase(it) })
           movies.upsert(remoteMovies.map { mappers.movie.toDatabase(it) })
-          peopleCredits.insertSingle(mediaId!!, localCredits)
+          peopleCredits.insertSingle(idTmdb, localCredits)
         }
       }
 

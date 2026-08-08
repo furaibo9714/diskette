@@ -48,7 +48,7 @@ class MoviesSyncRunner @Inject constructor(
     var syncCount = 0
     val syncLog = localSource.moviesSyncLog.getAll()
     moviesToSync.forEach { movie ->
-      val lastSync = syncLog.find { it.mediaId == movie.ids.media.id }?.syncedAt ?: 0
+      val lastSync = syncLog.find { it.mediaId == movie.ids.media.key }?.syncedAt ?: 0
       if (nowUtcMillis() - lastSync < MOVIE_SYNC_COOLDOWN) {
         Timber.i("${movie.title} is on cooldown. No need to sync.")
         return@forEach

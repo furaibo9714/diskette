@@ -66,7 +66,7 @@ internal class BackupImportMoviesRunner @Inject constructor(
       val localRatings = ratingsRepository.loadMoviesRatings()
 
       for (rating in backup.ratingsMovies) {
-        if (localRatings.any { it.mediaId.id == rating.mediaId }) {
+        if (localRatings.any { it.mediaId.key == rating.mediaId }) {
           continue
         }
 

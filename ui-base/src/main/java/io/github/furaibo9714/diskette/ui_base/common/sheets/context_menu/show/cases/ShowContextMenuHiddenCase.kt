@@ -39,9 +39,9 @@ class ShowContextMenuHiddenCase @Inject constructor(
       showsRepository.hiddenShows.insert(show.ids.media)
 
       if (removeLocalData && isMyShow) {
-        localSource.episodes.deleteAllUnwatchedForShow(mediaId.id)
-        val seasons = localSource.seasons.getAllByShowId(mediaId.id)
-        val episodes = localSource.episodes.getAllByShowId(mediaId.id)
+        localSource.episodes.deleteAllUnwatchedForShow(mediaId.key)
+        val seasons = localSource.seasons.getAllByShowId(mediaId.key)
+        val episodes = localSource.episodes.getAllByShowId(mediaId.key)
         val toDelete = mutableListOf<Season>()
         seasons.forEach { season ->
           if (episodes.none { it.idSeason == season.mediaId }) {

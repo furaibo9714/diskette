@@ -62,9 +62,9 @@ class ShowDetailsRepository @Inject constructor(
   suspend fun delete(mediaId: MediaId) {
     with(localSource) {
       transactions.withTransaction {
-        shows.deleteById(mediaId.id)
-        seasons.deleteAllForShow(mediaId.id)
-        episodes.deleteAllForShow(mediaId.id)
+        shows.deleteById(mediaId.key)
+        seasons.deleteAllForShow(mediaId.key)
+        episodes.deleteAllForShow(mediaId.key)
       }
     }
   }

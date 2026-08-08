@@ -52,7 +52,7 @@ class MovieCollectionsRepository @Inject constructor(
         }
       }
 
-      val remoteCollections = remoteSource.fetchMovieCollections(movieId.id)
+      val remoteCollections = remoteSource.fetchMovieCollections(movieId.tmdbIdOrNull ?: return@withContext Pair(emptyList(), Source.REMOTE))
       val collections = remoteCollections.map { collectionMapper.fromNetwork(it) }
 
       updateLocalCollections(collections, movieId, now)
@@ -75,7 +75,7 @@ class MovieCollectionsRepository @Inject constructor(
         }
       }
 
-      val remoteItems = remoteSource.fetchMovieCollectionItems(collectionId.id)
+      val remoteItems = remoteSource.fetchMovieCollectionItems(collectionId.tmdbIdOrNull ?: return@withContext emptyList())
       val items = remoteItems.map { movieMapper.fromNetwork(it) }
 
       transactions.withTransaction {

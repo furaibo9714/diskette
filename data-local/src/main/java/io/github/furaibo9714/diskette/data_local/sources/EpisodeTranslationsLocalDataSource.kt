@@ -5,14 +5,14 @@ import io.github.furaibo9714.diskette.data_local.database.model.EpisodeTranslati
 interface EpisodeTranslationsLocalDataSource {
 
   suspend fun getById(
-    traktEpisodeId: Long,
-    traktShowId: Long,
+    episodeMediaId: String,
+    showMediaId: String,
     language: String,
   ): EpisodeTranslation?
 
   suspend fun getByIds(
-    traktEpisodeIds: List<Long>,
-    traktShowId: Long,
+    episodeMediaIds: List<String>,
+    showMediaId: String,
     language: String,
   ): List<EpisodeTranslation>
 

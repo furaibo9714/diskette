@@ -59,7 +59,7 @@ class MovieDetailsRepository @Inject constructor(
     return null
   }
 
-  suspend fun delete(mediaId: MediaId) = localSource.movies.deleteById(mediaId.id)
+  suspend fun delete(mediaId: MediaId) = localSource.movies.deleteById(mediaId.key)
 
   /**
    * TMDB is the only metadata provider, so a non-TMDB item (a Floppy manual entry) has nothing to

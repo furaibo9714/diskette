@@ -14,10 +14,5 @@ interface PeopleLocalDataSource {
 
   suspend fun getAll(): List<Person>
 
-  suspend fun updateMediaId(
-    mediaId: String,
-    idTmdb: Long,
-  )
-
   suspend fun deleteTranslations()
 }

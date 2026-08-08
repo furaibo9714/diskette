@@ -117,7 +117,7 @@ class DiscoverMoviesRepository @Inject constructor(
       localSource.discoverMovies.replace(
         movies.map {
           DiscoverMovie(
-            mediaId = it.ids.media.id,
+            mediaId = it.ids.media.key,
             createdAt = timestamp,
             updatedAt = timestamp,
           )

@@ -38,10 +38,10 @@ interface EpisodesDao : EpisodesLocalDataSource {
   ): Boolean
 
   @Query("SELECT * FROM episodes WHERE media_id IN(:episodesIds)")
-  override suspend fun getAll(episodesIds: List<Long>): List<Episode>
+  override suspend fun getAll(episodesIds: List<String>): List<Episode>
 
   @Query("SELECT * FROM episodes WHERE id_season = :seasonMediaId")
-  override suspend fun getAllForSeason(seasonMediaId: Long): List<Episode>
+  override suspend fun getAllForSeason(seasonMediaId: String): List<Episode>
 
   @Query("SELECT * FROM episodes WHERE show_media_id = :showMediaId")
   override suspend fun getAllByShowId(showMediaId: String): List<Episode>
@@ -53,9 +53,9 @@ interface EpisodesDao : EpisodesLocalDataSource {
   ): List<Episode>
 
   @Transaction
-  override suspend fun getAllByShowsIds(showTraktIds: List<Long>): List<Episode> {
+  override suspend fun getAllByShowsIds(showMediaIds: List<String>): List<Episode> {
     val result = mutableListOf<Episode>()
-    val chunks = showTraktIds.chunked(50)
+    val chunks = showMediaIds.chunked(50)
     chunks.forEach { chunk ->
       result += getAllByShowsIdsChunk(chunk)
     }
@@ -63,16 +63,16 @@ interface EpisodesDao : EpisodesLocalDataSource {
   }
 
   @Transaction
-  @Query("SELECT * FROM episodes WHERE show_media_id IN (:showTraktIds)")
-  override suspend fun getAllByShowsIdsChunk(showTraktIds: List<Long>): List<Episode>
+  @Query("SELECT * FROM episodes WHERE show_media_id IN (:showMediaIds)")
+  override suspend fun getAllByShowsIdsChunk(showMediaIds: List<String>): List<Episode>
 
   @Transaction
   override suspend fun getAllByShowsIds(
-    showTraktIds: List<Long>,
+    showMediaIds: List<String>,
     fromTime: Long,
   ): List<Episode> {
     val result = mutableListOf<Episode>()
-    val chunks = showTraktIds.chunked(50)
+    val chunks = showMediaIds.chunked(50)
     chunks.forEach { chunk ->
       result += getAllByShowsIdsChunk(chunk, fromTime)
     }
@@ -80,9 +80,9 @@ interface EpisodesDao : EpisodesLocalDataSource {
   }
 
   @Transaction
-  @Query("SELECT * FROM episodes WHERE show_media_id IN (:showTraktIds) AND first_aired >= :fromTime")
+  @Query("SELECT * FROM episodes WHERE show_media_id IN (:showMediaIds) AND first_aired >= :fromTime")
   override suspend fun getAllByShowsIdsChunk(
-    showTraktIds: List<Long>,
+    showMediaIds: List<String>,
     fromTime: Long,
   ): List<Episode>
 
@@ -151,13 +151,13 @@ interface EpisodesDao : EpisodesLocalDataSource {
   override suspend fun getAllWatched(): List<Episode>
 
   @Query("SELECT * FROM episodes WHERE show_media_id IN(:showsIds) AND is_watched = 1")
-  override suspend fun getAllWatchedForShows(showsIds: List<Long>): List<Episode>
+  override suspend fun getAllWatchedForShows(showsIds: List<String>): List<Episode>
 
   @Query(
     "SELECT * FROM episodes WHERE show_media_id IN(:showsIds) AND is_watched = 1 AND last_watched_at NOT NULL AND last_watched_at >= :fromTime AND last_watched_at <= :toTime",
   )
   override suspend fun getAllWatchedForShows(
-    showsIds: List<Long>,
+    showsIds: List<String>,
     fromTime: Long,
     toTime: Long,
   ): List<Episode>
@@ -177,7 +177,7 @@ interface EpisodesDao : EpisodesLocalDataSource {
 
   @Transaction
   override suspend fun updateIsExported(
-    episodesIds: List<Long>,
+    episodesIds: List<String>,
     exportedAt: Long,
   ) {
     episodesIds.forEach {
@@ -187,7 +187,7 @@ interface EpisodesDao : EpisodesLocalDataSource {
 
   @Query("UPDATE episodes SET last_exported_at = :exportedAt WHERE media_id = :episodeId")
   suspend fun updateIsExported(
-    episodeId: Long,
+    episodeId: String,
     exportedAt: Long,
   )
 

@@ -12,7 +12,7 @@ class CollectionMapper @Inject constructor() {
 
   fun fromNetwork(input: MovieCollectionNetwork): MovieCollection =
     MovieCollection(
-      id = MediaId.parse(input.ids.media!!),
+      id = input.ids.tmdb?.let { MediaId.tmdb(it) } ?: MediaId.EMPTY,
       name = input.name,
       description = input.description,
       itemCount = input.item_count,
@@ -27,13 +27,13 @@ class CollectionMapper @Inject constructor() {
     )
 
   fun toEntity(
-    movieId: Long,
+    movieId: String,
     input: MovieCollection,
     updatedAt: ZonedDateTime = nowUtc(),
     createdAt: ZonedDateTime = nowUtc(),
   ): MovieCollectionEntity =
     MovieCollectionEntity(
-      mediaId = input.id.id,
+      mediaId = input.id.key,
       movieMediaId = movieId,
       name = input.name,
       description = input.description,

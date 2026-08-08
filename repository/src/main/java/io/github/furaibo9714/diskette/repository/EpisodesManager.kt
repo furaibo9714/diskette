@@ -51,14 +51,14 @@ class EpisodesManager @Inject constructor(
       val (season, show) = seasonBundle
 
       val dbSeason = mappers.season.toDatabase(season, show.ids.media, true)
-      val localSeason = seasonsLocalSource.getById(season.ids.media.id)
+      val localSeason = seasonsLocalSource.getById(season.ids.media.key)
       if (localSeason == null) {
         seasonsLocalSource.upsert(listOf(dbSeason))
       }
 
-      val watchedEpisodes = episodesLocalSource.getAllForSeason(season.ids.media.id).filter { it.isWatched }
+      val watchedEpisodes = episodesLocalSource.getAllForSeason(season.ids.media.key).filter { it.isWatched }
       season.episodes.forEach { ep ->
-        if (watchedEpisodes.none { it.mediaId == ep.ids.media.id }) {
+        if (watchedEpisodes.none { it.mediaId == ep.ids.media.key }) {
           val dbEpisode = mappers.episode.toDatabase(ep, season, show.ids.media, true, null, date)
           toAdd.add(dbEpisode)
         }
@@ -76,7 +76,7 @@ class EpisodesManager @Inject constructor(
       val (season, show) = seasonBundle
 
       val dbSeason = mappers.season.toDatabase(season, show.ids.media, false)
-      val watchedEpisodes = episodesLocalSource.getAllForSeason(season.ids.media.id).filter { it.isWatched }
+      val watchedEpisodes = episodesLocalSource.getAllForSeason(season.ids.media.key).filter { it.isWatched }
       val toSet = watchedEpisodes.map { it.copy(isWatched = false, lastExportedAt = null, lastWatchedAt = null) }
 
       val isShowFollowed = showsRepository.myShows.load(show.ids.media) != null
@@ -95,8 +95,8 @@ class EpisodesManager @Inject constructor(
   }
 
   suspend fun setEpisodeWatched(
-    episodeId: Long,
-    seasonId: Long,
+    episodeId: String,
+    seasonId: String,
     showId: MediaId,
     customDate: ZonedDateTime?,
   ) {
@@ -124,7 +124,7 @@ class EpisodesManager @Inject constructor(
       val dbEpisode = mappers.episode.toDatabase(episode, season, show.ids.media, true, null, date)
       val dbSeason = mappers.season.toDatabase(season, show.ids.media, false)
 
-      val localSeason = seasonsLocalSource.getById(season.ids.media.id)
+      val localSeason = seasonsLocalSource.getById(season.ids.media.key)
       if (localSeason == null) {
         seasonsLocalSource.upsert(listOf(dbSeason))
       }
@@ -209,7 +209,7 @@ class EpisodesManager @Inject constructor(
           if (localEpisode == null) {
             // Double check by Trakt ID as season/episode combination might be old.
             localEpisode = localEpisodes.find {
-              it.mediaId == remoteEpisode.ids.media.id
+              it.mediaId == remoteEpisode.ids.media.key
             }
           }
 
@@ -255,7 +255,7 @@ class EpisodesManager @Inject constructor(
     season: Season,
     show: Show,
   ) {
-    val localEpisodes = episodesLocalSource.getAllForSeason(season.ids.media.id)
+    val localEpisodes = episodesLocalSource.getAllForSeason(season.ids.media.key)
     val isWatched = localEpisodes.count { it.isWatched } == season.episodeCount
     val dbSeason = mappers.season.toDatabase(season, show.ids.media, isWatched)
     seasonsLocalSource.update(listOf(dbSeason))

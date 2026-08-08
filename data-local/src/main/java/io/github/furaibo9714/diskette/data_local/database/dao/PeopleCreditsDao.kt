@@ -21,7 +21,6 @@ interface PeopleCreditsDao : BaseDao<PersonCredits>, PeopleCreditsLocalDataSourc
     shows.id_tmdb,
     shows.id_imdb,
     shows.id_slug,
-    shows.id_tvrage,
     shows.title,
     shows.year,
     shows.overview,
@@ -46,10 +45,10 @@ interface PeopleCreditsDao : BaseDao<PersonCredits>, PeopleCreditsLocalDataSourc
     people_credits.updated_at AS updated_at
     FROM shows
     INNER JOIN people_credits ON people_credits.show_media_id = shows.media_id
-    WHERE people_credits.person_media_id = :personMediaId
+    WHERE people_credits.person_tmdb_id = :personTmdbId
     """
   )
-  override suspend fun getAllShowsForPerson(personMediaId: String): List<Show>
+  override suspend fun getAllShowsForPerson(personTmdbId: Long): List<Show>
 
   @Query(
     """
@@ -76,23 +75,23 @@ interface PeopleCreditsDao : BaseDao<PersonCredits>, PeopleCreditsLocalDataSourc
     people_credits.created_at AS created_at
     FROM movies
     INNER JOIN people_credits ON people_credits.movie_media_id = movies.media_id
-    WHERE people_credits.person_media_id = :personMediaId
+    WHERE people_credits.person_tmdb_id = :personTmdbId
     """
   )
-  override suspend fun getAllMoviesForPerson(personMediaId: String): List<Movie>
+  override suspend fun getAllMoviesForPerson(personTmdbId: Long): List<Movie>
 
-  @Query("SELECT updated_at FROM people_credits WHERE person_media_id = :personMediaId LIMIT 1")
-  override suspend fun getTimestampForPerson(personMediaId: String): Long?
+  @Query("SELECT updated_at FROM people_credits WHERE person_tmdb_id = :personTmdbId LIMIT 1")
+  override suspend fun getTimestampForPerson(personTmdbId: Long): Long?
 
-  @Query("DELETE FROM people_credits WHERE person_media_id == :personMediaId")
-  override suspend fun deleteAllForPerson(personMediaId: String)
+  @Query("DELETE FROM people_credits WHERE person_tmdb_id == :personTmdbId")
+  override suspend fun deleteAllForPerson(personTmdbId: Long)
 
   @Transaction
   override suspend fun insertSingle(
-    personMediaId: String,
+    personTmdbId: Long,
     credits: List<PersonCredits>
   ) {
-    deleteAllForPerson(personMediaId)
+    deleteAllForPerson(personTmdbId)
     insert(credits)
   }
 }

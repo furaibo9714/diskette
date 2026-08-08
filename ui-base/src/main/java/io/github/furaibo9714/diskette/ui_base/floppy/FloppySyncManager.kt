@@ -299,7 +299,7 @@ class FloppySyncManager @Inject constructor(
   private fun resolveSourceAndMediaId(ids: Ids): Pair<String, String>? {
     if (!connectionManager.isConfigured()) return null
 
-    if (FloppyManualSyntheticIds.isSynthetic(ids.media.id)) {
+    if (FloppyManualSyntheticIds.isSynthetic(ids.media.key)) {
       val floppyMediaId = FloppyManualSyntheticIds.extractFloppyMediaId(ids.slug.id)
       if (floppyMediaId == null) {
         Timber.d("Synthetic manual id with no recoverable Floppy UUID. Skipping Floppy sync.")

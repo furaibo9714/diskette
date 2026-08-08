@@ -26,7 +26,7 @@ import java.time.ZonedDateTime
     ),
   ],
   indices = [
-    Index(value = ["person_media_id"]),
+    Index(value = ["person_tmdb_id"]),
     Index(value = ["show_media_id"]),
     Index(value = ["movie_media_id"]),
   ],
@@ -34,7 +34,7 @@ import java.time.ZonedDateTime
 @TypeConverters(DateConverter::class)
 data class PersonCredits(
   @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
-  @ColumnInfo(name = "person_media_id") val personMediaId: String,
+  @ColumnInfo(name = "person_tmdb_id") val personTmdbId: Long,
   @ColumnInfo(name = "show_media_id") val showMediaId: String?,
   @ColumnInfo(name = "movie_media_id") val movieMediaId: String?,
   @ColumnInfo(name = "type") val type: String,

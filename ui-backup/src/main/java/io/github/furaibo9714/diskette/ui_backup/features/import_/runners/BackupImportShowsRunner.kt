@@ -216,7 +216,7 @@ internal class BackupImportShowsRunner @Inject constructor(
       val localRatings = ratingsRepository.loadShowsRatings()
 
       for (rating in backup.ratingsShows) {
-        if (localRatings.any { it.mediaId.id == rating.mediaId }) {
+        if (localRatings.any { it.mediaId.key == rating.mediaId }) {
           continue
         }
 

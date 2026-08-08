@@ -101,8 +101,8 @@ internal class DiscoverMoviesCase @Inject constructor(
           DiscoverMovieListItem(
             movie,
             image,
-            isCollected = movie.ids.media.id in myMoviesIds,
-            isWatchlist = movie.ids.media.id in watchlistMoviesIds,
+            isCollected = movie.ids.media.key in myMoviesIds,
+            isWatchlist = movie.ids.media.key in watchlistMoviesIds,
             translation = translation,
           )
         }

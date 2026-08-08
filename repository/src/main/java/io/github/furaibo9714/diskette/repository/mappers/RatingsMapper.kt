@@ -45,7 +45,7 @@ class RatingsMapper @Inject constructor() {
     ratings: Ratings,
   ) = MovieRatings(
     id = 0,
-    mediaId = mediaId.id,
+    mediaId = mediaId.key,
     tmdb = ratings.tmdb?.value,
     createdAt = nowUtcMillis(),
     updatedAt = nowUtcMillis(),
@@ -56,7 +56,7 @@ class RatingsMapper @Inject constructor() {
     ratings: Ratings,
   ) = ShowRatings(
     id = 0,
-    mediaId = mediaId.id,
+    mediaId = mediaId.key,
     tmdb = ratings.tmdb?.value,
     createdAt = nowUtcMillis(),
     updatedAt = nowUtcMillis(),

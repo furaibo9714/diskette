@@ -40,7 +40,6 @@ class PersonMapper @Inject constructor() {
     characters: List<String> = emptyList(),
   ) = Person(
     ids = Ids.EMPTY.copy(
-      trakt = MediaId.parse(personDb.mediaId ?: -1),
       tmdb = IdTmdb(personDb.idTmdb),
       imdb = IdImdb(personDb.idImdb ?: ""),
     ),
@@ -62,7 +61,6 @@ class PersonMapper @Inject constructor() {
     person: Person,
     detailsTimestamp: ZonedDateTime?,
   ): PersonDb {
-    val mediaId = if (person.ids.media.id != -1L) person.ids.media.id else null
     val idImdb = if (person.ids.imdb.id
         .isNotBlank()
     ) {
@@ -72,7 +70,6 @@ class PersonMapper @Inject constructor() {
     }
     return PersonDb(
       idTmdb = person.ids.tmdb.id,
-      mediaId = mediaId,
       idImdb = idImdb,
       name = person.name,
       department = person.department.slug,

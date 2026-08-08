@@ -143,7 +143,7 @@ class ShowDetailsEpisodesViewModel @Inject constructor(
       }
 
       translations.forEach { translation ->
-        val episode = episodes.find { it.id == translation.ids.media.id }
+        val episode = episodes.find { it.id == translation.ids.media.key }
         episode?.let { ep ->
           if (translation.title.isNotBlank() || translation.overview.isNotBlank()) {
             val t = Translation(translation.title, translation.overview, translation.language)

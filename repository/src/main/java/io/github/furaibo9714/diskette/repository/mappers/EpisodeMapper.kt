@@ -58,9 +58,9 @@ class EpisodeMapper @Inject constructor(
     lastWatchedAt: ZonedDateTime?,
   ): EpisodeDb =
     EpisodeDb(
-      mediaId = episode.ids.media.id,
-      idSeason = season.ids.media.id,
-      showMediaId = showId.id,
+      mediaId = episode.ids.media.key,
+      idSeason = season.ids.media.key,
+      showMediaId = showId.key,
       idShowTvdb = episode.ids.tvdb.id,
       idShowImdb = episode.ids.imdb.id,
       idShowTmdb = episode.ids.tmdb.id,
@@ -82,7 +82,7 @@ class EpisodeMapper @Inject constructor(
   fun fromDatabase(episodeDb: EpisodeDb) =
     Episode(
       ids = Ids.EMPTY.copy(
-        trakt = MediaId.parse(episodeDb.mediaId),
+        media = MediaId.parse(episodeDb.mediaId),
         tvdb = IdTvdb(episodeDb.idShowTvdb),
         imdb = IdImdb(episodeDb.idShowImdb),
         tmdb = IdTmdb(episodeDb.idShowTmdb),

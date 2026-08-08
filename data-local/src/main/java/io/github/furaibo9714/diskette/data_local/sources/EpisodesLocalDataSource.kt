@@ -11,7 +11,7 @@ interface EpisodesLocalDataSource {
   suspend fun upsertChunked(items: List<Episode>)
 
   suspend fun updateIsExported(
-    episodesIds: List<Long>,
+    episodesIds: List<String>,
     exportedAt: Long,
   )
 
@@ -25,9 +25,9 @@ interface EpisodesLocalDataSource {
     episodeMediaId: String,
   ): Episode?
 
-  suspend fun getAll(episodesIds: List<Long>): List<Episode>
+  suspend fun getAll(episodesIds: List<String>): List<Episode>
 
-  suspend fun getAllForSeason(seasonMediaId: Long): List<Episode>
+  suspend fun getAllForSeason(seasonMediaId: String): List<Episode>
 
   suspend fun getAllByShowId(showMediaId: String): List<Episode>
 
@@ -36,17 +36,17 @@ interface EpisodesLocalDataSource {
     seasonNumber: Int,
   ): List<Episode>
 
-  suspend fun getAllByShowsIds(showTraktIds: List<Long>): List<Episode>
+  suspend fun getAllByShowsIds(showMediaIds: List<String>): List<Episode>
 
   suspend fun getAllByShowsIds(
-    showTraktIds: List<Long>,
+    showMediaIds: List<String>,
     fromTime: Long,
   ): List<Episode>
 
-  suspend fun getAllByShowsIdsChunk(showTraktIds: List<Long>): List<Episode>
+  suspend fun getAllByShowsIdsChunk(showMediaIds: List<String>): List<Episode>
 
   suspend fun getAllByShowsIdsChunk(
-    showTraktIds: List<Long>,
+    showMediaIds: List<String>,
     fromTime: Long,
   ): List<Episode>
 
@@ -86,10 +86,10 @@ interface EpisodesLocalDataSource {
 
   suspend fun getAllWatched(): List<Episode>
 
-  suspend fun getAllWatchedForShows(showsIds: List<Long>): List<Episode>
+  suspend fun getAllWatchedForShows(showsIds: List<String>): List<Episode>
 
   suspend fun getAllWatchedForShows(
-    showsIds: List<Long>,
+    showsIds: List<String>,
     fromTime: Long,
     toTime: Long,
   ): List<Episode>

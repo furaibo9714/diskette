@@ -12,13 +12,13 @@ class OnHoldItemsRepository @Inject constructor(
   @Named("progressOnHoldPreferences") private val sharedPreferences: SharedPreferences,
 ) {
 
-  fun getAll(): List<MediaId> = sharedPreferences.all.keys.map { MediaId.parse(it.toLong()) }
+  fun getAll(): List<MediaId> = sharedPreferences.all.keys.map { MediaId.parse(it) }
 
-  fun addItem(show: Show) = addItem(MediaId.parse(show.mediaId.key))
+  fun addItem(show: Show) = addItem(show.mediaId)
 
-  fun addItem(showId: MediaId) = sharedPreferences.edit().putLong(showId.id.toString(), showId.id).apply()
+  fun addItem(showId: MediaId) = sharedPreferences.edit().putString(showId.key, showId.key).apply()
 
-  fun removeItem(show: Show) = sharedPreferences.edit().remove(show.mediaId.toString()).apply()
+  fun removeItem(show: Show) = sharedPreferences.edit().remove(show.mediaId.key).apply()
 
   fun isOnHold(show: Show) = sharedPreferences.contains(show.mediaId.toString())
 }

@@ -34,7 +34,7 @@ class RelatedShowsRepository @Inject constructor(
     }
 
     val remoteShows = remoteSource.media
-      .fetchRelatedShows(show.mediaId, min(hiddenCount, 10), show.ids.tmdb.id)
+      .fetchRelatedShows(show.ids.tmdb.id, min(hiddenCount, 10))
       .map { mappers.show.fromNetwork(it) }
 
     cacheRelatedShows(remoteShows, show.ids.media)
@@ -52,7 +52,7 @@ class RelatedShowsRepository @Inject constructor(
       localSource.relatedShows.deleteById(showId.id)
       localSource.relatedShows.insert(
         shows.map {
-          RelatedShow.fromMediaId(it.ids.media.id, showId.id, timestamp)
+          RelatedShow.fromMediaId(it.ids.media.key, showId.id, timestamp)
         },
       )
     }
