@@ -44,17 +44,17 @@ class StatisticsLoadRatingsCaseTest : BaseMockTest() {
   fun `Should load sorted ratings properly`() =
     runTest {
       val ratings = listOf(
-        UserRating.EMPTY.copy(MediaId.parse(1), ratedAt = ZonedDateTime.of(2000, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
-        UserRating.EMPTY.copy(MediaId.parse(2), ratedAt = ZonedDateTime.of(2001, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
-        UserRating.EMPTY.copy(MediaId.parse(3), ratedAt = ZonedDateTime.of(2002, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
+        UserRating.EMPTY.copy(MediaId.tmdb(1), ratedAt = ZonedDateTime.of(2000, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
+        UserRating.EMPTY.copy(MediaId.tmdb(2), ratedAt = ZonedDateTime.of(2001, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
+        UserRating.EMPTY.copy(MediaId.tmdb(3), ratedAt = ZonedDateTime.of(2002, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
       )
 
       val shows = listOf(
-        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(1))),
-        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(2))),
-        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(3))),
-        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(4))),
-        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(5))),
+        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.tmdb(1))),
+        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.tmdb(2))),
+        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.tmdb(3))),
+        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.tmdb(4))),
+        Show.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.tmdb(5))),
       )
 
       val image = Image.createUnknown(ImageType.POSTER)

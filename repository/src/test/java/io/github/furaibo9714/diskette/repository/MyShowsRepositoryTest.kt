@@ -62,7 +62,7 @@ class MyShowsRepositoryTest : BaseMockTest() {
       coEvery { myShowsLocalSource.getById(any()) } returns showDb
       coEvery { mappers.show.fromDatabase(any()) } returns show
 
-      val testShow = SUT.load(MediaId.parse(1L))
+      val testShow = SUT.load(MediaId.tmdb(1))
 
       assertThat(testShow?.title).isEqualTo(show.title)
       coVerify(exactly = 1) { myShowsLocalSource.getById(any()) }
@@ -86,25 +86,25 @@ class MyShowsRepositoryTest : BaseMockTest() {
   @Test
   fun `Should load all shows ids`() {
     runBlocking {
-      coEvery { myShowsLocalSource.getAllMediaIds() } returns listOf(1L, 2L)
+      coEvery { myShowsLocalSource.getAllMediaIds() } returns listOf("tmdb:1", "tmdb:2")
 
       val ids = SUT.loadAllIds()
 
-      assertThat(ids).containsExactly(1L, 2L)
+      assertThat(ids).containsExactly(MediaId.tmdb(1), MediaId.tmdb(2))
       coVerify(exactly = 1) { myShowsLocalSource.getAllMediaIds() }
     }
   }
 
   @Test
-  fun `Should load and map all shows by Trakt Ids`() {
+  fun `Should load and map all shows by media ids`() {
     runBlocking {
       coEvery { myShowsLocalSource.getAll(any()) } returns listOf(showDb, showDb)
       coEvery { mappers.show.fromDatabase(any()) } returns Show.EMPTY
 
-      val shows = SUT.loadAll(listOf(MediaId.parse(1), MediaId.parse(2)))
+      val shows = SUT.loadAll(listOf(MediaId.tmdb(1), MediaId.tmdb(2)))
 
       assertThat(shows).hasSize(2)
-      coVerify(exactly = 1) { myShowsLocalSource.getAll(listOf(1, 2)) }
+      coVerify(exactly = 1) { myShowsLocalSource.getAll(listOf("tmdb:1", "tmdb:2")) }
       coVerify(exactly = 2) { mappers.show.fromDatabase(showDb) }
     }
   }
@@ -124,16 +124,16 @@ class MyShowsRepositoryTest : BaseMockTest() {
   }
 
   @Test
-  fun `Should insert show into database using Trakt ID`() {
+  fun `Should insert show into database using media id`() {
     runBlocking {
       val slot = slot<List<MyShow>>()
       coJustRun { myShowsLocalSource.insert(capture(slot)) }
 
-      SUT.insert(MediaId.parse(10L), 666)
+      SUT.insert(MediaId.tmdb(10), 666)
 
       slot.captured[0].run {
         assertThat(id).isEqualTo(0)
-        assertThat(mediaId).isEqualTo(10)
+        assertThat(mediaId).isEqualTo("tmdb:10")
         assertThat(createdAt).isGreaterThan(0L)
         assertThat(updatedAt).isGreaterThan(0L)
         assertThat(lastWatchedAt).isEqualTo(666)
@@ -145,15 +145,15 @@ class MyShowsRepositoryTest : BaseMockTest() {
   }
 
   @Test
-  fun `Should delete show from database using Trakt ID`() {
+  fun `Should delete show from database using media id`() {
     runBlocking {
-      val slot = slot<Long>()
+      val slot = slot<String>()
       coJustRun { myShowsLocalSource.deleteById(capture(slot)) }
 
-      SUT.delete(MediaId.parse(10L))
+      SUT.delete(MediaId.tmdb(10))
 
-      assertThat(slot.captured).isEqualTo(10L)
-      coVerify(exactly = 1) { myShowsLocalSource.deleteById(10L) }
+      assertThat(slot.captured).isEqualTo("tmdb:10")
+      coVerify(exactly = 1) { myShowsLocalSource.deleteById("tmdb:10") }
     }
   }
 }

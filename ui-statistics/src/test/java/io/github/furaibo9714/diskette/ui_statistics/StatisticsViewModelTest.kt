@@ -114,21 +114,21 @@ class StatisticsViewModelTest : BaseMockTest() {
   internal fun `Should load statistics properly`() =
     runTest {
       val shows = listOf(
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(1)), runtime = 1, genres = listOf("war", "drama")),
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(2)), runtime = 2, genres = listOf("war", "animation")),
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(3)), runtime = 3, genres = listOf("war", "animation")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(1)), runtime = 1, genres = listOf("war", "drama")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(2)), runtime = 2, genres = listOf("war", "animation")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(3)), runtime = 3, genres = listOf("war", "animation")),
       )
 
       val shows2 = listOf(
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(4)), runtime = 1, genres = listOf("war", "drama")),
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(5)), runtime = 2, genres = listOf("war", "animation")),
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(6)), runtime = 3, genres = listOf("war", "animation")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(4)), runtime = 1, genres = listOf("war", "drama")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(5)), runtime = 2, genres = listOf("war", "animation")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(6)), runtime = 3, genres = listOf("war", "animation")),
       )
 
       val shows3 = listOf(
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(7)), runtime = 1, genres = listOf("war", "drama")),
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(8)), runtime = 2, genres = listOf("war", "animation")),
-        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(9)), runtime = 3, genres = listOf("war", "animation")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(7)), runtime = 1, genres = listOf("war", "drama")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(8)), runtime = 2, genres = listOf("war", "animation")),
+        Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(9)), runtime = 3, genres = listOf("war", "animation")),
       )
 
       coEvery { showsRepository.myShows.loadAll() } returns shows
@@ -136,10 +136,10 @@ class StatisticsViewModelTest : BaseMockTest() {
       coEvery { showsRepository.hiddenShows.loadAll() } returns shows3
 
       coEvery { database.episodes.getAllWatchedForShows(any()) } returns listOf(
-        TestData.createEpisode().copy(showMediaId = 1, runtime = 5),
-        TestData.createEpisode().copy(showMediaId = 2, runtime = 6),
-        TestData.createEpisode().copy(showMediaId = 3, runtime = 7),
-        TestData.createEpisode().copy(showMediaId = 3, runtime = 7),
+        TestData.createEpisode().copy(showMediaId = "tmdb:1", runtime = 5),
+        TestData.createEpisode().copy(showMediaId = "tmdb:2", runtime = 6),
+        TestData.createEpisode().copy(showMediaId = "tmdb:3", runtime = 7),
+        TestData.createEpisode().copy(showMediaId = "tmdb:3", runtime = 7),
       )
 
       val job = launch(UnconfinedTestDispatcher()) { SUT.uiState.toList(stateResult) }

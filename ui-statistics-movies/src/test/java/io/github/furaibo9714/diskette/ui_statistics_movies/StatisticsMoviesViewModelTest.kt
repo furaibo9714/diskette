@@ -90,9 +90,9 @@ class StatisticsMoviesViewModelTest : BaseMockTest() {
   internal fun `Should load statistics properly`() =
     runTest {
       val movies = listOf(
-        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(1)), runtime = 1, genres = listOf("war", "drama")),
-        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(2)), runtime = 2, genres = listOf("war", "animation")),
-        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(3)), runtime = 3, genres = listOf("war", "animation")),
+        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(1)), runtime = 1, genres = listOf("war", "drama")),
+        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(2)), runtime = 2, genres = listOf("war", "animation")),
+        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(3)), runtime = 3, genres = listOf("war", "animation")),
       )
 
       coEvery { moviesRepository.myMovies.loadAll() } returns movies

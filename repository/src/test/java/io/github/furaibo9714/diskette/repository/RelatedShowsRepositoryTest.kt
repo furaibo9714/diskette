@@ -26,7 +26,7 @@ import org.junit.Test
 class RelatedShowsRepositoryTest : BaseMockTest() {
 
   @MockK
-  lateinit var traktApi: MediaRemoteDataSource
+  lateinit var mediaRemoteSource: MediaRemoteDataSource
 
   @RelaxedMockK
   lateinit var relatedShowsDao: RelatedShowsDao
@@ -41,7 +41,7 @@ class RelatedShowsRepositoryTest : BaseMockTest() {
     super.setUp()
     every { database.shows } returns showsDao
     every { database.relatedShows } returns relatedShowsDao
-    every { cloud.media } returns traktApi
+    every { cloud.media } returns mediaRemoteSource
 
     SUT = RelatedShowsRepository(cloud, database, transactions, mappers)
   }
@@ -61,7 +61,7 @@ class RelatedShowsRepositoryTest : BaseMockTest() {
         relatedShowsDao.getAllById(any())
         showsDao.getAll(any())
       }
-      coVerify(exactly = 0) { traktApi.fetchRelatedShows(any(), 0, any()) }
+      coVerify(exactly = 0) { mediaRemoteSource.fetchRelatedShows(any(), 0) }
     }
   }
 
@@ -70,14 +70,14 @@ class RelatedShowsRepositoryTest : BaseMockTest() {
     runBlocking {
       coEvery { showsDao.getAll(any()) } returns emptyList()
       coEvery { showsDao.upsert(any()) } just Runs
-      coEvery { traktApi.fetchRelatedShows(any(), 0, any()) } returns listOf(mockk(relaxed = true))
+      coEvery { mediaRemoteSource.fetchRelatedShows(any(), 0) } returns listOf(mockk(relaxed = true))
       coEvery { relatedShowsDao.getAllById(any()) } returns listOf()
 
       SUT.loadAll(mockk(relaxed = true), 0)
 
       coVerifyOrder {
         relatedShowsDao.getAllById(any())
-        traktApi.fetchRelatedShows(any(), 0, any())
+        mediaRemoteSource.fetchRelatedShows(any(), 0)
       }
       coVerify(exactly = 0) { showsDao.getAll(any()) }
     }
@@ -91,14 +91,14 @@ class RelatedShowsRepositoryTest : BaseMockTest() {
       }
       coEvery { showsDao.getAll(any()) } returns emptyList()
       coEvery { showsDao.upsert(any()) } just Runs
-      coEvery { traktApi.fetchRelatedShows(any(), 0, any()) } returns listOf(mockk(relaxed = true))
+      coEvery { mediaRemoteSource.fetchRelatedShows(any(), 0) } returns listOf(mockk(relaxed = true))
       coEvery { relatedShowsDao.getAllById(any()) } returns listOf(showDb)
 
       SUT.loadAll(mockk(relaxed = true), 0)
 
       coVerifyOrder {
         relatedShowsDao.getAllById(any())
-        traktApi.fetchRelatedShows(any(), 0, any())
+        mediaRemoteSource.fetchRelatedShows(any(), 0)
       }
       coVerify(exactly = 0) { showsDao.getAll(any()) }
     }
