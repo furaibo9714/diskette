@@ -8,6 +8,7 @@ import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
 import io.github.furaibo9714.diskette.repository.EpisodesManager
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ShowStatus.CANCELED
 import io.github.furaibo9714.diskette.ui_model.ShowStatus.ENDED
 import javax.inject.Inject
@@ -41,7 +42,7 @@ class ShowsSyncRunner @Inject constructor(
     val watchlistShowsIds = watchlistShows.map { it.mediaId }
     val syncLog = localSource.episodesSyncLog.getAll()
 
-    fun lastSyncOf(mediaId: Long) = syncLog.find { it.mediaId == mediaId }?.syncedAt ?: 0
+    fun lastSyncOf(mediaId: MediaId) = syncLog.find { it.mediaId == mediaId.key }?.syncedAt ?: 0
 
     /**
      * UNKNOWN is deliberately not excluded here: it's what a Floppy-imported thin show row reads
@@ -73,14 +74,20 @@ class ShowsSyncRunner @Inject constructor(
         Timber.e("${show.title}(${show.ids.media}) show sync error. Skipping... \n$t")
       }
 
-      if (isInWatchlist) {
-        localSource.episodesSyncLog.upsert(EpisodesSyncLog(show.mediaId, nowUtcMillis()))
+      /**
+       * A show with no TMDB id is a Floppy manual entry, which has no seasons to fetch. It is
+       * logged as synced rather than reconciled: [EpisodesManager.invalidateSeasons] against an
+       * empty list would delete the episodes the Floppy import created.
+       */
+      val showTmdbId = show.mediaId.tmdbIdOrNull
+      if (isInWatchlist || showTmdbId == null) {
+        localSource.episodesSyncLog.upsert(EpisodesSyncLog(show.mediaId.key, nowUtcMillis()))
       } else {
         try {
           Timber.i("Syncing ${show.title}(${show.ids.media}) episodes...")
 
           val remoteSeasons = remoteSource.media
-            .fetchSeasons(show.mediaId)
+            .fetchSeasons(showTmdbId)
             .map { mappers.season.fromNetwork(it) }
           episodesManager.invalidateSeasons(show, remoteSeasons)
           syncCount++

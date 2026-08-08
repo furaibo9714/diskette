@@ -24,7 +24,7 @@ class RatingsEpisodeCase @Inject constructor(
 
   suspend fun loadRating(mediaId: MediaId): UserRating =
     withContext(dispatchers.IO) {
-      val episode = Episode.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
+      val episode = Episode.EMPTY.copy(ids = Ids.EMPTY.copy(media = mediaId))
       val rating = ratingsRepository.shows.loadRating(episode)
       rating ?: UserRating.EMPTY
     }
@@ -38,7 +38,7 @@ class RatingsEpisodeCase @Inject constructor(
     check(rating in RATING_VALID_RANGE)
 
     val episode = Episode.EMPTY.copy(
-      ids = Ids.EMPTY.copy(trakt = mediaId),
+      ids = Ids.EMPTY.copy(media = mediaId),
       season = seasonNumber,
       number = episodeNumber,
     )
@@ -52,7 +52,7 @@ class RatingsEpisodeCase @Inject constructor(
     seasonNumber: Int,
     episodeNumber: Int,
   ) = withContext(dispatchers.IO) {
-    val episode = Episode.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
+    val episode = Episode.EMPTY.copy(ids = Ids.EMPTY.copy(media = mediaId))
     ratingsRepository.shows.deleteRating(episode = episode)
     floppySyncManager.scheduleEpisodeRating(mediaId, seasonNumber, episodeNumber, null)
   }

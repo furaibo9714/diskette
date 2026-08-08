@@ -20,5 +20,5 @@ class OnHoldItemsRepository @Inject constructor(
 
   fun removeItem(show: Show) = sharedPreferences.edit().remove(show.mediaId.key).apply()
 
-  fun isOnHold(show: Show) = sharedPreferences.contains(show.mediaId.toString())
+  fun isOnHold(show: Show) = sharedPreferences.contains(show.mediaId.key)
 }

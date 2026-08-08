@@ -75,7 +75,7 @@ class AnnouncementManager @Inject constructor(
 
     val language = translationsRepository.getLanguage()
     val delay = settings.episodesNotificationsDelay
-    val onHoldIds = onHoldItemsRepository.getAll().map { it.id }
+    val onHoldIds = onHoldItemsRepository.getAll().map { it.key }
 
     myShows
       .forEach { show ->

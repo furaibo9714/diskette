@@ -16,10 +16,19 @@ enum class MediaSource(
 
   /** Items tracked in Floppy with no external provider id, identified by a Floppy-issued UUID. */
   MANUAL("manual"),
+
+  /**
+   * An id the app derived itself because no provider named the row. Only rows that are addressed
+   * some other way - seasons and episodes, which Floppy reaches through the show plus their
+   * numbers - can carry one, so a [LOCAL] id is never sent anywhere.
+   */
+  LOCAL("local"),
   ;
 
   companion object {
-    fun fromKey(key: String): MediaSource = entries.firstOrNull { it.key == key } ?: TMDB
+    fun fromKeyOrNull(key: String): MediaSource? = entries.firstOrNull { it.key == key }
+
+    fun fromKey(key: String): MediaSource = fromKeyOrNull(key) ?: TMDB
   }
 }
 
@@ -27,24 +36,27 @@ enum class MediaSource(
  * Identity of a show or movie: the provider plus that provider's own id. Ids are opaque strings
  * because they are not all numeric - Floppy's manual entries use UUIDs.
  *
- * [key] is the single-column storage form, and the only shape written to the database or a
- * Bundle. It round-trips through [parse].
+ * The two halves are deliberately named apart. [key] is the whole identity and the only shape ever
+ * written to the database or a Bundle; [providerId] is one half of it and means nothing without
+ * its [source], so it belongs only in a Floppy request path. Reaching for [providerId] where [key]
+ * was meant would look up "1396" in a table keyed "tmdb:1396" and silently find nothing.
  */
 @Parcelize
 data class MediaId(
   val source: MediaSource,
-  val id: String,
+  val providerId: String,
 ) : Parcelable {
 
+  /** The storage and transport form. Round-trips through [parse]. */
   val key: String
-    get() = "${source.key}$SEPARATOR$id"
+    get() = "${source.key}$SEPARATOR$providerId"
 
   val isEmpty: Boolean
-    get() = id.isBlank()
+    get() = providerId.isBlank()
 
-  /** The numeric TMDB id, or -1 when this item is not TMDB-backed. */
+  /** The numeric TMDB id, or null when this item is not TMDB-backed. */
   val tmdbIdOrNull: Long?
-    get() = if (source == MediaSource.TMDB) id.toLongOrNull() else null
+    get() = if (source == MediaSource.TMDB) providerId.toLongOrNull() else null
 
   override fun toString() = key
 
@@ -57,13 +69,15 @@ data class MediaId(
 
     fun manual(uuid: String) = MediaId(MediaSource.MANUAL, uuid)
 
+    fun local(id: String) = MediaId(MediaSource.LOCAL, id)
+
     fun parse(key: String): MediaId {
       if (key.isBlank()) return EMPTY
       val separatorIndex = key.indexOf(SEPARATOR)
       if (separatorIndex <= 0) return MediaId(MediaSource.TMDB, key)
       return MediaId(
         source = MediaSource.fromKey(key.substring(0, separatorIndex)),
-        id = key.substring(separatorIndex + 1),
+        providerId = key.substring(separatorIndex + 1),
       )
     }
   }

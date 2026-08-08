@@ -164,8 +164,8 @@ class EpisodesManager @Inject constructor(
     skipSpecials: Boolean = false,
   ) {
     transactions.withTransaction {
-      val watchedEpisodes = episodesLocalSource.getAllByShowId(showId.id)
-      val watchedSeasons = seasonsLocalSource.getAllByShowId(showId.id)
+      val watchedEpisodes = episodesLocalSource.getAllByShowId(showId.key)
+      val watchedSeasons = seasonsLocalSource.getAllByShowId(showId.key)
 
       val updateEpisodes = watchedEpisodes
         .filter { if (skipSpecials) it.seasonNumber > 0 else true }

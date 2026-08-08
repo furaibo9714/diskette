@@ -62,7 +62,7 @@ class SeasonMapper @Inject constructor(
   ): SeasonDb =
     SeasonDb(
       season.ids.media.key,
-      showId.id,
+      showId.key,
       season.number,
       season.title,
       season.overview,

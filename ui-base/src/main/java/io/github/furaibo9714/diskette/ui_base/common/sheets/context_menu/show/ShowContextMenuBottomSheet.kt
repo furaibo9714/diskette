@@ -204,7 +204,7 @@ class ShowContextMenuBottomSheet : ContextMenuBottomSheet() {
   }
 
   override fun openDetails() {
-    val bundle = bundleOf(ARG_SHOW_ID to itemId.id)
+    val bundle = bundleOf(ARG_SHOW_ID to itemId.key)
     navigateTo(R.id.actionShowItemContextDialogToShowDetails, bundle)
   }
 }

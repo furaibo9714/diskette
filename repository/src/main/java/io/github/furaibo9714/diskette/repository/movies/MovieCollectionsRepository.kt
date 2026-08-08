@@ -34,13 +34,13 @@ class MovieCollectionsRepository @Inject constructor(
 
   suspend fun loadCollection(collectionId: MediaId) =
     withContext(dispatchers.IO) {
-      movieCollectionsLocalSource.getById(collectionId.id)
+      movieCollectionsLocalSource.getById(collectionId.key)
     }
 
   suspend fun loadCollections(movieId: MediaId): Pair<List<MovieCollection>, Source> =
     withContext(dispatchers.IO) {
       val now = nowUtc()
-      val localCollections = movieCollectionsLocalSource.getByMovieId(movieId.id)
+      val localCollections = movieCollectionsLocalSource.getByMovieId(movieId.key)
 
       val localTimestamp = localCollections.firstOrNull()?.updatedAt
       localTimestamp?.let { timestamp ->
@@ -66,7 +66,7 @@ class MovieCollectionsRepository @Inject constructor(
   suspend fun loadCollectionItems(collectionId: MediaId): List<Movie> =
     withContext(dispatchers.IO) {
       val now = nowUtc()
-      val localItems = movieCollectionsItemsLocalSource.getById(collectionId.id)
+      val localItems = movieCollectionsItemsLocalSource.getById(collectionId.key)
 
       val localTimestamp = localItems.firstOrNull()?.updatedAt
       localTimestamp?.let { timestamp ->
@@ -83,16 +83,16 @@ class MovieCollectionsRepository @Inject constructor(
           MovieCollectionItem(
             rank = index,
             mediaId = movie.mediaId.key,
-            collectionMediaId = collectionId.id,
+            collectionMediaId = collectionId.key,
             createdAt = now,
             updatedAt = now,
           )
         }
         moviesLocalSource.upsert(items.map { movieMapper.toDatabase(it) })
-        movieCollectionsItemsLocalSource.replace(collectionId.id, entities)
+        movieCollectionsItemsLocalSource.replace(collectionId.key, entities)
 
         // Fill up collection with other movies that belong in it.
-        val collection = movieCollectionsLocalSource.getById(collectionId.id)
+        val collection = movieCollectionsLocalSource.getById(collectionId.key)
         collection?.let { coll ->
           val insertEntities = entities
             .filter { it.mediaId != coll.movieMediaId }
@@ -111,7 +111,7 @@ class MovieCollectionsRepository @Inject constructor(
   ) {
     var entities = collections.map {
       collectionMapper.toEntity(
-        movieId = movieId.id,
+        movieId = movieId.key,
         input = it,
         updatedAt = now,
         createdAt = now,
@@ -120,12 +120,12 @@ class MovieCollectionsRepository @Inject constructor(
     if (entities.isEmpty()) {
       entities = listOf(
         collectionMapper.toEntity(
-          movieId.id,
+          movieId.key,
           MovieCollection.EMPTY,
         ),
       )
     }
-    movieCollectionsLocalSource.replaceByMovieId(movieId.id, entities)
+    movieCollectionsLocalSource.replaceByMovieId(movieId.key, entities)
   }
 
   enum class Source { LOCAL, REMOTE }

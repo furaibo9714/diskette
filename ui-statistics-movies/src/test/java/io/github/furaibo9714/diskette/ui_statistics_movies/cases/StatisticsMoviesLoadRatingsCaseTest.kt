@@ -50,11 +50,11 @@ class StatisticsMoviesLoadRatingsCaseTest : BaseMockTest() {
       )
 
       val movies = listOf(
-        Movie.EMPTY.copy(Ids.EMPTY.copy(trakt = MediaId.parse(1))),
-        Movie.EMPTY.copy(Ids.EMPTY.copy(trakt = MediaId.parse(2))),
-        Movie.EMPTY.copy(Ids.EMPTY.copy(trakt = MediaId.parse(3))),
-        Movie.EMPTY.copy(Ids.EMPTY.copy(trakt = MediaId.parse(4))),
-        Movie.EMPTY.copy(Ids.EMPTY.copy(trakt = MediaId.parse(5))),
+        Movie.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(1))),
+        Movie.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(2))),
+        Movie.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(3))),
+        Movie.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(4))),
+        Movie.EMPTY.copy(Ids.EMPTY.copy(media = MediaId.parse(5))),
       )
 
       val image = Image.createUnknown(ImageType.POSTER)

@@ -36,8 +36,10 @@ class ShowContextMenuMyShowsCase @Inject constructor(
     withContext(dispatchers.IO) {
       val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(mediaId))
 
-      val seasons = remoteSource.media
-        .fetchSeasons(mediaId.key)
+      // A show with no TMDB id is a Floppy manual entry, which has no seasons to fetch.
+      val seasons = mediaId.tmdbIdOrNull
+        ?.let { remoteSource.media.fetchSeasons(it) }
+        .orEmpty()
         .map { mappers.season.fromNetwork(it) }
         .filter { it.episodes.isNotEmpty() }
         .filter { if (!showSpecials()) !it.isSpecial() else true }
@@ -83,9 +85,9 @@ class ShowContextMenuMyShowsCase @Inject constructor(
       showsRepository.myShows.delete(show.ids.media)
 
       if (removeLocalData) {
-        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId)
-        val seasons = localSource.seasons.getAllByShowId(show.mediaId)
-        val episodes = localSource.episodes.getAllByShowId(show.mediaId)
+        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId.key)
+        val seasons = localSource.seasons.getAllByShowId(show.mediaId.key)
+        val episodes = localSource.episodes.getAllByShowId(show.mediaId.key)
         val toDelete = mutableListOf<SeasonDb>()
         seasons.forEach { season ->
           if (episodes.none { it.idSeason == season.mediaId }) {

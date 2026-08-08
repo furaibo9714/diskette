@@ -24,7 +24,7 @@ class RatingsMovieCase @Inject constructor(
 
   suspend fun loadRating(mediaId: MediaId): UserRating =
     withContext(dispatchers.IO) {
-      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
+      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = mediaId))
       val rating = ratingsRepository.movies.loadRatings(listOf(movie))
       rating.firstOrNull() ?: UserRating.EMPTY
     }
@@ -35,14 +35,14 @@ class RatingsMovieCase @Inject constructor(
   ) = withContext(dispatchers.IO) {
     check(rating in RATING_VALID_RANGE)
 
-    val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
+    val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = mediaId))
     ratingsRepository.movies.addRating(movie = movie, rating = rating)
     floppySyncManager.scheduleMovieRating(mediaId, rating)
   }
 
   suspend fun deleteRating(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
+      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = mediaId))
       ratingsRepository.movies.deleteRating(movie = movie)
       floppySyncManager.scheduleMovieRating(mediaId, null)
     }

@@ -49,10 +49,10 @@ class RelatedShowsRepository @Inject constructor(
     transactions.withTransaction {
       val timestamp = nowUtcMillis()
       localSource.shows.upsert(shows.map { mappers.show.toDatabase(it) })
-      localSource.relatedShows.deleteById(showId.id)
+      localSource.relatedShows.deleteById(showId.key)
       localSource.relatedShows.insert(
         shows.map {
-          RelatedShow.fromMediaId(it.ids.media.key, showId.id, timestamp)
+          RelatedShow.fromMediaId(it.ids.media.key, showId.key, timestamp)
         },
       )
     }

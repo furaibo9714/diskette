@@ -21,7 +21,7 @@ class MyShowsRepository @Inject constructor(
 ) {
 
   suspend fun load(id: MediaId) =
-    myShowsLocalSource.getById(id.id)?.let {
+    myShowsLocalSource.getById(id.key)?.let {
       mappers.show.fromDatabase(it)
     }
 
@@ -36,7 +36,7 @@ class MyShowsRepository @Inject constructor(
 
   suspend fun loadAll(ids: List<MediaId>) =
     myShowsLocalSource
-      .getAll(ids.map { it.id })
+      .getAll(ids.map { it.key })
       .map { mappers.show.fromDatabase(it) }
 
   suspend fun loadAllRecent(amount: Int) =
@@ -52,25 +52,25 @@ class MyShowsRepository @Inject constructor(
   ) {
     val nowUtc = nowUtcMillis()
     val dbShow = MyShow.fromMediaId(
-      mediaId = id.id,
+      mediaId = id.key,
       createdAt = nowUtc,
       updatedAt = nowUtc,
       watchedAt = lastWatchedAt,
     )
     transactions.withTransaction {
       myShowsLocalSource.insert(listOf(dbShow))
-      watchlistShowsLocalSource.deleteById(id.id)
-      hiddenShowsLocalDataSource.deleteById(id.id)
+      watchlistShowsLocalSource.deleteById(id.key)
+      hiddenShowsLocalDataSource.deleteById(id.key)
     }
     cache.invalidate()
   }
 
   suspend fun delete(id: MediaId) {
-    myShowsLocalSource.deleteById(id.id)
+    myShowsLocalSource.deleteById(id.key)
     cache.invalidate()
   }
 
-  suspend fun exists(id: MediaId) = myShowsLocalSource.checkExists(id.id)
+  suspend fun exists(id: MediaId) = myShowsLocalSource.checkExists(id.key)
 
   suspend fun updateWatchedAt(
     mediaId: MediaId,

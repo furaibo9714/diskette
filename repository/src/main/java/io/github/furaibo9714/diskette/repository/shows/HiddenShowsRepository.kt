@@ -27,32 +27,32 @@ class HiddenShowsRepository @Inject constructor(
 
   suspend fun loadAll(ids: List<MediaId>) =
     localSource.archiveShows
-      .getAll(ids.map { it.id })
+      .getAll(ids.map { it.key })
       .map { mappers.show.fromDatabase(it) }
 
   suspend fun load(id: MediaId) =
-    localSource.archiveShows.getById(id.id)?.let {
+    localSource.archiveShows.getById(id.key)?.let {
       mappers.show.fromDatabase(it)
     }
 
   suspend fun loadAllIds() = localSource.archiveShows.getAllMediaIds()
 
   suspend fun insert(id: MediaId) {
-    val dbShow = ArchiveShow.fromMediaId(id.id, nowUtcMillis())
+    val dbShow = ArchiveShow.fromMediaId(id.key, nowUtcMillis())
     with(localSource) {
       transactions.withTransaction {
         archiveShows.insert(dbShow)
-        myShows.deleteById(id.id)
-        watchlistShows.deleteById(id.id)
+        myShows.deleteById(id.key)
+        watchlistShows.deleteById(id.key)
       }
     }
     cache.invalidate()
   }
 
   suspend fun delete(id: MediaId) {
-    localSource.archiveShows.deleteById(id.id)
+    localSource.archiveShows.deleteById(id.key)
     cache.invalidate()
   }
 
-  suspend fun exists(id: MediaId) = localSource.archiveShows.getById(id.id) != null
+  suspend fun exists(id: MediaId) = localSource.archiveShows.getById(id.key) != null
 }

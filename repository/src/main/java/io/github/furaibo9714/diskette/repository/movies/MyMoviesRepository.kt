@@ -20,7 +20,7 @@ class MyMoviesRepository @Inject constructor(
 ) {
 
   suspend fun load(id: MediaId) =
-    localSource.myMovies.getById(id.id)?.let {
+    localSource.myMovies.getById(id.key)?.let {
       mappers.movie.fromDatabase(it)
     }
 
@@ -35,7 +35,7 @@ class MyMoviesRepository @Inject constructor(
 
   suspend fun loadAll(ids: List<MediaId>) =
     localSource.myMovies
-      .getAll(ids.map { it.id })
+      .getAll(ids.map { it.key })
       .map { mappers.movie.fromDatabase(it) }
 
   suspend fun loadAllRecent(amount: Int) =
@@ -50,23 +50,23 @@ class MyMoviesRepository @Inject constructor(
     customDate: ZonedDateTime?,
   ) {
     val movie = MyMovie.fromMediaId(
-      mediaId = id.id,
+      mediaId = id.key,
       timestamp = customDate?.toUtcZone()?.toMillis() ?: nowUtcMillis(),
     )
     transactions.withTransaction {
       with(localSource) {
         myMovies.insert(listOf(movie))
-        watchlistMovies.deleteById(id.id)
-        archiveMovies.deleteById(id.id)
+        watchlistMovies.deleteById(id.key)
+        archiveMovies.deleteById(id.key)
       }
     }
     cache.invalidate()
   }
 
   suspend fun delete(id: MediaId) {
-    localSource.myMovies.deleteById(id.id)
+    localSource.myMovies.deleteById(id.key)
     cache.invalidate()
   }
 
-  suspend fun exists(id: MediaId) = localSource.myMovies.checkExists(id.id)
+  suspend fun exists(id: MediaId) = localSource.myMovies.checkExists(id.key)
 }

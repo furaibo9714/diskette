@@ -43,7 +43,7 @@ class ProgressMoviesMainCaseTest : BaseMockTest() {
   @Test
   fun `Should add movie to movies history properly`() =
     runTest {
-      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = MediaId.parse(123)))
+      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.parse(123)))
 
       SUT.addToMyMovies(movie, null)
 

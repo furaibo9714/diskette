@@ -24,7 +24,7 @@ class RatingsShowCase @Inject constructor(
 
   suspend fun loadRating(mediaId: MediaId): UserRating =
     withContext(dispatchers.IO) {
-      val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
+      val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = mediaId))
       val rating = ratingsRepository.shows.loadRatings(listOf(show))
       rating.firstOrNull() ?: UserRating.EMPTY
     }
@@ -35,14 +35,14 @@ class RatingsShowCase @Inject constructor(
   ) = withContext(dispatchers.IO) {
     check(rating in RATING_VALID_RANGE)
 
-    val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
+    val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = mediaId))
     ratingsRepository.shows.addRating(show = show, rating = rating)
     floppySyncManager.scheduleShowRating(mediaId, rating)
   }
 
   suspend fun deleteRating(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
+      val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(media = mediaId))
       ratingsRepository.shows.deleteRating(show = show)
       floppySyncManager.scheduleShowRating(mediaId, null)
     }

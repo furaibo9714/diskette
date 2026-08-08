@@ -76,26 +76,31 @@ class AnnouncementWorker(
   }
 
   private fun createIntent(): PendingIntent {
-    var requestCode = 0L
+    /**
+     * The request code only has to tell one pending announcement apart from another, so the media
+     * key's hash serves as well as the old numeric id did - two announcements collide only if
+     * their keys do.
+     */
+    var requestCode = 0
     val targetClass = Class.forName(Config.HOST_ACTIVITY_NAME)
     val notifyIntent = Intent(applicationContext, targetClass).apply {
-      val showId = inputData.getLong(DATA_SHOW_ID, -1)
-      val movieId = inputData.getLong(DATA_MOVIE_ID, -1)
+      val showId = inputData.getString(DATA_SHOW_ID)
+      val movieId = inputData.getString(DATA_MOVIE_ID)
       when {
-        showId != -1L -> {
-          putExtra("EXTRA_SHOW_ID", showId.toString())
-          requestCode = showId
+        !showId.isNullOrBlank() -> {
+          putExtra("EXTRA_SHOW_ID", showId)
+          requestCode = showId.hashCode()
         }
-        movieId != -1L -> {
-          putExtra("EXTRA_MOVIE_ID", movieId.toString())
-          requestCode = movieId
+        !movieId.isNullOrBlank() -> {
+          putExtra("EXTRA_MOVIE_ID", movieId)
+          requestCode = movieId.hashCode()
         }
       }
       flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
     }
     return PendingIntent.getActivity(
       applicationContext,
-      requestCode.toInt(),
+      requestCode,
       notifyIntent,
       FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT,
     )

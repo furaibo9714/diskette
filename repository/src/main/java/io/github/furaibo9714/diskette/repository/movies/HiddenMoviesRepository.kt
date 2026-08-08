@@ -27,32 +27,32 @@ class HiddenMoviesRepository @Inject constructor(
 
   suspend fun loadAll(ids: List<MediaId>) =
     localSource.archiveMovies
-      .getAll(ids.map { it.id })
+      .getAll(ids.map { it.key })
       .map { mappers.movie.fromDatabase(it) }
 
   suspend fun load(id: MediaId) =
-    localSource.archiveMovies.getById(id.id)?.let {
+    localSource.archiveMovies.getById(id.key)?.let {
       mappers.movie.fromDatabase(it)
     }
 
   suspend fun loadAllIds() = localSource.archiveMovies.getAllMediaIds()
 
   suspend fun insert(id: MediaId) {
-    val dbMovie = ArchiveMovie.fromMediaId(id.id, nowUtcMillis())
+    val dbMovie = ArchiveMovie.fromMediaId(id.key, nowUtcMillis())
     transactions.withTransaction {
       with(localSource) {
         archiveMovies.insert(dbMovie)
-        myMovies.deleteById(id.id)
-        watchlistMovies.deleteById(id.id)
+        myMovies.deleteById(id.key)
+        watchlistMovies.deleteById(id.key)
       }
     }
     cache.invalidate()
   }
 
   suspend fun delete(id: MediaId) {
-    localSource.archiveMovies.deleteById(id.id)
+    localSource.archiveMovies.deleteById(id.key)
     cache.invalidate()
   }
 
-  suspend fun exists(id: MediaId) = localSource.archiveMovies.getById(id.id) != null
+  suspend fun exists(id: MediaId) = localSource.archiveMovies.getById(id.key) != null
 }

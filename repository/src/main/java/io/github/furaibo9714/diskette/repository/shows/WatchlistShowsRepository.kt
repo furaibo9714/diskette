@@ -28,26 +28,26 @@ class WatchlistShowsRepository @Inject constructor(
   suspend fun loadAllIds() = localSource.watchlistShows.getAllMediaIds()
 
   suspend fun load(id: MediaId) =
-    localSource.watchlistShows.getById(id.id)?.let {
+    localSource.watchlistShows.getById(id.key)?.let {
       mappers.show.fromDatabase(it)
     }
 
   suspend fun insert(id: MediaId) {
-    val dbShow = WatchlistShow.fromMediaId(id.id, nowUtcMillis())
+    val dbShow = WatchlistShow.fromMediaId(id.key, nowUtcMillis())
     with(localSource) {
       transactions.withTransaction {
         watchlistShows.insert(dbShow)
-        myShows.deleteById(id.id)
-        archiveShows.deleteById(id.id)
+        myShows.deleteById(id.key)
+        archiveShows.deleteById(id.key)
       }
     }
     cache.invalidate()
   }
 
   suspend fun delete(id: MediaId) {
-    localSource.watchlistShows.deleteById(id.id)
+    localSource.watchlistShows.deleteById(id.key)
     cache.invalidate()
   }
 
-  suspend fun exists(id: MediaId) = localSource.watchlistShows.checkExists(id.id)
+  suspend fun exists(id: MediaId) = localSource.watchlistShows.checkExists(id.key)
 }

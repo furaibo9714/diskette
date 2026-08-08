@@ -212,7 +212,7 @@ class MovieContextMenuBottomSheet : ContextMenuBottomSheet() {
   }
 
   override fun openDetails() {
-    val bundle = bundleOf(NavigationArgs.ARG_MOVIE_ID to itemId.id)
+    val bundle = bundleOf(NavigationArgs.ARG_MOVIE_ID to itemId.key)
     navigateTo(R.id.actionMovieItemContextDialogToMovieDetails, bundle)
   }
 }

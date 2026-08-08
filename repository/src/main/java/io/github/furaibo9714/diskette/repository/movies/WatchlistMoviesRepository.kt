@@ -28,12 +28,12 @@ class WatchlistMoviesRepository @Inject constructor(
   suspend fun loadAllIds() = localSource.watchlistMovies.getAllMediaIds()
 
   suspend fun load(id: MediaId) =
-    localSource.watchlistMovies.getById(id.id)?.let {
+    localSource.watchlistMovies.getById(id.key)?.let {
       mappers.movie.fromDatabase(it)
     }
 
   suspend fun insert(id: MediaId) {
-    val movie = WatchlistMovie.fromMediaId(id.id, nowUtcMillis())
+    val movie = WatchlistMovie.fromMediaId(id.key, nowUtcMillis())
     transactions.withTransaction {
       with(localSource) {
         watchlistMovies.insert(movie)
@@ -45,9 +45,9 @@ class WatchlistMoviesRepository @Inject constructor(
   }
 
   suspend fun delete(id: MediaId) {
-    localSource.watchlistMovies.deleteById(id.id)
+    localSource.watchlistMovies.deleteById(id.key)
     cache.invalidate()
   }
 
-  suspend fun exists(id: MediaId) = localSource.watchlistMovies.checkExists(id.id)
+  suspend fun exists(id: MediaId) = localSource.watchlistMovies.checkExists(id.key)
 }

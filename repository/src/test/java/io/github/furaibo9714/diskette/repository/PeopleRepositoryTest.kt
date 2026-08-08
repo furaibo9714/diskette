@@ -71,7 +71,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       coEvery { peopleShowsMoviesDao.getTimestampForShow(any()) } returns nowUtc().minusHours(10).toMillis()
       coEvery { peopleDao.getAllForShow(any()) } returns listOf(person)
 
-      SUT.loadAllForShow(Ids.EMPTY.copy(trakt = MediaId.parse(11)))
+      SUT.loadAllForShow(Ids.EMPTY.copy(media = MediaId.parse(11)))
 
       coVerifyOrder {
         peopleShowsMoviesDao.getTimestampForShow(11)
@@ -86,7 +86,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       coEvery { peopleShowsMoviesDao.getTimestampForShow(any()) } returns nowUtc().minusDays(10).toMillis()
       coEvery { peopleDao.getAllForShow(any()) } returns listOf(person)
 
-      SUT.loadAllForShow(Ids.EMPTY.copy(trakt = MediaId.parse(11), tmdb = IdTmdb(12)))
+      SUT.loadAllForShow(Ids.EMPTY.copy(media = MediaId.parse(11), tmdb = IdTmdb(12)))
 
       coVerifyOrder {
         peopleShowsMoviesDao.getTimestampForShow(11)
@@ -103,7 +103,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       coEvery { peopleShowsMoviesDao.getTimestampForMovie(any()) } returns nowUtc().minusHours(10).toMillis()
       coEvery { peopleDao.getAllForMovie(any()) } returns listOf(person)
 
-      SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = MediaId.parse(11)))
+      SUT.loadAllForMovie(Ids.EMPTY.copy(media = MediaId.parse(11)))
 
       coVerifyOrder {
         peopleShowsMoviesDao.getTimestampForMovie(11)
@@ -118,7 +118,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       coEvery { peopleShowsMoviesDao.getTimestampForMovie(any()) } returns nowUtc().minusDays(10).toMillis()
       coEvery { peopleDao.getAllForMovie(any()) } returns listOf(person)
 
-      SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = MediaId.parse(11), tmdb = IdTmdb(12)))
+      SUT.loadAllForMovie(Ids.EMPTY.copy(media = MediaId.parse(11), tmdb = IdTmdb(12)))
 
       coVerifyOrder {
         peopleShowsMoviesDao.getTimestampForMovie(11)
@@ -148,7 +148,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       }
       coEvery { peopleDao.getAllForShow(any()) } returns listOf(person1, person2, person3)
 
-      val result = SUT.loadAllForShow(Ids.EMPTY.copy(trakt = MediaId.parse(11)))
+      val result = SUT.loadAllForShow(Ids.EMPTY.copy(media = MediaId.parse(11)))
       assertThat(result[Department.ACTING]!!.first().imagePath).isNotNull()
 
       coVerify { peopleDao.getAllForShow(any()) }
@@ -173,7 +173,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       }
       coEvery { peopleDao.getAllForMovie(any()) } returns listOf(person1, person2, person3)
 
-      val result = SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = MediaId.parse(11)))
+      val result = SUT.loadAllForMovie(Ids.EMPTY.copy(media = MediaId.parse(11)))
       assertThat(result[Department.ACTING]!!.first().imagePath).isNotNull()
 
       coVerify { peopleDao.getAllForMovie(any()) }

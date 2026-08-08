@@ -29,7 +29,7 @@ class ProgressMoviesMainCase @Inject constructor(
 
   suspend fun addToMyMovies(movieId: MediaId) {
     addToMyMovies(
-      movie = Movie.EMPTY.copy(Ids.EMPTY.copy(trakt = movieId)),
+      movie = Movie.EMPTY.copy(Ids.EMPTY.copy(media = movieId)),
       customDate = null,
     )
   }
