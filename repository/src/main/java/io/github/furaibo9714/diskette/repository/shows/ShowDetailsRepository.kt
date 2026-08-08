@@ -9,7 +9,7 @@ import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.IdImdb
 import io.github.furaibo9714.diskette.ui_model.IdSlug
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import javax.inject.Inject
 
@@ -21,13 +21,13 @@ class ShowDetailsRepository @Inject constructor(
 ) {
 
   suspend fun load(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     force: Boolean = false,
   ): Show {
-    val localShow = localSource.shows.getById(idTrakt.id)
+    val localShow = localSource.shows.getById(mediaId.key)
     val isIncomplete = localShow != null && localShow.runtime <= 0
     if (force || localShow == null || isIncomplete || nowUtcMillis() - localShow.updatedAt > Config.SHOW_DETAILS_CACHE_DURATION) {
-      val remoteShow = remoteSource.media.fetchShow(idTrakt.id, localShow?.idTmdb)
+      val remoteShow = remoteSource.media.fetchShow(requireTmdbId(mediaId, localShow?.idTmdb))
       val show = mappers.show.fromNetwork(remoteShow)
       localSource.shows.upsert(listOf(mappers.show.toDatabase(show)))
       return show
@@ -59,13 +59,26 @@ class ShowDetailsRepository @Inject constructor(
     return null
   }
 
-  suspend fun delete(idTrakt: IdTrakt) {
+  suspend fun delete(mediaId: MediaId) {
     with(localSource) {
       transactions.withTransaction {
-        shows.deleteById(idTrakt.id)
-        seasons.deleteAllForShow(idTrakt.id)
-        episodes.deleteAllForShow(idTrakt.id)
+        shows.deleteById(mediaId.id)
+        seasons.deleteAllForShow(mediaId.id)
+        episodes.deleteAllForShow(mediaId.id)
       }
     }
   }
+
+  /**
+   * TMDB is the only metadata provider, so a non-TMDB item (a Floppy manual entry) has nothing to
+   * fetch. The cached row's TMDB id wins when present, since it survives even for items whose
+   * identity is not TMDB-based.
+   */
+  private fun requireTmdbId(
+    mediaId: MediaId,
+    cachedTmdbId: Long?,
+  ): Long =
+    cachedTmdbId?.takeIf { it > 0 }
+      ?: mediaId.tmdbIdOrNull
+      ?: error("No TMDB id for $mediaId. Cannot fetch details.")
 }

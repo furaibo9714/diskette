@@ -22,12 +22,12 @@ class MovieDetailsWatchlistCase @Inject constructor(
 
   suspend fun isWatchlist(movie: Movie) =
     withContext(dispatchers.IO) {
-      moviesRepository.watchlistMovies.load(movie.ids.trakt) != null
+      moviesRepository.watchlistMovies.load(movie.ids.media) != null
     }
 
   suspend fun addToWatchlist(movie: Movie) {
     withContext(dispatchers.IO) {
-      moviesRepository.watchlistMovies.insert(movie.ids.trakt)
+      moviesRepository.watchlistMovies.insert(movie.ids.media)
       pinnedItemsRepository.removePinnedItem(movie)
       floppySyncManager.scheduleMovieWatchlist(movie.ids, Operation.ADD)
       announcementManager.refreshMoviesAnnouncements()
@@ -36,7 +36,7 @@ class MovieDetailsWatchlistCase @Inject constructor(
 
   suspend fun removeFromWatchlist(movie: Movie) {
     withContext(dispatchers.IO) {
-      moviesRepository.watchlistMovies.delete(movie.ids.trakt)
+      moviesRepository.watchlistMovies.delete(movie.ids.media)
       pinnedItemsRepository.removePinnedItem(movie)
       floppySyncManager.scheduleMovieWatchlist(movie.ids, Operation.REMOVE)
     }

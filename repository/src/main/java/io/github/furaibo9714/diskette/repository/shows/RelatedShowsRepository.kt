@@ -7,7 +7,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.RelatedShow
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import javax.inject.Inject
 import kotlin.math.min
@@ -23,28 +23,28 @@ class RelatedShowsRepository @Inject constructor(
     show: Show,
     hiddenCount: Int,
   ): List<Show> {
-    val relatedShows = localSource.relatedShows.getAllById(show.traktId)
+    val relatedShows = localSource.relatedShows.getAllById(show.mediaId.key)
     val latest = relatedShows.maxByOrNull { it.updatedAt }
 
     if (latest != null && nowUtcMillis() - latest.updatedAt < Config.RELATED_CACHE_DURATION) {
-      val relatedShowsIds = relatedShows.map { it.idTrakt }
+      val relatedShowsIds = relatedShows.map { it.mediaId }
       return localSource.shows
         .getAll(relatedShowsIds)
         .map { mappers.show.fromDatabase(it) }
     }
 
     val remoteShows = remoteSource.media
-      .fetchRelatedShows(show.traktId, min(hiddenCount, 10), show.ids.tmdb.id)
+      .fetchRelatedShows(show.mediaId, min(hiddenCount, 10), show.ids.tmdb.id)
       .map { mappers.show.fromNetwork(it) }
 
-    cacheRelatedShows(remoteShows, show.ids.trakt)
+    cacheRelatedShows(remoteShows, show.ids.media)
 
     return remoteShows
   }
 
   private suspend fun cacheRelatedShows(
     shows: List<Show>,
-    showId: IdTrakt,
+    showId: MediaId,
   ) {
     transactions.withTransaction {
       val timestamp = nowUtcMillis()
@@ -52,7 +52,7 @@ class RelatedShowsRepository @Inject constructor(
       localSource.relatedShows.deleteById(showId.id)
       localSource.relatedShows.insert(
         shows.map {
-          RelatedShow.fromTraktId(it.ids.trakt.id, showId.id, timestamp)
+          RelatedShow.fromMediaId(it.ids.media.id, showId.id, timestamp)
         },
       )
     }

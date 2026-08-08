@@ -19,7 +19,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STO
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.rethrowCancellation
 import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ProgressDateSelectionType.ALWAYS_ASK
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,18 +43,18 @@ class MovieContextMenuViewModel @Inject constructor(
 ) : ViewModel(),
   ChannelsDelegate by DefaultChannelsDelegate() {
 
-  private var movieId by notNull<IdTrakt>()
+  private var movieId by notNull<MediaId>()
 
   private val loadingState = MutableStateFlow(false)
   private val itemState = MutableStateFlow<MovieContextItem?>(null)
 
-  fun loadMovie(idTrakt: IdTrakt) {
+  fun loadMovie(mediaId: MediaId) {
     viewModelScope.launch {
-      movieId = idTrakt
+      movieId = mediaId
 
       try {
         loadingState.value = true
-        val item = loadItemCase.loadItem(idTrakt)
+        val item = loadItemCase.loadItem(mediaId)
         itemState.value = item
       } catch (error: Throwable) {
         messageChannel.send(MessageEvent.Error(R.string.errorGeneral))

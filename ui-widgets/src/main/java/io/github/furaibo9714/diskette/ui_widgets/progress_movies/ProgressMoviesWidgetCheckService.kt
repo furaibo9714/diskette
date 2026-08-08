@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import io.github.furaibo9714.diskette.ui_base.Logger
 import io.github.furaibo9714.diskette.ui_base.common.WidgetsProvider
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_progress_movies.main.cases.ProgressMoviesMainCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +26,7 @@ class ProgressMoviesWidgetCheckService :
 
     fun initialize(
       context: Context,
-      movieId: IdTrakt,
+      movieId: MediaId,
     ) {
       val intent = Intent().apply {
         putExtra(EXTRA_MOVIE_ID, movieId.id)
@@ -53,7 +53,7 @@ class ProgressMoviesWidgetCheckService :
     }
 
     runBlocking {
-      progressMoviesCase.addToMyMovies(IdTrakt(movieId))
+      progressMoviesCase.addToMyMovies(MediaId.parse(movieId))
       (applicationContext as WidgetsProvider).requestMoviesWidgetsUpdate()
     }
   }

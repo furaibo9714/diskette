@@ -17,7 +17,7 @@ import io.github.furaibo9714.diskette.ui_backup.features.import_.model.BackupImp
 import io.github.furaibo9714.diskette.ui_backup.model.BackupMovie
 import io.github.furaibo9714.diskette.ui_backup.model.BackupMovies
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.rethrowCancellation
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
@@ -55,7 +55,7 @@ internal class BackupImportMoviesRunner @Inject constructor(
       val localPinned = pinnedItemsRepository.getAllMovies()
       for (pinned in backup.progressPinned) {
         if (!localPinned.contains(pinned)) {
-          pinnedItemsRepository.addMoviePinnedItem(IdTrakt(pinned))
+          pinnedItemsRepository.addMoviePinnedItem(MediaId.parse(pinned))
         }
       }
     }
@@ -66,12 +66,12 @@ internal class BackupImportMoviesRunner @Inject constructor(
       val localRatings = ratingsRepository.loadMoviesRatings()
 
       for (rating in backup.ratingsMovies) {
-        if (localRatings.any { it.idTrakt.id == rating.traktId }) {
+        if (localRatings.any { it.mediaId.id == rating.mediaId }) {
           continue
         }
 
         val entity = Rating(
-          idTrakt = rating.traktId,
+          mediaId = rating.mediaId,
           type = "movie",
           rating = rating.rating,
           seasonNumber = null,
@@ -90,7 +90,7 @@ internal class BackupImportMoviesRunner @Inject constructor(
     withContext(dispatchers.IO) {
       val localCollection = moviesRepository
         .loadCollection()
-        .map { it.traktId }
+        .map { it.mediaId }
 
       importedCount = 0
       importedTotal = backup.collectionHistory.size + backup.collectionWatchlist.size + backup.collectionHidden.size
@@ -106,16 +106,16 @@ internal class BackupImportMoviesRunner @Inject constructor(
     localCollection: List<Long>,
   ) {
     for (movie in backupMovies.collectionHistory) {
-      Timber.d("Importing movie ${movie.traktId} ...")
+      Timber.d("Importing movie ${movie.mediaId} ...")
       importedCount++
       statusListener?.invoke(Importing(movie.title, importedCount, importedTotal))
 
-      if (localCollection.contains(movie.traktId)) {
+      if (localCollection.contains(movie.mediaId)) {
         Timber.d("Movie already in collection. Skipping.")
         continue
       }
 
-      val movieDetails = localSource.movies.getById(movie.traktId)
+      val movieDetails = localSource.movies.getById(movie.mediaId)
       if (movieDetails == null) {
         if (!fetchMovieDetails(movie)) {
           continue
@@ -123,10 +123,10 @@ internal class BackupImportMoviesRunner @Inject constructor(
       }
 
       val timestamp = movie.addedAt.toUtcDateTime()?.toMillis() ?: nowUtcMillis()
-      val myMovie = MyMovie.fromTraktId(movie.traktId, timestamp)
+      val myMovie = MyMovie.fromMediaId(movie.mediaId, timestamp)
       localSource.myMovies.insert(listOf(myMovie))
 
-      Timber.d("Added to history ${movie.traktId} ...")
+      Timber.d("Added to history ${movie.mediaId} ...")
     }
   }
 
@@ -135,16 +135,16 @@ internal class BackupImportMoviesRunner @Inject constructor(
     localCollection: List<Long>,
   ) {
     for (movie in backupMovies.collectionWatchlist) {
-      Timber.d("Importing movie ${movie.traktId} ...")
+      Timber.d("Importing movie ${movie.mediaId} ...")
       importedCount++
       statusListener?.invoke(Importing(movie.title, importedCount, importedTotal))
 
-      if (localCollection.contains(movie.traktId)) {
+      if (localCollection.contains(movie.mediaId)) {
         Timber.d("Movie already in collection. Skipping.")
         continue
       }
 
-      val movieDetails = localSource.movies.getById(movie.traktId)
+      val movieDetails = localSource.movies.getById(movie.mediaId)
       if (movieDetails == null) {
         if (!fetchMovieDetails(movie)) {
           continue
@@ -152,10 +152,10 @@ internal class BackupImportMoviesRunner @Inject constructor(
       }
 
       val timestamp = movie.addedAt.toUtcDateTime()?.toMillis() ?: nowUtcMillis()
-      val watchlistMovie = WatchlistMovie.fromTraktId(movie.traktId, timestamp)
+      val watchlistMovie = WatchlistMovie.fromMediaId(movie.mediaId, timestamp)
       localSource.watchlistMovies.insert(watchlistMovie)
 
-      Timber.d("Added to Watchlist ${movie.traktId} ...")
+      Timber.d("Added to Watchlist ${movie.mediaId} ...")
     }
   }
 
@@ -164,16 +164,16 @@ internal class BackupImportMoviesRunner @Inject constructor(
     localCollection: List<Long>,
   ) {
     for (movie in backupMovies.collectionHidden) {
-      Timber.d("Importing movie ${movie.traktId} ...")
+      Timber.d("Importing movie ${movie.mediaId} ...")
       importedCount++
       statusListener?.invoke(Importing(movie.title, importedCount, importedTotal))
 
-      if (localCollection.contains(movie.traktId)) {
+      if (localCollection.contains(movie.mediaId)) {
         Timber.d("Movie already in collection. Skipping.")
         continue
       }
 
-      val movieDetails = localSource.movies.getById(movie.traktId)
+      val movieDetails = localSource.movies.getById(movie.mediaId)
       if (movieDetails == null) {
         if (!fetchMovieDetails(movie)) {
           continue
@@ -181,22 +181,22 @@ internal class BackupImportMoviesRunner @Inject constructor(
       }
 
       val timestamp = movie.addedAt.toUtcDateTime()?.toMillis() ?: nowUtcMillis()
-      val hiddenMovie = ArchiveMovie.fromTraktId(movie.traktId, timestamp)
+      val hiddenMovie = ArchiveMovie.fromMediaId(movie.mediaId, timestamp)
       localSource.archiveMovies.insert(hiddenMovie)
 
-      Timber.d("Added to Hidden ${movie.traktId} ...")
+      Timber.d("Added to Hidden ${movie.mediaId} ...")
     }
   }
 
   private suspend fun fetchMovieDetails(movie: BackupMovie): Boolean {
-    Timber.d("Fetching remote movie details for ${movie.traktId} ...")
+    Timber.d("Fetching remote movie details for ${movie.mediaId} ...")
     return try {
-      moviesRepository.movieDetails.load(IdTrakt(movie.traktId), force = true)
+      moviesRepository.movieDetails.load(MediaId.parse(movie.mediaId), force = true)
       true
     } catch (error: Throwable) {
       rethrowCancellation(error) {
         if (error is HttpException && error.code() == 404) {
-          Timber.w("Failed to fetch movie: ${movie.traktId} ${movie.title}")
+          Timber.w("Failed to fetch movie: ${movie.mediaId} ${movie.title}")
         }
       }
       false

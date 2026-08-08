@@ -16,7 +16,7 @@ data class BackupShows(
 )
 
 data class BackupShow(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "tmId") val tmdbId: Long,
   @Json(name = "t") val title: String,
   @Json(name = "a") val addedAt: String,
@@ -24,14 +24,14 @@ data class BackupShow(
 )
 
 data class BackupSeason(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "sId") val showTraktId: Long,
   @Json(name = "stmId") val showTmdbId: Long,
   @Json(name = "sN") val seasonNumber: Int,
 )
 
 data class BackupEpisode(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "sId") val showTraktId: Long,
   @Json(name = "stmId") val showTmdbId: Long,
   @Json(name = "eN") val episodeNumber: Int,
@@ -42,14 +42,14 @@ data class BackupEpisode(
 // Ratings
 
 data class BackupShowRating(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "tmId") val tmdbId: Long,
   @Json(name = "r") val rating: Int,
   @Json(name = "rA") val ratedAt: String,
 )
 
 data class BackupSeasonRating(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "sId") val showTraktId: Long,
   @Json(name = "stmId") val showTmdbId: Long,
   @Json(name = "sN") val seasonNumber: Int,
@@ -58,7 +58,7 @@ data class BackupSeasonRating(
 )
 
 data class BackupEpisodeRating(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "sId") val showTraktId: Long,
   @Json(name = "stmId") val showTmdbId: Long,
   @Json(name = "sN") val seasonNumber: Int,

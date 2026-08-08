@@ -4,6 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 
 data class ShowSearch(
-  @PrimaryKey @ColumnInfo(name = "id_trakt") val idTrakt: Long,
+  @PrimaryKey @ColumnInfo(name = "media_id") val mediaId: String,
   @ColumnInfo(name = "title") val title: String,
 )

@@ -107,10 +107,10 @@ class EpisodeDetailsBottomSheet : BaseBottomSheetFragment(R.layout.view_episode_
         { messageFlow.collect { renderSnackbar(it) } },
         doAfterLaunch = {
           val (ids, episode, seasonEpisodes) = options
-          loadLastWatchedAt(ids.trakt, episode)
-          loadSeason(ids.trakt, episode, seasonEpisodes?.toIntArray())
+          loadLastWatchedAt(ids.media, episode)
+          loadSeason(ids.media, episode, seasonEpisodes?.toIntArray())
           loadImage(ids.tmdb, episode)
-          loadTranslation(ids.trakt, episode)
+          loadTranslation(ids.media, episode)
           loadRatings(episode)
         },
       )
@@ -369,7 +369,7 @@ class EpisodeDetailsBottomSheet : BaseBottomSheetFragment(R.layout.view_episode_
       setFragmentResult(REQUEST_EPISODE_DETAILS, bundleOf(NavigationArgs.ACTION_RATING_CHANGED to true))
     }
     val bundle = RatingsBottomSheet.createBundle(
-      id = options.episode.ids.trakt,
+      id = options.episode.ids.media,
       type = Type.EPISODE,
       seasonNumber = options.episode.season,
       episodeNumber = options.episode.number,

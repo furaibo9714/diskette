@@ -4,7 +4,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.FloppySyncQueue.
 import io.github.furaibo9714.diskette.repository.PinnedItemsRepository
 import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Movie
 import java.time.ZonedDateTime
@@ -22,12 +22,12 @@ class ProgressMoviesMainCase @Inject constructor(
     movie: Movie,
     customDate: ZonedDateTime?,
   ) {
-    moviesRepository.myMovies.insert(movie.ids.trakt, customDate)
+    moviesRepository.myMovies.insert(movie.ids.media, customDate)
     pinnedItemsRepository.removePinnedItem(movie)
-    floppySyncManager.scheduleMovieWatched(movie.ids.trakt, Operation.ADD)
+    floppySyncManager.scheduleMovieWatched(movie.ids.media, Operation.ADD)
   }
 
-  suspend fun addToMyMovies(movieId: IdTrakt) {
+  suspend fun addToMyMovies(movieId: MediaId) {
     addToMyMovies(
       movie = Movie.EMPTY.copy(Ids.EMPTY.copy(trakt = movieId)),
       customDate = null,

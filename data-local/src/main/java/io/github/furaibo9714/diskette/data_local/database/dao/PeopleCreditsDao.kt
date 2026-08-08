@@ -16,7 +16,7 @@ interface PeopleCreditsDao : BaseDao<PersonCredits>, PeopleCreditsLocalDataSourc
   @Query(
     """
     SELECT
-    shows.id_trakt,
+    shows.media_id,
     shows.id_tvdb,
     shows.id_tmdb,
     shows.id_imdb,
@@ -45,16 +45,16 @@ interface PeopleCreditsDao : BaseDao<PersonCredits>, PeopleCreditsLocalDataSourc
     people_credits.created_at AS created_at,
     people_credits.updated_at AS updated_at
     FROM shows
-    INNER JOIN people_credits ON people_credits.id_trakt_show = shows.id_trakt
-    WHERE people_credits.id_trakt_person = :personTraktId
+    INNER JOIN people_credits ON people_credits.show_media_id = shows.media_id
+    WHERE people_credits.person_media_id = :personMediaId
     """
   )
-  override suspend fun getAllShowsForPerson(personTraktId: Long): List<Show>
+  override suspend fun getAllShowsForPerson(personMediaId: String): List<Show>
 
   @Query(
     """
     SELECT
-    movies.id_trakt,
+    movies.media_id,
     movies.id_tmdb,
     movies.id_imdb,
     movies.id_slug,
@@ -75,24 +75,24 @@ interface PeopleCreditsDao : BaseDao<PersonCredits>, PeopleCreditsLocalDataSourc
     people_credits.updated_at AS updated_at,
     people_credits.created_at AS created_at
     FROM movies
-    INNER JOIN people_credits ON people_credits.id_trakt_movie = movies.id_trakt
-    WHERE people_credits.id_trakt_person = :personTraktId
+    INNER JOIN people_credits ON people_credits.movie_media_id = movies.media_id
+    WHERE people_credits.person_media_id = :personMediaId
     """
   )
-  override suspend fun getAllMoviesForPerson(personTraktId: Long): List<Movie>
+  override suspend fun getAllMoviesForPerson(personMediaId: String): List<Movie>
 
-  @Query("SELECT updated_at FROM people_credits WHERE id_trakt_person = :personTraktId LIMIT 1")
-  override suspend fun getTimestampForPerson(personTraktId: Long): Long?
+  @Query("SELECT updated_at FROM people_credits WHERE person_media_id = :personMediaId LIMIT 1")
+  override suspend fun getTimestampForPerson(personMediaId: String): Long?
 
-  @Query("DELETE FROM people_credits WHERE id_trakt_person == :personTraktId")
-  override suspend fun deleteAllForPerson(personTraktId: Long)
+  @Query("DELETE FROM people_credits WHERE person_media_id == :personMediaId")
+  override suspend fun deleteAllForPerson(personMediaId: String)
 
   @Transaction
   override suspend fun insertSingle(
-    personTraktId: Long,
+    personMediaId: String,
     credits: List<PersonCredits>
   ) {
-    deleteAllForPerson(personTraktId)
+    deleteAllForPerson(personMediaId)
     insert(credits)
   }
 }

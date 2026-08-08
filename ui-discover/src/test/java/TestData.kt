@@ -3,7 +3,7 @@ import io.github.furaibo9714.diskette.ui_model.AirTime
 import io.github.furaibo9714.diskette.ui_model.IdImdb
 import io.github.furaibo9714.diskette.ui_model.IdSlug
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.IdTvRage
 import io.github.furaibo9714.diskette.ui_model.IdTvdb
 import io.github.furaibo9714.diskette.ui_model.Ids
@@ -20,7 +20,7 @@ object TestData {
   val DISCOVER_LIST_ITEM = DiscoverListItem(
     show = Show(
       ids = Ids(
-        trakt = IdTrakt(id = 0),
+        trakt = MediaId.parse(id = 0),
         slug = IdSlug(id = ""),
         tvdb = IdTvdb(id = 0),
         imdb = IdImdb(id = ""),

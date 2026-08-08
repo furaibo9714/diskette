@@ -10,7 +10,7 @@ data class BackupMovies1(
 )
 
 data class BackupMovie1(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "tmId") val tmdbId: Long,
   @Json(name = "t") val title: String,
   @Json(name = "a") val addedAt: String,

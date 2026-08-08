@@ -17,8 +17,8 @@ class WatchlistAppender @Inject constructor() {
       return
     }
 
-    val seasonId = seasons.maxOf { it.idTrakt }
-    val episodeId = episodes.maxOf { it.idTrakt }
+    val seasonId = seasons.maxOf { it.mediaId }
+    val episodeId = episodes.maxOf { it.mediaId }
 
     shows
       .filter { it.firstAired.isNotBlank() }
@@ -43,8 +43,8 @@ class WatchlistAppender @Inject constructor() {
     show: Show,
     seasonId: Long,
   ) = Season(
-    idTrakt = seasonId,
-    idShowTrakt = show.traktId,
+    mediaId = seasonId,
+    showMediaId = show.mediaId,
     seasonNumber = 1,
     seasonTitle = "",
     seasonOverview = "",
@@ -60,9 +60,9 @@ class WatchlistAppender @Inject constructor() {
     season: Season,
     episodeId: Long,
   ) = Episode(
-    idTrakt = episodeId,
-    idSeason = season.idTrakt,
-    idShowTrakt = show.traktId,
+    mediaId = episodeId,
+    idSeason = season.mediaId,
+    showMediaId = show.mediaId,
     idShowTvdb = show.ids.tvdb.id,
     idShowImdb = show.ids.imdb.id,
     idShowTmdb = show.ids.tmdb.id,

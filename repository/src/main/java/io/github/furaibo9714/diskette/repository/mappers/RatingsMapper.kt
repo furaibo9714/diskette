@@ -4,7 +4,7 @@ import io.github.furaibo9714.diskette.common.extensions.nowUtcMillis
 import io.github.furaibo9714.diskette.data_local.database.model.MovieRatings
 import io.github.furaibo9714.diskette.data_local.database.model.ShowRatings
 import io.github.furaibo9714.diskette.data_remote.floppy.model.FloppyMediaDetail
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.Ratings
 import io.github.furaibo9714.diskette.ui_model.Show
@@ -41,22 +41,22 @@ class RatingsMapper @Inject constructor() {
     )
 
   fun toMovieDatabase(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     ratings: Ratings,
   ) = MovieRatings(
     id = 0,
-    idTrakt = idTrakt.id,
+    mediaId = mediaId.id,
     tmdb = ratings.tmdb?.value,
     createdAt = nowUtcMillis(),
     updatedAt = nowUtcMillis(),
   )
 
   fun toShowDatabase(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     ratings: Ratings,
   ) = ShowRatings(
     id = 0,
-    idTrakt = idTrakt.id,
+    mediaId = mediaId.id,
     tmdb = ratings.tmdb?.value,
     createdAt = nowUtcMillis(),
     updatedAt = nowUtcMillis(),

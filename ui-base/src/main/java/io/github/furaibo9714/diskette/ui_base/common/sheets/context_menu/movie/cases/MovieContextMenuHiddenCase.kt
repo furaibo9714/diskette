@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.FloppySyncQueue.
 import io.github.furaibo9714.diskette.repository.PinnedItemsRepository
 import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Movie
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -20,18 +20,18 @@ class MovieContextMenuHiddenCase @Inject constructor(
   private val floppySyncManager: FloppySyncManager,
 ) {
 
-  suspend fun moveToHidden(traktId: IdTrakt) =
+  suspend fun moveToHidden(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(traktId))
+      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(mediaId))
 
-      moviesRepository.hiddenMovies.insert(movie.ids.trakt)
+      moviesRepository.hiddenMovies.insert(movie.ids.media)
       pinnedItemsRepository.removePinnedItem(movie)
-      floppySyncManager.scheduleMovieHidden(traktId, Operation.ADD)
+      floppySyncManager.scheduleMovieHidden(mediaId, Operation.ADD)
     }
 
-  suspend fun removeFromHidden(traktId: IdTrakt) =
+  suspend fun removeFromHidden(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      moviesRepository.hiddenMovies.delete(traktId)
-      floppySyncManager.scheduleMovieHidden(traktId, Operation.REMOVE)
+      moviesRepository.hiddenMovies.delete(mediaId)
+      floppySyncManager.scheduleMovieHidden(mediaId, Operation.REMOVE)
     }
 }

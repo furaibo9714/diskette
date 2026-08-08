@@ -7,13 +7,13 @@ interface WatchlistMoviesLocalDataSource {
 
   suspend fun getAll(): List<Movie>
 
-  suspend fun getAllTraktIds(): List<Long>
+  suspend fun getAllMediaIds(): List<String>
 
-  suspend fun getById(traktId: Long): Movie?
+  suspend fun getById(mediaId: String): Movie?
 
   suspend fun insert(movie: WatchlistMovie)
 
-  suspend fun deleteById(traktId: Long)
+  suspend fun deleteById(mediaId: String)
 
-  suspend fun checkExists(traktId: Long): Boolean
+  suspend fun checkExists(mediaId: String): Boolean
 }

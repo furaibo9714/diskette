@@ -6,7 +6,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.CustomListItem
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.CustomList
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,12 +20,12 @@ class ListsRepository @Inject constructor(
   suspend fun createList(
     name: String,
     description: String?,
-    idTrakt: Long?,
+    mediaId: Long?,
     idFloppy: Long?,
     idSlug: String?,
   ): CustomList {
     val list = CustomList.create().copy(
-      idTrakt = idTrakt,
+      mediaId = mediaId,
       idFloppy = idFloppy,
       idSlug = idSlug ?: "",
       name = name.trim(),
@@ -38,7 +38,7 @@ class ListsRepository @Inject constructor(
 
   suspend fun updateList(
     id: Long,
-    idTrakt: Long?,
+    mediaId: Long?,
     idFloppy: Long?,
     idSlug: String?,
     name: String,
@@ -47,7 +47,7 @@ class ListsRepository @Inject constructor(
     val listDb = localSource.customLists.getById(id)!!
     val updated = listDb.copy(
       name = name,
-      idTrakt = idTrakt ?: listDb.idTrakt,
+      mediaId = mediaId ?: listDb.mediaId,
       idFloppy = idFloppy ?: listDb.idFloppy,
       idSlug = idSlug ?: listDb.idSlug,
       description = description,
@@ -61,7 +61,7 @@ class ListsRepository @Inject constructor(
 
   suspend fun addToList(
     listId: Long,
-    itemTraktId: IdTrakt,
+    itemTraktId: MediaId,
     itemType: String,
     listedAt: Long = nowUtcMillis(),
     createdAt: Long = nowUtcMillis(),
@@ -70,7 +70,7 @@ class ListsRepository @Inject constructor(
     val itemDb = CustomListItem(
       rank = 0,
       idList = listId,
-      idTrakt = itemTraktId.id,
+      mediaId = itemTraktId.id,
       type = itemType,
       listedAt = listedAt,
       createdAt = createdAt,
@@ -84,7 +84,7 @@ class ListsRepository @Inject constructor(
 
   suspend fun removeFromList(
     listId: Long,
-    itemTraktId: IdTrakt,
+    itemTraktId: MediaId,
     itemType: String,
   ) {
     transactions.withTransaction {
@@ -94,7 +94,7 @@ class ListsRepository @Inject constructor(
   }
 
   suspend fun loadListIdsForItem(
-    itemTraktId: IdTrakt,
+    itemTraktId: MediaId,
     itemType: String,
   ) = localSource.customListsItems.getListsForItem(itemTraktId.id, itemType)
 

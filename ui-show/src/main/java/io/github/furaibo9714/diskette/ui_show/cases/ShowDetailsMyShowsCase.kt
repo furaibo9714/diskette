@@ -41,7 +41,7 @@ class ShowDetailsMyShowsCase @Inject constructor(
 
   suspend fun isMyShows(show: Show) =
     withContext(dispatchers.IO) {
-      showsRepository.myShows.exists(show.ids.trakt)
+      showsRepository.myShows.exists(show.ids.media)
     }
 
   suspend fun addToMyShows(
@@ -50,24 +50,24 @@ class ShowDetailsMyShowsCase @Inject constructor(
     episodes: List<Episode>,
   ) = withContext(dispatchers.IO) {
     transactions.withTransaction {
-      val localSeasons = localSource.seasons.getAllByShowId(show.traktId)
-      val localEpisodes = localSource.episodes.getAllByShowId(show.traktId)
+      val localSeasons = localSource.seasons.getAllByShowId(show.mediaId)
+      val localEpisodes = localSource.episodes.getAllByShowId(show.mediaId)
       val lastWatchedAt = localEpisodes.maxByOrNull { it.lastWatchedAt != null }?.lastWatchedAt?.toMillis() ?: 0L
 
-      showsRepository.myShows.insert(show.ids.trakt, lastWatchedAt)
+      showsRepository.myShows.insert(show.ids.media, lastWatchedAt)
 
       val seasonsToAdd = mutableListOf<SeasonDb>()
       val episodesToAdd = mutableListOf<EpisodeDb>()
 
       seasons.forEach { season ->
-        if (localSeasons.none { it.idTrakt == season.ids.trakt.id }) {
-          seasonsToAdd.add(mappers.season.toDatabase(season, show.ids.trakt, false))
+        if (localSeasons.none { it.mediaId == season.ids.media.id }) {
+          seasonsToAdd.add(mappers.season.toDatabase(season, show.ids.media, false))
         }
       }
       episodes.forEach { episode ->
-        if (localEpisodes.none { it.idTrakt == episode.ids.trakt.id }) {
+        if (localEpisodes.none { it.mediaId == episode.ids.media.id }) {
           val season = seasons.find { it.number == episode.season }!!
-          episodesToAdd.add(mappers.episode.toDatabase(episode, season, show.ids.trakt, false, null, null))
+          episodesToAdd.add(mappers.episode.toDatabase(episode, season, show.ids.media, false, null, null))
         }
       }
 
@@ -84,15 +84,15 @@ class ShowDetailsMyShowsCase @Inject constructor(
     removeLocalData: Boolean,
   ) = withContext(dispatchers.IO) {
     transactions.withTransaction {
-      showsRepository.myShows.delete(show.ids.trakt)
+      showsRepository.myShows.delete(show.ids.media)
 
       if (removeLocalData) {
-        localSource.episodes.deleteAllUnwatchedForShow(show.traktId)
-        val seasons = localSource.seasons.getAllByShowId(show.traktId)
-        val episodes = localSource.episodes.getAllByShowId(show.traktId)
+        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId)
+        val seasons = localSource.seasons.getAllByShowId(show.mediaId)
+        val episodes = localSource.episodes.getAllByShowId(show.mediaId)
         val toDelete = mutableListOf<SeasonDb>()
         seasons.forEach { season ->
-          if (episodes.none { it.idSeason == season.idTrakt }) {
+          if (episodes.none { it.idSeason == season.mediaId }) {
             toDelete.add(season)
           }
         }

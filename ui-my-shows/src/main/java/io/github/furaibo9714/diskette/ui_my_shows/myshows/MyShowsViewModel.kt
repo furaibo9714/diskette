@@ -111,13 +111,13 @@ class MyShowsViewModel @Inject constructor(
             itemType = Type.ALL_SHOWS_ITEM,
             show = it,
             type = POSTER,
-            userRating = ratings[it.ids.trakt],
+            userRating = ratings[it.ids.media],
             sortOrder = sortOrder,
             spoilers = spoilers,
           )
         }.awaitAll()
 
-      val seasons = loadShowsCase.loadSeasonsForShows(shows.map { it.show.traktId })
+      val seasons = loadShowsCase.loadSeasonsForShows(shows.map { it.show.mediaId })
       val allShows = loadShowsCase.filterSectionShows(
         allShows = shows,
         allSeasons = seasons,
@@ -130,7 +130,7 @@ class MyShowsViewModel @Inject constructor(
         loadShowsCase
           .loadRecentShows()
           .map {
-            toListItemAsync(Type.RECENT_SHOWS, it, ImageType.FANART, ratings[it.ids.trakt], null, spoilers)
+            toListItemAsync(Type.RECENT_SHOWS, it, ImageType.FANART, ratings[it.ids.media], null, spoilers)
           }.awaitAll()
       } else {
         emptyList()

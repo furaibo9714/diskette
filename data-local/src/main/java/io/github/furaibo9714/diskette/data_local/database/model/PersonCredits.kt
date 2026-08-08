@@ -14,29 +14,29 @@ import java.time.ZonedDateTime
   foreignKeys = [
     ForeignKey(
       entity = Show::class,
-      parentColumns = arrayOf("id_trakt"),
-      childColumns = arrayOf("id_trakt_show"),
+      parentColumns = arrayOf("media_id"),
+      childColumns = arrayOf("show_media_id"),
       onDelete = ForeignKey.CASCADE,
     ),
     ForeignKey(
       entity = Movie::class,
-      parentColumns = arrayOf("id_trakt"),
-      childColumns = arrayOf("id_trakt_movie"),
+      parentColumns = arrayOf("media_id"),
+      childColumns = arrayOf("movie_media_id"),
       onDelete = ForeignKey.CASCADE,
     ),
   ],
   indices = [
-    Index(value = ["id_trakt_person"]),
-    Index(value = ["id_trakt_show"]),
-    Index(value = ["id_trakt_movie"]),
+    Index(value = ["person_media_id"]),
+    Index(value = ["show_media_id"]),
+    Index(value = ["movie_media_id"]),
   ],
 )
 @TypeConverters(DateConverter::class)
 data class PersonCredits(
   @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
-  @ColumnInfo(name = "id_trakt_person") val idTraktPerson: Long,
-  @ColumnInfo(name = "id_trakt_show") val idTraktShow: Long?,
-  @ColumnInfo(name = "id_trakt_movie") val idTraktMovie: Long?,
+  @ColumnInfo(name = "person_media_id") val personMediaId: String,
+  @ColumnInfo(name = "show_media_id") val showMediaId: String?,
+  @ColumnInfo(name = "movie_media_id") val movieMediaId: String?,
   @ColumnInfo(name = "type") val type: String,
   @ColumnInfo(name = "created_at") val createdAt: ZonedDateTime,
   @ColumnInfo(name = "updated_at") val updatedAt: ZonedDateTime,

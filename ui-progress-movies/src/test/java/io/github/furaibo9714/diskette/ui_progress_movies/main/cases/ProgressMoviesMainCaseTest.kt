@@ -4,7 +4,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.FloppySyncQueue.
 import io.github.furaibo9714.diskette.repository.PinnedItemsRepository
 import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_progress_movies.BaseMockTest
@@ -43,22 +43,22 @@ class ProgressMoviesMainCaseTest : BaseMockTest() {
   @Test
   fun `Should add movie to movies history properly`() =
     runTest {
-      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = IdTrakt(123)))
+      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = MediaId.parse(123)))
 
       SUT.addToMyMovies(movie, null)
 
-      coVerify { moviesRepository.myMovies.insert(IdTrakt(123), null) }
+      coVerify { moviesRepository.myMovies.insert(MediaId.parse(123), null) }
       coVerify { pinnedItemsRepository.removePinnedItem(movie) }
-      coVerify { floppySyncManager.scheduleMovieWatched(IdTrakt(123), Operation.ADD) }
+      coVerify { floppySyncManager.scheduleMovieWatched(MediaId.parse(123), Operation.ADD) }
     }
 
   @Test
   fun `Should add movie to movies history properly using only ID`() =
     runTest {
-      SUT.addToMyMovies(IdTrakt(123))
+      SUT.addToMyMovies(MediaId.parse(123))
 
-      coVerify { moviesRepository.myMovies.insert(IdTrakt(123), null) }
+      coVerify { moviesRepository.myMovies.insert(MediaId.parse(123), null) }
       coVerify { pinnedItemsRepository.removePinnedItem(any<Movie>()) }
-      coVerify { floppySyncManager.scheduleMovieWatched(IdTrakt(123), Operation.ADD) }
+      coVerify { floppySyncManager.scheduleMovieWatched(MediaId.parse(123), Operation.ADD) }
     }
 }

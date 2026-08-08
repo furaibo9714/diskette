@@ -28,7 +28,7 @@ class EpisodesSetSeasonWatchedCase @Inject constructor(
 
     when {
       isChecked -> {
-        val isMyShows = showsRepository.myShows.exists(show.ids.trakt)
+        val isMyShows = showsRepository.myShows.exists(show.ids.media)
         val episodesAdded = episodesManager.setSeasonWatched(bundle, customDate)
         if (isMyShows) {
           episodesAdded.forEach {

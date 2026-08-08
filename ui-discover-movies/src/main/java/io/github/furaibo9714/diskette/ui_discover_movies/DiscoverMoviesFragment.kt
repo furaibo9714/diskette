@@ -229,7 +229,7 @@ internal class DiscoverMoviesFragment :
       }
       clearFragmentResultListener(NavigationArgs.REQUEST_ITEM_MENU)
     }
-    val bundle = ContextMenuBottomSheet.createBundle(movie.ids.trakt)
+    val bundle = ContextMenuBottomSheet.createBundle(movie.ids.media)
     navigateToSafe(R.id.actionDiscoverMoviesFragmentToItemMenu, bundle)
   }
 
@@ -259,7 +259,7 @@ internal class DiscoverMoviesFragment :
           startDelay = 350,
           endAction = {
             if (!isResumed) return@fadeOut
-            val bundle = Bundle().apply { putLong(NavigationArgs.ARG_MOVIE_ID, item.movie.traktId) }
+            val bundle = Bundle().apply { putLong(NavigationArgs.ARG_MOVIE_ID, item.movie.mediaId) }
             navigateToSafe(R.id.actionDiscoverMoviesFragmentToMovieDetailsFragment, bundle)
           },
         ).add(animations)

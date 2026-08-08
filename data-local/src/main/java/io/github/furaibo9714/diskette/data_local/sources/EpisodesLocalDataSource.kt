@@ -16,23 +16,23 @@ interface EpisodesLocalDataSource {
   )
 
   suspend fun isEpisodeWatched(
-    showTraktId: Long,
-    episodeTraktId: Long,
+    showMediaId: String,
+    episodeMediaId: String,
   ): Boolean
 
   suspend fun getById(
-    showTraktId: Long,
-    episodeTraktId: Long,
+    showMediaId: String,
+    episodeMediaId: String,
   ): Episode?
 
   suspend fun getAll(episodesIds: List<Long>): List<Episode>
 
-  suspend fun getAllForSeason(seasonTraktId: Long): List<Episode>
+  suspend fun getAllForSeason(seasonMediaId: Long): List<Episode>
 
-  suspend fun getAllByShowId(showTraktId: Long): List<Episode>
+  suspend fun getAllByShowId(showMediaId: String): List<Episode>
 
   suspend fun getAllByShowId(
-    showTraktId: Long,
+    showMediaId: String,
     seasonNumber: Int,
   ): List<Episode>
 
@@ -51,38 +51,38 @@ interface EpisodesLocalDataSource {
   ): List<Episode>
 
   suspend fun getFirstUnwatched(
-    showTraktId: Long,
+    showMediaId: String,
     toTime: Long,
   ): Episode?
 
   suspend fun getFirstUnwatched(
-    showTraktId: Long,
+    showMediaId: String,
     fromTime: Long,
     toTime: Long,
   ): Episode?
 
   suspend fun getFirstUnwatchedAfterEpisode(
-    showTraktId: Long,
+    showMediaId: String,
     seasonNumber: Int,
     episodeNumber: Int,
     toTime: Long,
   ): Episode?
 
-  suspend fun getLastWatched(showTraktId: Long): Episode?
+  suspend fun getLastWatched(showMediaId: String): Episode?
 
   suspend fun getTotalCount(
-    showTraktId: Long,
+    showMediaId: String,
     toTime: Long,
   ): Int
 
-  suspend fun getTotalCount(showTraktId: Long): Int
+  suspend fun getTotalCount(showMediaId: String): Int
 
   suspend fun getWatchedCount(
-    showTraktId: Long,
+    showMediaId: String,
     toTime: Long,
   ): Int
 
-  suspend fun getWatchedCount(showTraktId: Long): Int
+  suspend fun getWatchedCount(showMediaId: String): Int
 
   suspend fun getAllWatched(): List<Episode>
 
@@ -94,7 +94,7 @@ interface EpisodesLocalDataSource {
     toTime: Long,
   ): List<Episode>
 
-  suspend fun getAllWatchedIdsForShows(showsIds: List<Long>): List<Long>
+  suspend fun getAllWatchedIdsForShows(showsIds: List<String>): List<String>
 
   suspend fun getAllWatchedForTrackedShowsPaged(
     fromTime: Long,
@@ -103,9 +103,9 @@ interface EpisodesLocalDataSource {
     offset: Int,
   ): List<Episode>
 
-  suspend fun deleteAllUnwatchedForShow(showTraktId: Long)
+  suspend fun deleteAllUnwatchedForShow(showMediaId: String)
 
-  suspend fun deleteAllForShow(showTraktId: Long)
+  suspend fun deleteAllForShow(showMediaId: String)
 
   suspend fun delete(items: List<Episode>)
 }

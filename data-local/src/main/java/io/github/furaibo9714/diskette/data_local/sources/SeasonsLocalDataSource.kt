@@ -4,21 +4,21 @@ import io.github.furaibo9714.diskette.data_local.database.model.Season
 
 interface SeasonsLocalDataSource {
 
-  suspend fun getAll(traktIds: List<Long>): List<Season>
+  suspend fun getAll(mediaIds: List<String>): List<Season>
 
-  suspend fun getAllByShowsIds(traktIds: List<Long>): List<Season>
+  suspend fun getAllByShowsIds(mediaIds: List<String>): List<Season>
 
-  suspend fun getAllByShowsIdsChunk(traktIds: List<Long>): List<Season>
+  suspend fun getAllByShowsIdsChunk(mediaIds: List<String>): List<Season>
 
   suspend fun getAllWatched(): List<Season>
 
-  suspend fun getAllWatchedForShows(traktIds: List<Long>): List<Season>
+  suspend fun getAllWatchedForShows(mediaIds: List<String>): List<Season>
 
-  suspend fun getAllWatchedIdsForShows(traktIds: List<Long>): List<Long>
+  suspend fun getAllWatchedIdsForShows(mediaIds: List<String>): List<String>
 
-  suspend fun getAllByShowId(traktId: Long): List<Season>
+  suspend fun getAllByShowId(mediaId: String): List<Season>
 
-  suspend fun getById(traktId: Long): Season?
+  suspend fun getById(mediaId: String): Season?
 
   suspend fun update(items: List<Season>)
 
@@ -26,5 +26,5 @@ interface SeasonsLocalDataSource {
 
   suspend fun delete(items: List<Season>)
 
-  suspend fun deleteAllForShow(showTraktId: Long)
+  suspend fun deleteAllForShow(showMediaId: String)
 }

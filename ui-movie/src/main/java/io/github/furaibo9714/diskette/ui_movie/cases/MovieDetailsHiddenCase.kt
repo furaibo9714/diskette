@@ -20,12 +20,12 @@ class MovieDetailsHiddenCase @Inject constructor(
 
   suspend fun isHidden(movie: Movie) =
     withContext(dispatchers.IO) {
-      moviesRepository.hiddenMovies.exists(movie.ids.trakt)
+      moviesRepository.hiddenMovies.exists(movie.ids.media)
     }
 
   suspend fun addToHidden(movie: Movie) {
     withContext(dispatchers.IO) {
-      moviesRepository.hiddenMovies.insert(movie.ids.trakt)
+      moviesRepository.hiddenMovies.insert(movie.ids.media)
       pinnedItemsRepository.removePinnedItem(movie)
       floppySyncManager.scheduleMovieHidden(movie.ids, Operation.ADD)
     }
@@ -33,7 +33,7 @@ class MovieDetailsHiddenCase @Inject constructor(
 
   suspend fun removeFromHidden(movie: Movie) {
     withContext(dispatchers.IO) {
-      moviesRepository.hiddenMovies.delete(movie.ids.trakt)
+      moviesRepository.hiddenMovies.delete(movie.ids.media)
       pinnedItemsRepository.removePinnedItem(movie)
       floppySyncManager.scheduleMovieHidden(movie.ids, Operation.REMOVE)
     }

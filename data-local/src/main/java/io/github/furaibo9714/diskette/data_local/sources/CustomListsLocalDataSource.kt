@@ -12,9 +12,9 @@ interface CustomListsLocalDataSource {
 
   suspend fun getById(id: Long): CustomList?
 
-  suspend fun updateTraktId(
+  suspend fun updateMediaId(
     id: Long,
-    idTrakt: Long,
+    mediaId: String,
     idSlug: String,
     timestamp: Long,
   )

@@ -32,7 +32,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
 import io.github.furaibo9714.diskette.ui_gallery.R
 import io.github.furaibo9714.diskette.ui_gallery.databinding.FragmentArtGalleryBinding
 import io.github.furaibo9714.diskette.ui_gallery.fanart.recycler.ArtGalleryAdapter
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ImageFamily
 import io.github.furaibo9714.diskette.ui_model.ImageFamily.SHOW
 import io.github.furaibo9714.diskette.ui_model.ImageType
@@ -52,8 +52,8 @@ class ArtGalleryFragment : BaseFragment<ArtGalleryViewModel>(R.layout.fragment_a
   override val viewModel by viewModels<ArtGalleryViewModel>()
   private val binding by viewBinding(FragmentArtGalleryBinding::bind)
 
-  private val showId by lazy { IdTrakt(arguments?.getLong(ARG_SHOW_ID, -1) ?: -1) }
-  private val movieId by lazy { IdTrakt(arguments?.getLong(ARG_MOVIE_ID, -1) ?: -1) }
+  private val showId by lazy { MediaId.parse(arguments?.getLong(ARG_SHOW_ID, -1) ?: -1) }
+  private val movieId by lazy { MediaId.parse(arguments?.getLong(ARG_MOVIE_ID, -1) ?: -1) }
   private val family by lazy { arguments?.getSerializable(ARG_FAMILY) as ImageFamily }
   private val type by lazy { arguments?.getSerializable(ARG_TYPE) as ImageType }
 

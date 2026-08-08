@@ -13,8 +13,8 @@ interface TranslationsSyncLogDao : TranslationsShowsSyncLogLocalDataSource {
   @Query("SELECT * from sync_translations_log")
   override suspend fun getAll(): List<TranslationsSyncLog>
 
-  @Query("SELECT * from sync_translations_log WHERE id_show_trakt == :idTrakt")
-  override suspend fun getById(idTrakt: Long): TranslationsSyncLog?
+  @Query("SELECT * from sync_translations_log WHERE show_media_id == :mediaId")
+  override suspend fun getById(mediaId: String): TranslationsSyncLog?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   override suspend fun upsert(log: TranslationsSyncLog)

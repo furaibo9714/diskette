@@ -45,7 +45,7 @@ class ShowsRatingsRepository @Inject constructor(
   suspend fun loadRatings(shows: List<Show>): List<UserRating> {
     val ratings = mutableListOf<Rating>()
     shows.chunked(CHUNK_SIZE).forEach { chunk ->
-      val items = localSource.ratings.getAllByType(chunk.map { it.traktId }, TYPE_SHOW)
+      val items = localSource.ratings.getAllByType(chunk.map { it.mediaId.key }, TYPE_SHOW)
       ratings.addAll(items)
     }
     return ratings.map {
@@ -56,7 +56,7 @@ class ShowsRatingsRepository @Inject constructor(
   suspend fun loadRatingsSeasons(seasons: List<Season>): List<UserRating> {
     val ratings = mutableListOf<Rating>()
     seasons.chunked(CHUNK_SIZE).forEach { chunk ->
-      val items = localSource.ratings.getAllByType(chunk.map { it.ids.trakt.id }, TYPE_SEASON)
+      val items = localSource.ratings.getAllByType(chunk.map { it.ids.media.id }, TYPE_SEASON)
       ratings.addAll(items)
     }
     return ratings.map {
@@ -65,14 +65,14 @@ class ShowsRatingsRepository @Inject constructor(
   }
 
   suspend fun loadRating(episode: Episode): UserRating? {
-    val rating = localSource.ratings.getAllByType(listOf(episode.ids.trakt.id), TYPE_EPISODE)
+    val rating = localSource.ratings.getAllByType(listOf(episode.ids.media.id), TYPE_EPISODE)
     return rating.firstOrNull()?.let {
       mappers.userRatings.fromDatabase(it)
     }
   }
 
   suspend fun loadRating(season: Season): UserRating? {
-    val rating = localSource.ratings.getAllByType(listOf(season.ids.trakt.id), TYPE_SEASON)
+    val rating = localSource.ratings.getAllByType(listOf(season.ids.media.id), TYPE_SEASON)
     return rating.firstOrNull()?.let {
       mappers.userRatings.fromDatabase(it)
     }
@@ -106,14 +106,14 @@ class ShowsRatingsRepository @Inject constructor(
   }
 
   suspend fun deleteRating(show: Show) {
-    localSource.ratings.deleteByType(show.traktId, TYPE_SHOW)
+    localSource.ratings.deleteByType(show.mediaId.key, TYPE_SHOW)
   }
 
   suspend fun deleteRating(episode: Episode) {
-    localSource.ratings.deleteByType(episode.ids.trakt.id, TYPE_EPISODE)
+    localSource.ratings.deleteByType(episode.ids.media.id, TYPE_EPISODE)
   }
 
   suspend fun deleteRating(season: Season) {
-    localSource.ratings.deleteByType(season.ids.trakt.id, TYPE_SEASON)
+    localSource.ratings.deleteByType(season.ids.media.id, TYPE_SEASON)
   }
 }

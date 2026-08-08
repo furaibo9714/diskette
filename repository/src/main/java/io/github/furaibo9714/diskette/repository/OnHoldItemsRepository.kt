@@ -1,7 +1,7 @@
 package io.github.furaibo9714.diskette.repository
 
 import android.content.SharedPreferences
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import javax.inject.Inject
 import javax.inject.Named
@@ -12,13 +12,13 @@ class OnHoldItemsRepository @Inject constructor(
   @Named("progressOnHoldPreferences") private val sharedPreferences: SharedPreferences,
 ) {
 
-  fun getAll(): List<IdTrakt> = sharedPreferences.all.keys.map { IdTrakt(it.toLong()) }
+  fun getAll(): List<MediaId> = sharedPreferences.all.keys.map { MediaId.parse(it.toLong()) }
 
-  fun addItem(show: Show) = addItem(IdTrakt(show.traktId))
+  fun addItem(show: Show) = addItem(MediaId.parse(show.mediaId.key))
 
-  fun addItem(showId: IdTrakt) = sharedPreferences.edit().putLong(showId.id.toString(), showId.id).apply()
+  fun addItem(showId: MediaId) = sharedPreferences.edit().putLong(showId.id.toString(), showId.id).apply()
 
-  fun removeItem(show: Show) = sharedPreferences.edit().remove(show.traktId.toString()).apply()
+  fun removeItem(show: Show) = sharedPreferences.edit().remove(show.mediaId.toString()).apply()
 
-  fun isOnHold(show: Show) = sharedPreferences.contains(show.traktId.toString())
+  fun isOnHold(show: Show) = sharedPreferences.contains(show.mediaId.toString())
 }

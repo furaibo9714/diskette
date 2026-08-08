@@ -62,8 +62,8 @@ class HiddenLoadMoviesCase @Inject constructor(
         .map {
           toListItemAsync(
             movie = it,
-            translation = translations[it.traktId],
-            userRating = ratings[it.ids.trakt],
+            translation = translations[it.mediaId],
+            userRating = ratings[it.ids.media],
             dateFormat = dateFormat,
             fullDateFormat = fullDateFormat,
             sortOrder = sortOrder,

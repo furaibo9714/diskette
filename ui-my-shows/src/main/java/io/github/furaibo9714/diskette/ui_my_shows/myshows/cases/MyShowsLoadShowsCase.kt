@@ -65,7 +65,7 @@ class MyShowsLoadShowsCase @Inject constructor(
   ): List<MyShowsItem> {
     val shows = allShows
       .filter { showItem ->
-        val seasons = allSeasons.filter { it.idShowTrakt == showItem.show.traktId }
+        val seasons = allSeasons.filter { it.showMediaId == showItem.show.mediaId }
         val airedSeasons = seasons.filter { it.seasonFirstAired?.isBefore(nowUtc()) == true }
 
         when (val type = settingsRepository.filters.myShowsType) {

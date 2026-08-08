@@ -22,12 +22,12 @@ class ShowDetailsWatchlistCase @Inject constructor(
 
   suspend fun isWatchlist(show: Show) =
     withContext(dispatchers.IO) {
-      showsRepository.watchlistShows.exists(show.ids.trakt)
+      showsRepository.watchlistShows.exists(show.ids.media)
     }
 
   suspend fun addToWatchlist(show: Show) =
     withContext(dispatchers.IO) {
-      showsRepository.watchlistShows.insert(show.ids.trakt)
+      showsRepository.watchlistShows.insert(show.ids.media)
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
       floppySyncManager.scheduleShowWatchlist(show.ids, Operation.ADD)
@@ -35,7 +35,7 @@ class ShowDetailsWatchlistCase @Inject constructor(
 
   suspend fun removeFromWatchlist(show: Show) =
     withContext(dispatchers.IO) {
-      showsRepository.watchlistShows.delete(show.ids.trakt)
+      showsRepository.watchlistShows.delete(show.ids.media)
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
       floppySyncManager.scheduleShowWatchlist(show.ids, Operation.REMOVE)

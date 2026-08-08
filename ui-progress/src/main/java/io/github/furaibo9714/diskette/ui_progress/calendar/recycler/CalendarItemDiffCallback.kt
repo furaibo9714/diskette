@@ -28,7 +28,7 @@ class CalendarItemDiffCallback : DiffUtil.ItemCallback<CalendarListItem>() {
   private fun areItemsTheSame(
     oldItem: CalendarListItem.Episode,
     newItem: CalendarListItem.Episode,
-  ): Boolean = oldItem.episode.ids.trakt == newItem.episode.ids.trakt
+  ): Boolean = oldItem.episode.ids.media == newItem.episode.ids.media
 
   private fun areItemsTheSame(
     oldItem: CalendarListItem.Header,

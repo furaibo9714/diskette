@@ -25,7 +25,7 @@ class EpisodesSetEpisodeWatchedCase @Inject constructor(
 
     when {
       isChecked -> {
-        val isMyShows = showsRepository.myShows.exists(show.ids.trakt)
+        val isMyShows = showsRepository.myShows.exists(show.ids.media)
         episodesManager.setEpisodeWatched(episodeBundle, customDate)
         if (isMyShows) {
           floppySyncManager.scheduleEpisodeWatched(show.ids, episode.season, episode.number, Operation.ADD)

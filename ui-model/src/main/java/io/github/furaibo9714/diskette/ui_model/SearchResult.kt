@@ -8,5 +8,5 @@ data class SearchResult(
 
   val isShow = show != Show.EMPTY
 
-  val traktId = if (show != Show.EMPTY) show.traktId else movie.traktId
+  val mediaId = if (show != Show.EMPTY) show.mediaId else movie.mediaId
 }

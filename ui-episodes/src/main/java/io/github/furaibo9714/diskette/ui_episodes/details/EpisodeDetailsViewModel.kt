@@ -16,7 +16,7 @@ import io.github.furaibo9714.diskette.ui_episodes.details.cases.EpisodeDetailsSe
 import io.github.furaibo9714.diskette.ui_episodes.details.cases.EpisodeDetailsWatchedCase
 import io.github.furaibo9714.diskette.ui_model.Episode
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.RatingState
 import io.github.furaibo9714.diskette.ui_model.SpoilersSettings
@@ -60,7 +60,7 @@ class EpisodeDetailsViewModel @Inject constructor(
   }
 
   fun loadLastWatchedAt(
-    showTraktId: IdTrakt,
+    showTraktId: MediaId,
     episode: Episode,
   ) {
     viewModelScope.launch {
@@ -86,7 +86,7 @@ class EpisodeDetailsViewModel @Inject constructor(
   }
 
   fun loadSeason(
-    showTraktId: IdTrakt,
+    showTraktId: MediaId,
     episode: Episode,
     seasonEpisodes: IntArray?,
   ) {
@@ -100,7 +100,7 @@ class EpisodeDetailsViewModel @Inject constructor(
   }
 
   fun loadTranslation(
-    showTraktId: IdTrakt,
+    showTraktId: MediaId,
     episode: Episode,
   ) {
     viewModelScope.launch {

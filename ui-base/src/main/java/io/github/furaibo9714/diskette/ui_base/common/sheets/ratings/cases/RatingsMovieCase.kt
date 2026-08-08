@@ -4,7 +4,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.RatingsRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.UserRating
@@ -22,28 +22,28 @@ class RatingsMovieCase @Inject constructor(
     private val RATING_VALID_RANGE = 1..10
   }
 
-  suspend fun loadRating(idTrakt: IdTrakt): UserRating =
+  suspend fun loadRating(mediaId: MediaId): UserRating =
     withContext(dispatchers.IO) {
-      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
+      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
       val rating = ratingsRepository.movies.loadRatings(listOf(movie))
       rating.firstOrNull() ?: UserRating.EMPTY
     }
 
   suspend fun saveRating(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     rating: Int,
   ) = withContext(dispatchers.IO) {
     check(rating in RATING_VALID_RANGE)
 
-    val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
+    val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
     ratingsRepository.movies.addRating(movie = movie, rating = rating)
-    floppySyncManager.scheduleMovieRating(idTrakt, rating)
+    floppySyncManager.scheduleMovieRating(mediaId, rating)
   }
 
-  suspend fun deleteRating(idTrakt: IdTrakt) =
+  suspend fun deleteRating(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
+      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
       ratingsRepository.movies.deleteRating(movie = movie)
-      floppySyncManager.scheduleMovieRating(idTrakt, null)
+      floppySyncManager.scheduleMovieRating(mediaId, null)
     }
 }

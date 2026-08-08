@@ -18,7 +18,7 @@ import io.github.furaibo9714.diskette.data_remote.tmdb.TmdbRemoteDataSource
 import io.github.furaibo9714.diskette.repository.common.BaseMockTest
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Person
 import io.github.furaibo9714.diskette.ui_model.Person.Department
@@ -71,7 +71,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       coEvery { peopleShowsMoviesDao.getTimestampForShow(any()) } returns nowUtc().minusHours(10).toMillis()
       coEvery { peopleDao.getAllForShow(any()) } returns listOf(person)
 
-      SUT.loadAllForShow(Ids.EMPTY.copy(trakt = IdTrakt(11)))
+      SUT.loadAllForShow(Ids.EMPTY.copy(trakt = MediaId.parse(11)))
 
       coVerifyOrder {
         peopleShowsMoviesDao.getTimestampForShow(11)
@@ -86,7 +86,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       coEvery { peopleShowsMoviesDao.getTimestampForShow(any()) } returns nowUtc().minusDays(10).toMillis()
       coEvery { peopleDao.getAllForShow(any()) } returns listOf(person)
 
-      SUT.loadAllForShow(Ids.EMPTY.copy(trakt = IdTrakt(11), tmdb = IdTmdb(12)))
+      SUT.loadAllForShow(Ids.EMPTY.copy(trakt = MediaId.parse(11), tmdb = IdTmdb(12)))
 
       coVerifyOrder {
         peopleShowsMoviesDao.getTimestampForShow(11)
@@ -103,7 +103,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       coEvery { peopleShowsMoviesDao.getTimestampForMovie(any()) } returns nowUtc().minusHours(10).toMillis()
       coEvery { peopleDao.getAllForMovie(any()) } returns listOf(person)
 
-      SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = IdTrakt(11)))
+      SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = MediaId.parse(11)))
 
       coVerifyOrder {
         peopleShowsMoviesDao.getTimestampForMovie(11)
@@ -118,7 +118,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       coEvery { peopleShowsMoviesDao.getTimestampForMovie(any()) } returns nowUtc().minusDays(10).toMillis()
       coEvery { peopleDao.getAllForMovie(any()) } returns listOf(person)
 
-      SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = IdTrakt(11), tmdb = IdTmdb(12)))
+      SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = MediaId.parse(11), tmdb = IdTmdb(12)))
 
       coVerifyOrder {
         peopleShowsMoviesDao.getTimestampForMovie(11)
@@ -148,7 +148,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       }
       coEvery { peopleDao.getAllForShow(any()) } returns listOf(person1, person2, person3)
 
-      val result = SUT.loadAllForShow(Ids.EMPTY.copy(trakt = IdTrakt(11)))
+      val result = SUT.loadAllForShow(Ids.EMPTY.copy(trakt = MediaId.parse(11)))
       assertThat(result[Department.ACTING]!!.first().imagePath).isNotNull()
 
       coVerify { peopleDao.getAllForShow(any()) }
@@ -173,7 +173,7 @@ class PeopleRepositoryTest : BaseMockTest() {
       }
       coEvery { peopleDao.getAllForMovie(any()) } returns listOf(person1, person2, person3)
 
-      val result = SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = IdTrakt(11)))
+      val result = SUT.loadAllForMovie(Ids.EMPTY.copy(trakt = MediaId.parse(11)))
       assertThat(result[Department.ACTING]!!.first().imagePath).isNotNull()
 
       coVerify { peopleDao.getAllForMovie(any()) }
@@ -184,7 +184,7 @@ class PeopleRepositoryTest : BaseMockTest() {
     runBlocking {
       val person = mockk<Person>(relaxed = true)
       val personDb = mockk<PersonDb>(relaxed = true) {
-        coEvery { idTrakt } returns 1
+        coEvery { mediaId } returns 1
       }
       val show = mockk<Show>(relaxed = true)
       val movie = mockk<Movie>(relaxed = true)
@@ -209,7 +209,7 @@ class PeopleRepositoryTest : BaseMockTest() {
     runBlocking {
       val person = mockk<Person>(relaxed = true)
       val personDb = mockk<PersonDb>(relaxed = true) {
-        coEvery { idTrakt } returns 1
+        coEvery { mediaId } returns 1
       }
       val creditsShows = mockk<PersonCredit>(relaxed = true)
       val creditsMovies = mockk<PersonCredit>(relaxed = true)

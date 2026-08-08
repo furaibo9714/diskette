@@ -26,7 +26,7 @@ import io.github.furaibo9714.diskette.ui_lists.R
 import io.github.furaibo9714.diskette.ui_lists.databinding.ViewManageListsBinding
 import io.github.furaibo9714.diskette.ui_lists.manage.helpers.ManageListsDividerDecoration
 import io.github.furaibo9714.diskette.ui_lists.manage.recycler.ManageListsAdapter
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs.ARG_ID
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs.ARG_TYPE
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs.REQUEST_CREATE_LIST
@@ -40,7 +40,7 @@ class ManageListsBottomSheet : BaseBottomSheetFragment(R.layout.view_manage_list
   private val viewModel by viewModels<ManageListsViewModel>()
   private val binding by viewBinding(ViewManageListsBinding::bind)
 
-  private val itemId by lazy { IdTrakt(requireLong(ARG_ID)) }
+  private val itemId by lazy { MediaId.parse(requireLong(ARG_ID)) }
   private val itemType by lazy { requireString(ARG_TYPE) }
 
   private var adapter: ManageListsAdapter? = null

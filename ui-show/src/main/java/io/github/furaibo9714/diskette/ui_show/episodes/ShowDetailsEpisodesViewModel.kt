@@ -12,7 +12,7 @@ import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
 import io.github.furaibo9714.diskette.ui_model.Episode
 import io.github.furaibo9714.diskette.ui_model.EpisodeBundle
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ProgressDateSelectionType.ALWAYS_ASK
 import io.github.furaibo9714.diskette.ui_model.Show
 import io.github.furaibo9714.diskette.ui_model.Translation
@@ -70,8 +70,8 @@ class ShowDetailsEpisodesViewModel @Inject constructor(
   }
 
   private fun loadInitialData(
-    showId: IdTrakt,
-    seasonId: IdTrakt,
+    showId: MediaId,
+    seasonId: MediaId,
   ) {
     viewModelScope.launch {
       this@ShowDetailsEpisodesViewModel.show = loadShowCase.loadDetails(showId)
@@ -143,7 +143,7 @@ class ShowDetailsEpisodesViewModel @Inject constructor(
       }
 
       translations.forEach { translation ->
-        val episode = episodes.find { it.id == translation.ids.trakt.id }
+        val episode = episodes.find { it.id == translation.ids.media.id }
         episode?.let { ep ->
           if (translation.title.isNotBlank() || translation.overview.isNotBlank()) {
             val t = Translation(translation.title, translation.overview, translation.language)
@@ -194,7 +194,7 @@ class ShowDetailsEpisodesViewModel @Inject constructor(
         val bundle = EpisodeBundle(episode, it.season, show)
         episodeWatchedCase.setEpisodeWatched(bundle, isChecked, customDate)
         refreshWatchedEpisodes()
-        announcementsCase.refreshAnnouncements(show.ids.trakt)
+        announcementsCase.refreshAnnouncements(show.ids.media)
       }
     }
   }
@@ -225,7 +225,7 @@ class ShowDetailsEpisodesViewModel @Inject constructor(
     viewModelScope.launch {
       seasonWatchedCase.setSeasonWatched(show, season.season, isChecked, customDate)
       refreshWatchedEpisodes()
-      announcementsCase.refreshAnnouncements(show.ids.trakt)
+      announcementsCase.refreshAnnouncements(show.ids.media)
     }
   }
 
@@ -284,10 +284,10 @@ class ShowDetailsEpisodesViewModel @Inject constructor(
   }
 
   private fun refreshSeasonsCache() {
-    val cachedSeasons = seasonsCache.loadSeasons(show.ids.trakt)?.toMutableList()
+    val cachedSeasons = seasonsCache.loadSeasons(show.ids.media)?.toMutableList()
     val currentSeason = seasonState.value
     val currentEpisodes = episodesState.value
-    val isSeasonLocal = seasonsCache.areSeasonsLocal(show.ids.trakt)
+    val isSeasonLocal = seasonsCache.areSeasonsLocal(show.ids.media)
 
     if (currentSeason != null && currentEpisodes != null) {
       cachedSeasons?.find { it.id == currentSeason.id }?.let { season ->
@@ -296,7 +296,7 @@ class ShowDetailsEpisodesViewModel @Inject constructor(
           userRating = currentSeason.userRating,
         )
         cachedSeasons.findReplace(updated) { it.id == season.id }
-        seasonsCache.setSeasons(show.ids.trakt, cachedSeasons, isSeasonLocal)
+        seasonsCache.setSeasons(show.ids.media, cachedSeasons, isSeasonLocal)
       }
     }
   }

@@ -21,7 +21,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.launchDelayed
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.rethrowCancellation
 import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ImageType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,19 +47,19 @@ class ShowContextMenuViewModel @Inject constructor(
 ) : ViewModel(),
   ChannelsDelegate by DefaultChannelsDelegate() {
 
-  private var showId by notNull<IdTrakt>()
+  private var showId by notNull<MediaId>()
 
   private val loadingState = MutableStateFlow(false)
   private val loadingSecondaryState = MutableStateFlow(false)
   private val itemState = MutableStateFlow<ShowContextItem?>(null)
 
-  fun loadShow(idTrakt: IdTrakt) {
+  fun loadShow(mediaId: MediaId) {
     viewModelScope.launch {
-      showId = idTrakt
+      showId = mediaId
 
       try {
         loadingState.value = true
-        val item = loadItemCase.loadItem(idTrakt)
+        val item = loadItemCase.loadItem(mediaId)
         itemState.value = item
       } catch (error: Throwable) {
         messageChannel.send(MessageEvent.Error(R.string.errorGeneral))
@@ -94,7 +94,7 @@ class ShowContextMenuViewModel @Inject constructor(
     viewModelScope.launch {
       try {
         myShowsCase.removeFromMyShows(
-          traktId = showId,
+          mediaId = showId,
           removeLocalData = networkProvider.isOnline(),
         )
         finish()
@@ -108,7 +108,7 @@ class ShowContextMenuViewModel @Inject constructor(
     viewModelScope.launch {
       try {
         watchlistCase.moveToWatchlist(
-          traktId = showId,
+          mediaId = showId,
           removeLocalData = networkProvider.isOnline(),
         )
         finish()
@@ -133,7 +133,7 @@ class ShowContextMenuViewModel @Inject constructor(
     viewModelScope.launch {
       try {
         hiddenCase.moveToHidden(
-          traktId = showId,
+          mediaId = showId,
           removeLocalData = networkProvider.isOnline(),
         )
         finish()

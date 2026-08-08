@@ -21,7 +21,7 @@ object FloppyManualSyntheticIds {
     return OFFSET + bits
   }
 
-  fun isSynthetic(traktId: Long): Boolean = traktId >= OFFSET
+  fun isSynthetic(mediaId: Long): Boolean = mediaId >= OFFSET
 
   fun toSlugValue(floppyMediaId: String): String = "$SLUG_PREFIX$floppyMediaId"
 

@@ -15,7 +15,7 @@ interface ArchiveMoviesDao : ArchiveMoviesLocalDataSource {
 
   @Query(
     "SELECT " +
-      "movies.id_trakt, " +
+      "movies.media_id, " +
       "movies.id_tmdb, " +
       "movies.id_imdb, " +
       "movies.id_slug, " +
@@ -36,13 +36,13 @@ interface ArchiveMoviesDao : ArchiveMoviesLocalDataSource {
       "movies_archive.updated_at, " +
       "movies_archive.created_at " +
       "FROM movies " +
-      "INNER JOIN movies_archive USING(id_trakt)",
+      "INNER JOIN movies_archive USING(media_id)",
   )
   override suspend fun getAll(): List<Movie>
 
   @Query(
     "SELECT " +
-      "movies.id_trakt, " +
+      "movies.media_id, " +
       "movies.id_tmdb, " +
       "movies.id_imdb, " +
       "movies.id_slug, " +
@@ -63,19 +63,19 @@ interface ArchiveMoviesDao : ArchiveMoviesLocalDataSource {
       "movies_archive.updated_at, " +
       "movies_archive.created_at " +
       "FROM movies " +
-      "INNER JOIN movies_archive USING(id_trakt) WHERE id_trakt IN (:ids)",
+      "INNER JOIN movies_archive USING(media_id) WHERE media_id IN (:ids)",
   )
-  override suspend fun getAll(ids: List<Long>): List<Movie>
+  override suspend fun getAll(ids: List<String>): List<Movie>
 
-  @Query("SELECT movies.id_trakt FROM movies INNER JOIN movies_archive USING(id_trakt)")
-  override suspend fun getAllTraktIds(): List<Long>
+  @Query("SELECT movies.media_id FROM movies INNER JOIN movies_archive USING(media_id)")
+  override suspend fun getAllMediaIds(): List<String>
 
-  @Query("SELECT movies.* FROM movies INNER JOIN movies_archive USING(id_trakt) WHERE id_trakt == :traktId")
-  override suspend fun getById(traktId: Long): Movie?
+  @Query("SELECT movies.* FROM movies INNER JOIN movies_archive USING(media_id) WHERE media_id == :mediaId")
+  override suspend fun getById(mediaId: String): Movie?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   override suspend fun insert(movie: ArchiveMovie)
 
-  @Query("DELETE FROM movies_archive WHERE id_trakt == :traktId")
-  override suspend fun deleteById(traktId: Long)
+  @Query("DELETE FROM movies_archive WHERE media_id == :mediaId")
+  override suspend fun deleteById(mediaId: String)
 }

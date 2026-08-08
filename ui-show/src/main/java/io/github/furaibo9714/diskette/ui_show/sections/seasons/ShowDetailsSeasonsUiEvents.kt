@@ -3,7 +3,7 @@
 package io.github.furaibo9714.diskette.ui_show.sections.seasons
 
 import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Season
 import io.github.furaibo9714.diskette.ui_show.quicksetup.QuickSetupListItem
 
@@ -12,9 +12,9 @@ sealed class ShowDetailsSeasonsEvent<T>(
 ) : Event<T>(action) {
 
   data class OpenSeasonEpisodes(
-    val showId: IdTrakt,
-    val seasonId: IdTrakt,
-  ) : ShowDetailsSeasonsEvent<IdTrakt>(showId)
+    val showId: MediaId,
+    val seasonId: MediaId,
+  ) : ShowDetailsSeasonsEvent<MediaId>(showId)
 
   data class OpenSeasonDateSelection(
     val season: Season,

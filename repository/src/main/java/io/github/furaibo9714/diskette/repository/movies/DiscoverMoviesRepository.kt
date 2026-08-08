@@ -33,11 +33,11 @@ class DiscoverMoviesRepository @Inject constructor(
   }
 
   suspend fun loadAllCached(): List<Movie> {
-    val cachedMovies = localSource.discoverMovies.getAll().map { it.idTrakt }
+    val cachedMovies = localSource.discoverMovies.getAll().map { it.mediaId }
     val movies = localSource.movies.getAll(cachedMovies)
 
     return cachedMovies
-      .map { id -> movies.first { it.idTrakt == id } }
+      .map { id -> movies.first { it.mediaId == id } }
       .map { mappers.movie.fromDatabase(it) }
   }
 
@@ -117,7 +117,7 @@ class DiscoverMoviesRepository @Inject constructor(
       localSource.discoverMovies.replace(
         movies.map {
           DiscoverMovie(
-            idTrakt = it.ids.trakt.id,
+            mediaId = it.ids.media.id,
             createdAt = timestamp,
             updatedAt = timestamp,
           )
@@ -130,7 +130,7 @@ class DiscoverMoviesRepository @Inject constructor(
     movies: MutableList<Movie>,
     movie: Movie,
   ) {
-    if (movies.any { it.ids.trakt == movie.ids.trakt }) {
+    if (movies.any { it.ids.media == movie.ids.media }) {
       return
     }
     movies.add(movie)

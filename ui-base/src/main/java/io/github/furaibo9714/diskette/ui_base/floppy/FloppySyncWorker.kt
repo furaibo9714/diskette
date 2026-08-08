@@ -182,10 +182,10 @@ class FloppySyncWorker @AssistedInject constructor(
     movies.forEachIndexed { index, movie ->
       updateProgress(FloppySyncPhase.SYNCING_DETAILS, index + 1, movies.size)
       try {
-        movieDetailsRepository.load(movie.ids.trakt)
+        movieDetailsRepository.load(movie.ids.media)
         count++
       } catch (error: Throwable) {
-        Timber.w(error, "Failed to sync details for movie ${movie.ids.trakt}.")
+        Timber.w(error, "Failed to sync details for movie ${movie.ids.media}.")
       } finally {
         delay(MOVIE_SYNC_DELAY_MS)
       }

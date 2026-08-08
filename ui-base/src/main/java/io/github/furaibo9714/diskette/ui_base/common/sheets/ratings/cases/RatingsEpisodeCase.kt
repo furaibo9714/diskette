@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.RatingsRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
 import io.github.furaibo9714.diskette.ui_model.Episode
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.UserRating
 import javax.inject.Inject
@@ -22,15 +22,15 @@ class RatingsEpisodeCase @Inject constructor(
     private val RATING_VALID_RANGE = 1..10
   }
 
-  suspend fun loadRating(idTrakt: IdTrakt): UserRating =
+  suspend fun loadRating(mediaId: MediaId): UserRating =
     withContext(dispatchers.IO) {
-      val episode = Episode.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
+      val episode = Episode.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
       val rating = ratingsRepository.shows.loadRating(episode)
       rating ?: UserRating.EMPTY
     }
 
   suspend fun saveRating(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     rating: Int,
     seasonNumber: Int,
     episodeNumber: Int,
@@ -38,22 +38,22 @@ class RatingsEpisodeCase @Inject constructor(
     check(rating in RATING_VALID_RANGE)
 
     val episode = Episode.EMPTY.copy(
-      ids = Ids.EMPTY.copy(trakt = idTrakt),
+      ids = Ids.EMPTY.copy(trakt = mediaId),
       season = seasonNumber,
       number = episodeNumber,
     )
 
     ratingsRepository.shows.addRating(episode = episode, rating = rating)
-    floppySyncManager.scheduleEpisodeRating(idTrakt, seasonNumber, episodeNumber, rating)
+    floppySyncManager.scheduleEpisodeRating(mediaId, seasonNumber, episodeNumber, rating)
   }
 
   suspend fun deleteRating(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     seasonNumber: Int,
     episodeNumber: Int,
   ) = withContext(dispatchers.IO) {
-    val episode = Episode.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
+    val episode = Episode.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = mediaId))
     ratingsRepository.shows.deleteRating(episode = episode)
-    floppySyncManager.scheduleEpisodeRating(idTrakt, seasonNumber, episodeNumber, null)
+    floppySyncManager.scheduleEpisodeRating(mediaId, seasonNumber, episodeNumber, null)
   }
 }

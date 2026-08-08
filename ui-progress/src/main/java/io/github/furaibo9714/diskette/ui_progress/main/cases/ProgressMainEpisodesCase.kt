@@ -46,7 +46,7 @@ class ProgressMainEpisodesCase @Inject constructor(
       ) {
         return@withContext false
       }
-      return@withContext localDataSource.isEpisodeWatched(show.traktId, episode.ids.trakt.id)
+      return@withContext localDataSource.isEpisodeWatched(show.mediaId, episode.ids.media.id)
     }
   }
 }

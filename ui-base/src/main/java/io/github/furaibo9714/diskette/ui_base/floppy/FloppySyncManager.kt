@@ -11,7 +11,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.FloppySyncQueue.
 import io.github.furaibo9714.diskette.repository.floppy.FloppyConnectionManager
 import io.github.furaibo9714.diskette.ui_model.IdSlug
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import timber.log.Timber
 import javax.inject.Inject
@@ -134,7 +134,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleListItemAdd(
-    itemId: IdTrakt,
+    itemId: MediaId,
     mode: Mode,
     listFloppyId: Long?,
   ) {
@@ -146,7 +146,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleListItemRemove(
-    itemId: IdTrakt,
+    itemId: MediaId,
     mode: Mode,
     listFloppyId: Long?,
   ) {
@@ -179,14 +179,14 @@ class FloppySyncManager @Inject constructor(
   }
 
   /**
-   * Convenience overloads for call sites that only have an [IdTrakt] on hand (context-menu
+   * Convenience overloads for call sites that only have an [MediaId] on hand (context-menu
    * sheets, widgets, progress-tab quick actions) rather than the full [Ids] a details screen
    * already has in memory. Resolves the local row's tmdb id/id_slug before delegating to the
    * [Ids]-based overload above; if the item isn't cached locally there's nothing to resolve and
    * the sync is silently skipped, same as any other unresolvable case.
    */
   suspend fun scheduleShowWatchlist(
-    showId: IdTrakt,
+    showId: MediaId,
     operation: Operation,
   ) {
     val ids = resolveShowIds(showId) ?: return
@@ -194,7 +194,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleMovieWatchlist(
-    movieId: IdTrakt,
+    movieId: MediaId,
     operation: Operation,
   ) {
     val ids = resolveMovieIds(movieId) ?: return
@@ -202,7 +202,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleMovieWatched(
-    movieId: IdTrakt,
+    movieId: MediaId,
     operation: Operation,
   ) {
     val ids = resolveMovieIds(movieId) ?: return
@@ -210,7 +210,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleEpisodeWatched(
-    showId: IdTrakt,
+    showId: MediaId,
     seasonNumber: Int,
     episodeNumber: Int,
     operation: Operation,
@@ -220,7 +220,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleShowHidden(
-    showId: IdTrakt,
+    showId: MediaId,
     operation: Operation,
   ) {
     val ids = resolveShowIds(showId) ?: return
@@ -228,7 +228,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleMovieHidden(
-    movieId: IdTrakt,
+    movieId: MediaId,
     operation: Operation,
   ) {
     val ids = resolveMovieIds(movieId) ?: return
@@ -236,7 +236,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleShowRating(
-    showId: IdTrakt,
+    showId: MediaId,
     score: Int?,
   ) {
     val ids = resolveShowIds(showId) ?: return
@@ -244,7 +244,7 @@ class FloppySyncManager @Inject constructor(
   }
 
   suspend fun scheduleMovieRating(
-    movieId: IdTrakt,
+    movieId: MediaId,
     score: Int?,
   ) {
     val ids = resolveMovieIds(movieId) ?: return
@@ -253,16 +253,16 @@ class FloppySyncManager @Inject constructor(
 
   /**
    * [seasonId] is the season's own id_trakt (what local rating storage keys off), not the parent
-   * show's - resolved to the show via the local `Season.idShowTrakt` column since Floppy addresses
+   * show's - resolved to the show via the local `Season.showMediaId` column since Floppy addresses
    * seasons through the show's media id, not a season-level one.
    */
   suspend fun scheduleSeasonRating(
-    seasonId: IdTrakt,
+    seasonId: MediaId,
     seasonNumber: Int,
     score: Int?,
   ) {
     val season = localSource.seasons.getById(seasonId.id) ?: return
-    val showIds = resolveShowIds(IdTrakt(season.idShowTrakt)) ?: return
+    val showIds = resolveShowIds(MediaId.parse(season.showMediaId)) ?: return
     scheduleSeasonRating(showIds, seasonNumber, score)
   }
 
@@ -271,22 +271,22 @@ class FloppySyncManager @Inject constructor(
    * [scheduleSeasonRating] above.
    */
   suspend fun scheduleEpisodeRating(
-    episodeId: IdTrakt,
+    episodeId: MediaId,
     seasonNumber: Int,
     episodeNumber: Int,
     score: Int?,
   ) {
     val episode = localSource.episodes.getAll(listOf(episodeId.id)).firstOrNull() ?: return
-    val showIds = resolveShowIds(IdTrakt(episode.idShowTrakt)) ?: return
+    val showIds = resolveShowIds(MediaId.parse(episode.showMediaId)) ?: return
     scheduleEpisodeRating(showIds, seasonNumber, episodeNumber, score)
   }
 
-  private suspend fun resolveShowIds(showId: IdTrakt): Ids? {
+  private suspend fun resolveShowIds(showId: MediaId): Ids? {
     val show = localSource.shows.getById(showId.id) ?: return null
     return Ids.EMPTY.copy(trakt = showId, tmdb = IdTmdb(show.idTmdb), slug = IdSlug(show.idSlug))
   }
 
-  private suspend fun resolveMovieIds(movieId: IdTrakt): Ids? {
+  private suspend fun resolveMovieIds(movieId: MediaId): Ids? {
     val movie = localSource.movies.getById(movieId.id) ?: return null
     return Ids.EMPTY.copy(trakt = movieId, tmdb = IdTmdb(movie.idTmdb), slug = IdSlug(movie.idSlug))
   }
@@ -299,7 +299,7 @@ class FloppySyncManager @Inject constructor(
   private fun resolveSourceAndMediaId(ids: Ids): Pair<String, String>? {
     if (!connectionManager.isConfigured()) return null
 
-    if (FloppyManualSyntheticIds.isSynthetic(ids.trakt.id)) {
+    if (FloppyManualSyntheticIds.isSynthetic(ids.media.id)) {
       val floppyMediaId = FloppyManualSyntheticIds.extractFloppyMediaId(ids.slug.id)
       if (floppyMediaId == null) {
         Timber.d("Synthetic manual id with no recoverable Floppy UUID. Skipping Floppy sync.")

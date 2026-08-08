@@ -59,7 +59,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.withFailListe
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.withSuccessListener
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
 import io.github.furaibo9714.diskette.ui_model.Genre
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageFamily.MOVIE
 import io.github.furaibo9714.diskette.ui_model.ImageStatus.UNAVAILABLE
@@ -98,7 +98,7 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
 
   override val viewModel by viewModels<MovieDetailsViewModel>()
 
-  private val movieId by lazy { IdTrakt(requireLong(ARG_MOVIE_ID)) }
+  private val movieId by lazy { MediaId.parse(requireLong(ARG_MOVIE_ID)) }
 
   private val imageHeight by lazy {
     if (resources.configuration.orientation == ORIENTATION_PORTRAIT) {

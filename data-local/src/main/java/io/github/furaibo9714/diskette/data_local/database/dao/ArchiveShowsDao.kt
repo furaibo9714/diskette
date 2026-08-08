@@ -15,7 +15,7 @@ interface ArchiveShowsDao : ArchiveShowsLocalDataSource {
 
   @Query(
     "SELECT " +
-      "shows.id_trakt, " +
+      "shows.media_id, " +
       "shows.id_tvdb, " +
       "shows.id_tmdb, " +
       "shows.id_imdb, " +
@@ -44,13 +44,13 @@ interface ArchiveShowsDao : ArchiveShowsLocalDataSource {
       "shows_archive.updated_at, " +
       "shows_archive.created_at " +
       "FROM shows " +
-      "INNER JOIN shows_archive USING(id_trakt)",
+      "INNER JOIN shows_archive USING(media_id)",
   )
   override suspend fun getAll(): List<Show>
 
   @Query(
     "SELECT " +
-      "shows.id_trakt, " +
+      "shows.media_id, " +
       "shows.id_tvdb, " +
       "shows.id_tmdb, " +
       "shows.id_imdb, " +
@@ -79,19 +79,19 @@ interface ArchiveShowsDao : ArchiveShowsLocalDataSource {
       "shows_archive.updated_at, " +
       "shows_archive.created_at " +
       "FROM shows " +
-      "INNER JOIN shows_archive USING(id_trakt) WHERE id_trakt IN (:ids)",
+      "INNER JOIN shows_archive USING(media_id) WHERE media_id IN (:ids)",
   )
-  override suspend fun getAll(ids: List<Long>): List<Show>
+  override suspend fun getAll(ids: List<String>): List<Show>
 
-  @Query("SELECT shows.id_trakt FROM shows INNER JOIN shows_archive USING(id_trakt)")
-  override suspend fun getAllTraktIds(): List<Long>
+  @Query("SELECT shows.media_id FROM shows INNER JOIN shows_archive USING(media_id)")
+  override suspend fun getAllMediaIds(): List<String>
 
-  @Query("SELECT shows.* FROM shows INNER JOIN shows_archive USING(id_trakt) WHERE id_trakt == :traktId")
-  override suspend fun getById(traktId: Long): Show?
+  @Query("SELECT shows.* FROM shows INNER JOIN shows_archive USING(media_id) WHERE media_id == :mediaId")
+  override suspend fun getById(mediaId: String): Show?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   override suspend fun insert(show: ArchiveShow)
 
-  @Query("DELETE FROM shows_archive WHERE id_trakt == :traktId")
-  override suspend fun deleteById(traktId: Long)
+  @Query("DELETE FROM shows_archive WHERE media_id == :mediaId")
+  override suspend fun deleteById(mediaId: String)
 }

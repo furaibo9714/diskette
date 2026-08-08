@@ -13,7 +13,7 @@ data class BackupShows1(
 )
 
 data class BackupShow1(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "tmId") val tmdbId: Long,
   @Json(name = "t") val title: String,
   @Json(name = "a") val addedAt: String,
@@ -21,13 +21,13 @@ data class BackupShow1(
 )
 
 data class BackupSeason1(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "sId") val showTraktId: Long,
   @Json(name = "sN") val seasonNumber: Int,
 )
 
 data class BackupEpisode1(
-  @Json(name = "id") val traktId: Long,
+  @Json(name = "id") val mediaId: Long,
   @Json(name = "sId") val showTraktId: Long,
   @Json(name = "eN") val episodeNumber: Int,
   @Json(name = "sN") val seasonNumber: Int,

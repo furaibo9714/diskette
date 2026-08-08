@@ -26,7 +26,7 @@ internal object BackupMigrationV1 {
       shows = BackupShows(
         collectionHistory = scheme.shows.collectionHistory.map {
           BackupShow(
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             tmdbId = it.tmdbId,
             title = it.title,
             addedAt = it.addedAt,
@@ -35,7 +35,7 @@ internal object BackupMigrationV1 {
         },
         collectionWatchlist = scheme.shows.collectionWatchlist.map {
           BackupShow(
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             tmdbId = it.tmdbId,
             title = it.title,
             addedAt = it.addedAt,
@@ -44,7 +44,7 @@ internal object BackupMigrationV1 {
         },
         collectionHidden = scheme.shows.collectionHidden.map {
           BackupShow(
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             tmdbId = it.tmdbId,
             title = it.title,
             addedAt = it.addedAt,
@@ -53,7 +53,7 @@ internal object BackupMigrationV1 {
         },
         progressEpisodes = scheme.shows.progressEpisodes.map {
           BackupEpisode(
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             showTraktId = it.showTraktId,
             showTmdbId = -1,
             episodeNumber = it.episodeNumber,
@@ -63,7 +63,7 @@ internal object BackupMigrationV1 {
         },
         progressSeasons = scheme.shows.progressSeasons.map {
           BackupSeason(
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             showTraktId = it.showTraktId,
             showTmdbId = -1,
             seasonNumber = it.seasonNumber,
@@ -78,7 +78,7 @@ internal object BackupMigrationV1 {
       movies = BackupMovies(
         collectionHistory = scheme.movies.collectionHistory.map {
           BackupMovie(
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             tmdbId = it.tmdbId,
             title = it.title,
             addedAt = it.addedAt,
@@ -86,7 +86,7 @@ internal object BackupMigrationV1 {
         },
         collectionWatchlist = scheme.movies.collectionWatchlist.map {
           BackupMovie(
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             tmdbId = it.tmdbId,
             title = it.title,
             addedAt = it.addedAt,
@@ -94,7 +94,7 @@ internal object BackupMigrationV1 {
         },
         collectionHidden = scheme.movies.collectionHidden.map {
           BackupMovie(
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             tmdbId = it.tmdbId,
             title = it.title,
             addedAt = it.addedAt,
@@ -106,7 +106,7 @@ internal object BackupMigrationV1 {
         lists = scheme.lists.lists.map {
           BackupList(
             id = it.id,
-            traktId = it.traktId,
+            mediaId = it.mediaId,
             slugId = it.slugId,
             name = it.name,
             description = it.description,
@@ -118,7 +118,7 @@ internal object BackupMigrationV1 {
               BackupListItem(
                 id = item.id,
                 listId = item.listId,
-                traktId = item.traktId,
+                mediaId = item.mediaId,
                 tmdbId = -1,
                 type = item.type,
                 rank = item.rank,

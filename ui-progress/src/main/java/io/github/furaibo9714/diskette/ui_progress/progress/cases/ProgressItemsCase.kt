@@ -82,7 +82,7 @@ class ProgressItemsCase @Inject constructor(
         .flatMap { chunk ->
           chunk.map { show ->
             async {
-              val nextEpisode = findNextEpisode(show.traktId, nextEpisodeType, upcomingLimit)
+              val nextEpisode = findNextEpisode(show.mediaId, nextEpisodeType, upcomingLimit)
 
               val episodeUi = nextEpisode?.let { mappers.episode.fromDatabase(it) }
               val seasonUi = nextEpisode?.let { ep ->
@@ -131,7 +131,7 @@ class ProgressItemsCase @Inject constructor(
                   show = translationsRepository.loadTranslation(it.show, language, onlyLocal = true),
                   episode = translationsRepository.loadTranslation(
                     it.episode ?: EpisodeUi.EMPTY,
-                    it.show.ids.trakt,
+                    it.show.ids.media,
                     language,
                     onlyLocal = true,
                   ),
@@ -141,15 +141,15 @@ class ProgressItemsCase @Inject constructor(
               val (total, watched) = when (settingsRepository.progressPercentType) {
                 ProgressType.AIRED -> {
                   awaitAll(
-                    async { localSource.episodes.getTotalCount(it.show.traktId, nowUtc.toMillis()) },
-                    async { localSource.episodes.getWatchedCount(it.show.traktId, nowUtc.toMillis()) },
+                    async { localSource.episodes.getTotalCount(it.show.mediaId, nowUtc.toMillis()) },
+                    async { localSource.episodes.getWatchedCount(it.show.mediaId, nowUtc.toMillis()) },
                   )
                 }
 
                 ProgressType.ALL -> {
                   awaitAll(
-                    async { localSource.episodes.getTotalCount(it.show.traktId) },
-                    async { localSource.episodes.getWatchedCount(it.show.traktId) },
+                    async { localSource.episodes.getTotalCount(it.show.mediaId) },
+                    async { localSource.episodes.getWatchedCount(it.show.mediaId) },
                   )
                 }
               }

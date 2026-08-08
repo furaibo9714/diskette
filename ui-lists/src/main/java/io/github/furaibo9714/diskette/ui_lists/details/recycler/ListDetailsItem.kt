@@ -1,7 +1,7 @@
 package io.github.furaibo9714.diskette.ui_lists.details.recycler
 
 import io.github.furaibo9714.diskette.common.extensions.toMillis
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.Show
@@ -63,9 +63,9 @@ data class ListDetailsItem(
     throw IllegalStateException()
   }
 
-  fun getTraktId(): IdTrakt {
-    if (isShow()) return IdTrakt(requireShow().traktId)
-    if (isMovie()) return IdTrakt(requireMovie().traktId)
+  fun getTraktId(): MediaId {
+    if (isShow()) return MediaId.parse(requireShow().mediaId)
+    if (isMovie()) return MediaId.parse(requireMovie().mediaId)
     throw IllegalStateException()
   }
 

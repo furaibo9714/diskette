@@ -6,7 +6,7 @@ interface TranslationsShowsSyncLogLocalDataSource {
 
   suspend fun getAll(): List<TranslationsSyncLog>
 
-  suspend fun getById(idTrakt: Long): TranslationsSyncLog?
+  suspend fun getById(mediaId: String): TranslationsSyncLog?
 
   suspend fun upsert(log: TranslationsSyncLog)
 

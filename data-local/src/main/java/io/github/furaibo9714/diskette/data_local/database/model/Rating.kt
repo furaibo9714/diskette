@@ -9,14 +9,14 @@ import java.time.ZonedDateTime
 
 @Entity(
   tableName = "ratings",
-  primaryKeys = ["id_trakt", "type"],
+  primaryKeys = ["media_id", "type"],
   indices = [
-    Index(value = ["id_trakt", "type"], unique = false),
+    Index(value = ["media_id", "type"], unique = false),
   ],
 )
 @TypeConverters(DateConverter::class)
 data class Rating(
-  @ColumnInfo(name = "id_trakt") val idTrakt: Long,
+  @ColumnInfo(name = "media_id") val mediaId: String,
   @ColumnInfo(name = "type") val type: String,
   @ColumnInfo(name = "rating") val rating: Int,
   @ColumnInfo(name = "season_number") val seasonNumber: Int?,

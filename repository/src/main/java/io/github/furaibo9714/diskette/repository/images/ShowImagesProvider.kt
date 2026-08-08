@@ -8,7 +8,7 @@ import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbImages
 import io.github.furaibo9714.diskette.repository.TranslationsRepository
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.IdTvdb
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageFamily.SHOW
@@ -34,7 +34,7 @@ class ShowImagesProvider @Inject constructor(
   private var translationsRepository: TranslationsRepository,
 ) {
 
-  private val unavailableCache = mutableSetOf<IdTrakt>()
+  private val unavailableCache = mutableSetOf<MediaId>()
 
   suspend fun findCachedImage(
     show: Show,
@@ -44,7 +44,7 @@ class ShowImagesProvider @Inject constructor(
       val image = localSource.showImages.getByShowId(show.ids.tmdb.id, type.key)
       when (image) {
         null -> {
-          if (unavailableCache.contains(show.ids.trakt)) {
+          if (unavailableCache.contains(show.ids.media)) {
             Image.createUnavailable(type, SHOW)
           } else {
             Image.createUnknown(type, SHOW)
@@ -86,7 +86,7 @@ class ShowImagesProvider @Inject constructor(
 
       // If requested fanart is unavailable try backing up to an episode image
       if (typeImages.isEmpty() && type in arrayOf(FANART, FANART_WIDE)) {
-        val seasons = remoteSource.media.fetchSeasons(show.traktId)
+        val seasons = remoteSource.media.fetchSeasons(tmdbId.id)
         if (seasons.isNotEmpty()) {
           val episode = seasons[0].episodes?.firstOrNull()
           episode?.let { ep ->
@@ -108,7 +108,7 @@ class ShowImagesProvider @Inject constructor(
 
       when (image.status) {
         UNAVAILABLE -> {
-          unavailableCache.add(show.ids.trakt)
+          unavailableCache.add(show.ids.media)
           localSource.showImages.deleteByShowId(tmdbId.id, image.type.key)
         }
         else -> {

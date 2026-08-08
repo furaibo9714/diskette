@@ -228,7 +228,7 @@ class FollowedShowsFragment :
     hideNavigation()
     binding.followedShowsRoot
       .fadeOut(150) {
-        val bundle = Bundle().apply { putLong(ARG_SHOW_ID, show.traktId) }
+        val bundle = Bundle().apply { putLong(ARG_SHOW_ID, show.mediaId) }
         navigateToSafe(R.id.actionFollowedShowsFragmentToShowDetailsFragment, bundle)
         exitSearch()
       }.add(animations)
@@ -241,7 +241,7 @@ class FollowedShowsFragment :
       }
       clearFragmentResultListener(REQUEST_ITEM_MENU)
     }
-    val bundle = ContextMenuBottomSheet.createBundle(show.ids.trakt)
+    val bundle = ContextMenuBottomSheet.createBundle(show.ids.media)
     navigateToSafe(R.id.actionFollowedShowsFragmentToItemMenu, bundle)
   }
 

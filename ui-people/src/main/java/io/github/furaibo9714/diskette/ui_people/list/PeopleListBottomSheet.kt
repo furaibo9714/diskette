@@ -19,7 +19,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireSerial
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireString
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.screenHeight
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Person
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs.ARG_DEPARTMENT
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs.ARG_ID
@@ -38,7 +38,7 @@ class PeopleListBottomSheet : BaseBottomSheetFragment(R.layout.view_people_list)
 
   companion object {
     fun createBundle(
-      mediaIdTrakt: IdTrakt,
+      mediaIdTrakt: MediaId,
       mediaTitle: String,
       mode: Mode,
       department: Person.Department,
@@ -53,7 +53,7 @@ class PeopleListBottomSheet : BaseBottomSheetFragment(R.layout.view_people_list)
   private val viewModel by viewModels<PeopleListViewModel>()
   private val binding by viewBinding(ViewPeopleListBinding::bind)
 
-  private val mediaIdTrakt by lazy { IdTrakt(requireLong(ARG_ID)) }
+  private val mediaIdTrakt by lazy { MediaId.parse(requireLong(ARG_ID)) }
   private val mediaTitle by lazy { requireString(ARG_TITLE) }
   private val mode by lazy { Mode.fromType(requireString(ARG_TYPE)) }
   private val department by lazy { requireSerializable<Person.Department>(ARG_DEPARTMENT) }

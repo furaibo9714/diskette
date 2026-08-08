@@ -6,7 +6,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STO
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.findReplace
 import io.github.furaibo9714.diskette.ui_lists.manage.cases.ManageListsCase
 import io.github.furaibo9714.diskette.ui_lists.manage.recycler.ManageListsItem
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +25,7 @@ class ManageListsViewModel @Inject constructor(
   private val itemsState = MutableStateFlow<List<ManageListsItem>?>(null)
 
   fun loadLists(
-    itemId: IdTrakt,
+    itemId: MediaId,
     itemType: String,
   ) {
     viewModelScope.launch {
@@ -41,7 +41,7 @@ class ManageListsViewModel @Inject constructor(
   }
 
   fun onListItemChecked(
-    itemId: IdTrakt,
+    itemId: MediaId,
     itemType: String,
     listItem: ManageListsItem,
     isChecked: Boolean,

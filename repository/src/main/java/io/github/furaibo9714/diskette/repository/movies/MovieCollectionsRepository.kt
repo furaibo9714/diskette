@@ -12,7 +12,7 @@ import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
 import io.github.furaibo9714.diskette.repository.mappers.CollectionMapper
 import io.github.furaibo9714.diskette.repository.mappers.MovieMapper
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.MovieCollection
 import java.time.ZonedDateTime
@@ -32,12 +32,12 @@ class MovieCollectionsRepository @Inject constructor(
   private val transactions: TransactionsProvider,
 ) {
 
-  suspend fun loadCollection(collectionId: IdTrakt) =
+  suspend fun loadCollection(collectionId: MediaId) =
     withContext(dispatchers.IO) {
       movieCollectionsLocalSource.getById(collectionId.id)
     }
 
-  suspend fun loadCollections(movieId: IdTrakt): Pair<List<MovieCollection>, Source> =
+  suspend fun loadCollections(movieId: MediaId): Pair<List<MovieCollection>, Source> =
     withContext(dispatchers.IO) {
       val now = nowUtc()
       val localCollections = movieCollectionsLocalSource.getByMovieId(movieId.id)
@@ -63,7 +63,7 @@ class MovieCollectionsRepository @Inject constructor(
       )
     }
 
-  suspend fun loadCollectionItems(collectionId: IdTrakt): List<Movie> =
+  suspend fun loadCollectionItems(collectionId: MediaId): List<Movie> =
     withContext(dispatchers.IO) {
       val now = nowUtc()
       val localItems = movieCollectionsItemsLocalSource.getById(collectionId.id)
@@ -82,8 +82,8 @@ class MovieCollectionsRepository @Inject constructor(
         val entities = items.mapIndexed { index, movie ->
           MovieCollectionItem(
             rank = index,
-            idTrakt = movie.traktId,
-            idTraktCollection = collectionId.id,
+            mediaId = movie.mediaId.key,
+            collectionMediaId = collectionId.id,
             createdAt = now,
             updatedAt = now,
           )
@@ -95,8 +95,8 @@ class MovieCollectionsRepository @Inject constructor(
         val collection = movieCollectionsLocalSource.getById(collectionId.id)
         collection?.let { coll ->
           val insertEntities = entities
-            .filter { it.idTrakt != coll.idTraktMovie }
-            .map { coll.copy(id = 0, idTraktMovie = it.idTrakt) }
+            .filter { it.mediaId != coll.movieMediaId }
+            .map { coll.copy(id = 0, movieMediaId = it.mediaId) }
           movieCollectionsLocalSource.insertAll(insertEntities)
         }
       }
@@ -106,7 +106,7 @@ class MovieCollectionsRepository @Inject constructor(
 
   private suspend fun updateLocalCollections(
     collections: List<MovieCollection>,
-    movieId: IdTrakt,
+    movieId: MediaId,
     now: ZonedDateTime,
   ) {
     var entities = collections.map {

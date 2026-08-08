@@ -8,7 +8,7 @@ import io.github.furaibo9714.diskette.data_remote.floppy.model.FloppyMediaItemRe
 import io.github.furaibo9714.diskette.data_remote.tmdb.TmdbSyntheticIds
 import io.github.furaibo9714.diskette.repository.floppy.FloppyConnectionManager
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppyManualSyntheticIds
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +16,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.Movie as MovieDb
 import io.github.furaibo9714.diskette.data_local.database.model.Show as ShowDb
 
 /**
- * Resolves a Floppy media item reference to a local [IdTrakt], for both TMDB-backed items and
+ * Resolves a Floppy media item reference to a local [MediaId], for both TMDB-backed items and
  * Floppy "manual" items (no external provider id), without ever calling TMDB directly - Floppy
  * is the sole metadata source for this fork. TMDB-backed rows are enriched via Floppy's own
  * media-detail endpoint ([FloppyService.getMediaDetail][io.github.furaibo9714.diskette.data_remote.floppy.api.FloppyService.getMediaDetail]),
@@ -38,56 +38,56 @@ class FloppyManualMediaResolver @Inject constructor(
   private val connectionManager: FloppyConnectionManager,
 ) {
 
-  suspend fun resolveShowId(item: FloppyMediaItemRef): IdTrakt? {
+  suspend fun resolveShowId(item: FloppyMediaItemRef): MediaId? {
     val tmdbId = item.mediaId.toLongOrNull()
     if (tmdbId != null) {
       val localShow = localSource.shows.getByTmdbId(tmdbId)
-      if (localShow != null) return IdTrakt(localShow.idTrakt)
+      if (localShow != null) return MediaId.parse(localShow.mediaId)
 
       val detail = fetchDetail(MEDIA_TYPE_TV, item)
       val title = detail?.title?.takeIf { it.isNotBlank() }
         ?: item.title?.takeIf { it.isNotBlank() }
         ?: return null
 
-      val traktId = TmdbSyntheticIds.toSyntheticTraktId(tmdbId)
-      if (localSource.shows.getById(traktId) == null) {
-        localSource.shows.upsert(listOf(buildTmdbShow(traktId, tmdbId, title, detail)))
+      val mediaId = TmdbSyntheticIds.toSyntheticTraktId(tmdbId)
+      if (localSource.shows.getById(mediaId) == null) {
+        localSource.shows.upsert(listOf(buildTmdbShow(mediaId, tmdbId, title, detail)))
       }
-      return IdTrakt(traktId)
+      return MediaId.parse(mediaId)
     }
     if (item.source != SOURCE_MANUAL) return null
     val title = item.title?.takeIf { it.isNotBlank() } ?: return null
-    val traktId = FloppyManualSyntheticIds.toSyntheticTraktId(item.mediaId)
-    if (localSource.shows.getById(traktId) == null) {
-      localSource.shows.upsert(listOf(buildManualShow(traktId, item.mediaId, title)))
+    val mediaId = FloppyManualSyntheticIds.toSyntheticTraktId(item.mediaId)
+    if (localSource.shows.getById(mediaId) == null) {
+      localSource.shows.upsert(listOf(buildManualShow(mediaId, item.mediaId, title)))
     }
-    return IdTrakt(traktId)
+    return MediaId.parse(mediaId)
   }
 
-  suspend fun resolveMovieId(item: FloppyMediaItemRef): IdTrakt? {
+  suspend fun resolveMovieId(item: FloppyMediaItemRef): MediaId? {
     val tmdbId = item.mediaId.toLongOrNull()
     if (tmdbId != null) {
       val localMovie = localSource.movies.getByTmdbId(tmdbId)
-      if (localMovie != null) return IdTrakt(localMovie.idTrakt)
+      if (localMovie != null) return MediaId.parse(localMovie.mediaId)
 
       val detail = fetchDetail(MEDIA_TYPE_MOVIE, item)
       val title = detail?.title?.takeIf { it.isNotBlank() }
         ?: item.title?.takeIf { it.isNotBlank() }
         ?: return null
 
-      val traktId = TmdbSyntheticIds.toSyntheticTraktId(tmdbId)
-      if (localSource.movies.getById(traktId) == null) {
-        localSource.movies.upsert(listOf(buildTmdbMovie(traktId, tmdbId, title, detail)))
+      val mediaId = TmdbSyntheticIds.toSyntheticTraktId(tmdbId)
+      if (localSource.movies.getById(mediaId) == null) {
+        localSource.movies.upsert(listOf(buildTmdbMovie(mediaId, tmdbId, title, detail)))
       }
-      return IdTrakt(traktId)
+      return MediaId.parse(mediaId)
     }
     if (item.source != SOURCE_MANUAL) return null
     val title = item.title?.takeIf { it.isNotBlank() } ?: return null
-    val traktId = FloppyManualSyntheticIds.toSyntheticTraktId(item.mediaId)
-    if (localSource.movies.getById(traktId) == null) {
-      localSource.movies.upsert(listOf(buildManualMovie(traktId, item.mediaId, title)))
+    val mediaId = FloppyManualSyntheticIds.toSyntheticTraktId(item.mediaId)
+    if (localSource.movies.getById(mediaId) == null) {
+      localSource.movies.upsert(listOf(buildManualMovie(mediaId, item.mediaId, title)))
     }
-    return IdTrakt(traktId)
+    return MediaId.parse(mediaId)
   }
 
   private suspend fun fetchDetail(
@@ -104,12 +104,12 @@ class FloppyManualMediaResolver @Inject constructor(
   }
 
   private fun buildTmdbShow(
-    traktId: Long,
+    mediaId: Long,
     tmdbId: Long,
     title: String,
     detail: FloppyMediaDetail?,
   ) = ShowDb(
-    idTrakt = traktId,
+    mediaId = mediaId,
     idTvdb = -1,
     idTmdb = tmdbId,
     idImdb = "",
@@ -140,12 +140,12 @@ class FloppyManualMediaResolver @Inject constructor(
   )
 
   private fun buildTmdbMovie(
-    traktId: Long,
+    mediaId: Long,
     tmdbId: Long,
     title: String,
     detail: FloppyMediaDetail?,
   ) = MovieDb(
-    idTrakt = traktId,
+    mediaId = mediaId,
     idTmdb = tmdbId,
     idImdb = "",
     idSlug = "",
@@ -170,11 +170,11 @@ class FloppyManualMediaResolver @Inject constructor(
   private fun parseYear(date: String?): Int = date?.take(4)?.toIntOrNull() ?: -1
 
   private fun buildManualShow(
-    traktId: Long,
+    mediaId: Long,
     floppyMediaId: String,
     title: String,
   ) = ShowDb(
-    idTrakt = traktId,
+    mediaId = mediaId,
     idTvdb = -1,
     idTmdb = -1,
     idImdb = "",
@@ -205,11 +205,11 @@ class FloppyManualMediaResolver @Inject constructor(
   )
 
   private fun buildManualMovie(
-    traktId: Long,
+    mediaId: Long,
     floppyMediaId: String,
     title: String,
   ) = MovieDb(
-    idTrakt = traktId,
+    mediaId = mediaId,
     idTmdb = -1,
     idImdb = "",
     idSlug = FloppyManualSyntheticIds.toSlugValue(floppyMediaId),

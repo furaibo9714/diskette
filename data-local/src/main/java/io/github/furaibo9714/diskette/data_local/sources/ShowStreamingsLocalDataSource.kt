@@ -5,13 +5,13 @@ import io.github.furaibo9714.diskette.data_local.database.model.ShowStreaming
 interface ShowStreamingsLocalDataSource {
 
   suspend fun replace(
-    traktId: Long,
+    mediaId: String,
     entities: List<ShowStreaming>,
   )
 
-  suspend fun getById(traktId: Long): List<ShowStreaming>
+  suspend fun getById(mediaId: String): List<ShowStreaming>
 
-  suspend fun deleteById(traktId: Long)
+  suspend fun deleteById(mediaId: String)
 
   suspend fun deleteAll()
 }

@@ -26,7 +26,7 @@ sealed class MovieDetailsCollectionItem {
     val spoilers: SpoilersSettings,
     val isLoading: Boolean,
   ) : MovieDetailsCollectionItem() {
-    override val id get() = "${movie.traktId}"
+    override val id get() = "${movie.mediaId}"
   }
 
   object LoadingItem : MovieDetailsCollectionItem()

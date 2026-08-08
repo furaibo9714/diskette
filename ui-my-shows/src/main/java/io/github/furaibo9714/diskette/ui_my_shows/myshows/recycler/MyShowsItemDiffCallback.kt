@@ -11,7 +11,7 @@ class MyShowsItemDiffCallback : DiffUtil.ItemCallback<MyShowsItem>() {
     newItem: MyShowsItem,
   ) = when (oldItem.type) {
     RECENT_SHOWS -> true
-    else -> oldItem.type == newItem.type && oldItem.show.ids.trakt == newItem.show.ids.trakt
+    else -> oldItem.type == newItem.type && oldItem.show.ids.media == newItem.show.ids.media
   }
 
   override fun areContentsTheSame(

@@ -14,7 +14,7 @@ interface EpisodeTranslationsDao :
 
   @Query(
     "SELECT * FROM episodes_translations " +
-      "WHERE id_trakt == :traktEpisodeId AND id_trakt_show == :traktShowId AND language == :language",
+      "WHERE media_id == :traktEpisodeId AND show_media_id == :traktShowId AND language == :language",
   )
   override suspend fun getById(
     traktEpisodeId: Long,
@@ -24,7 +24,7 @@ interface EpisodeTranslationsDao :
 
   @Query(
     "SELECT * FROM episodes_translations " +
-      "WHERE id_trakt IN (:traktEpisodeIds) AND id_trakt_show == :traktShowId AND language == :language",
+      "WHERE media_id IN (:traktEpisodeIds) AND show_media_id == :traktShowId AND language == :language",
   )
   override suspend fun getByIds(
     traktEpisodeIds: List<Long>,

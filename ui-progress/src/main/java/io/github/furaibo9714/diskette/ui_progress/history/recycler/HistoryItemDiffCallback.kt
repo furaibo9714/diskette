@@ -29,7 +29,7 @@ internal class HistoryItemDiffCallback : DiffUtil.ItemCallback<HistoryListItem>(
   private fun areItemsTheSame(
     oldItem: HistoryListItem.Episode,
     newItem: HistoryListItem.Episode,
-  ): Boolean = oldItem.episode.ids.trakt == newItem.episode.ids.trakt
+  ): Boolean = oldItem.episode.ids.media == newItem.episode.ids.media
 
   private fun areItemsTheSame(
     oldItem: HistoryListItem.Header,

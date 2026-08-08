@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.ListsRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
 import io.github.furaibo9714.diskette.ui_lists.manage.recycler.ManageListsItem
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -19,7 +19,7 @@ class ManageListsCase @Inject constructor(
 ) {
 
   suspend fun loadLists(
-    itemId: IdTrakt,
+    itemId: MediaId,
     itemType: String,
   ) = withContext(dispatchers.IO) {
     val listsAsync = async { listsRepository.loadAll() }
@@ -34,7 +34,7 @@ class ManageListsCase @Inject constructor(
   }
 
   suspend fun addToList(
-    itemId: IdTrakt,
+    itemId: MediaId,
     itemType: String,
     listItem: ManageListsItem,
   ) = withContext(dispatchers.IO) {
@@ -43,7 +43,7 @@ class ManageListsCase @Inject constructor(
   }
 
   suspend fun removeFromList(
-    itemId: IdTrakt,
+    itemId: MediaId,
     itemType: String,
     listItem: ManageListsItem,
   ) = withContext(dispatchers.IO) {

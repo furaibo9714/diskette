@@ -11,7 +11,7 @@ import io.github.furaibo9714.diskette.repository.shows.MyShowsRepository
 import io.github.furaibo9714.diskette.ui_base.events.EventsManager
 import io.github.furaibo9714.diskette.ui_base.events.FloppySyncProgress
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppyEpisodeSyntheticIds
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -135,13 +135,13 @@ class FloppyImportWatchedRunner @Inject constructor(
     seasonNumber: Int,
     episodeNumber: Int,
   ): EpisodeDb {
-    val seasonId = FloppyEpisodeSyntheticIds.toSeasonTraktId(show.idTrakt, seasonNumber)
+    val seasonId = FloppyEpisodeSyntheticIds.toSeasonTraktId(show.mediaId, seasonNumber)
     if (localSource.seasons.getById(seasonId) == null) {
-      localSource.seasons.upsert(listOf(buildThinSeason(seasonId, show.idTrakt, seasonNumber)))
+      localSource.seasons.upsert(listOf(buildThinSeason(seasonId, show.mediaId, seasonNumber)))
     }
 
-    val episodeId = FloppyEpisodeSyntheticIds.toEpisodeTraktId(show.idTrakt, seasonNumber, episodeNumber)
-    localSource.episodes.getById(show.idTrakt, episodeId)?.let { return it }
+    val episodeId = FloppyEpisodeSyntheticIds.toEpisodeTraktId(show.mediaId, seasonNumber, episodeNumber)
+    localSource.episodes.getById(show.mediaId, episodeId)?.let { return it }
 
     val thinEpisode = buildThinEpisode(episodeId, seasonId, show, seasonNumber, episodeNumber)
     localSource.episodes.upsert(listOf(thinEpisode))
@@ -155,9 +155,9 @@ class FloppyImportWatchedRunner @Inject constructor(
     val date = nowUtc()
     localSource.episodes.upsert(listOf(episode.copy(isWatched = true, lastWatchedAt = date)))
 
-    val showId = IdTrakt(show.idTrakt)
+    val showId = MediaId.parse(show.mediaId)
     if (myShowsRepository.exists(showId)) {
-      myShowsRepository.updateWatchedAt(show.idTrakt, date.toMillis())
+      myShowsRepository.updateWatchedAt(show.mediaId, date.toMillis())
     } else {
       myShowsRepository.insert(showId, date.toMillis())
     }
@@ -168,8 +168,8 @@ class FloppyImportWatchedRunner @Inject constructor(
     showTraktId: Long,
     seasonNumber: Int,
   ) = SeasonDb(
-    idTrakt = seasonId,
-    idShowTrakt = showTraktId,
+    mediaId = seasonId,
+    showMediaId = showTraktId,
     seasonNumber = seasonNumber,
     seasonTitle = "",
     seasonOverview = "",
@@ -187,9 +187,9 @@ class FloppyImportWatchedRunner @Inject constructor(
     seasonNumber: Int,
     episodeNumber: Int,
   ) = EpisodeDb(
-    idTrakt = episodeId,
+    mediaId = episodeId,
     idSeason = seasonId,
-    idShowTrakt = show.idTrakt,
+    showMediaId = show.mediaId,
     idShowTvdb = show.idTvdb,
     idShowImdb = show.idImdb,
     idShowTmdb = show.idTmdb,

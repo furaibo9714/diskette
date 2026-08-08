@@ -22,15 +22,15 @@ class SearchInvalidateItemCase @Inject constructor(
       when {
         item.isShow -> {
           val (isMy, isWatchlist) = awaitAll(
-            async { showsRepository.myShows.exists(item.show.ids.trakt) },
-            async { showsRepository.watchlistShows.exists(item.show.ids.trakt) },
+            async { showsRepository.myShows.exists(item.show.ids.media) },
+            async { showsRepository.watchlistShows.exists(item.show.ids.media) },
           )
           Pair(isMy, isWatchlist)
         }
         item.isMovie -> {
           val (isMy, isWatchlist) = awaitAll(
-            async { moviesRepository.myMovies.exists(item.movie.ids.trakt) },
-            async { moviesRepository.watchlistMovies.exists(item.movie.ids.trakt) },
+            async { moviesRepository.myMovies.exists(item.movie.ids.media) },
+            async { moviesRepository.watchlistMovies.exists(item.movie.ids.media) },
           )
           Pair(isMy, isWatchlist)
         }

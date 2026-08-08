@@ -9,7 +9,7 @@ import io.github.furaibo9714.diskette.repository.EpisodesManager
 import io.github.furaibo9714.diskette.ui_base.Logger
 import io.github.furaibo9714.diskette.ui_base.common.WidgetsProvider
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ class ProgressWidgetEpisodeCheckService :
       context: Context,
       episodeId: Long,
       seasonId: Long,
-      showId: IdTrakt,
+      showId: MediaId,
     ) {
       val intent = Intent().apply {
         putExtra(EXTRA_EPISODE_ID, episodeId)
@@ -67,10 +67,10 @@ class ProgressWidgetEpisodeCheckService :
     }
 
     runBlocking {
-      episodesManager.setEpisodeWatched(episodeId, seasonId, IdTrakt(showId), null)
+      episodesManager.setEpisodeWatched(episodeId, seasonId, MediaId.parse(showId), null)
       val episode = localSource.episodes.getById(showId, episodeId)
       if (episode != null) {
-        floppySyncManager.scheduleEpisodeWatched(IdTrakt(showId), episode.seasonNumber, episode.episodeNumber, Operation.ADD)
+        floppySyncManager.scheduleEpisodeWatched(MediaId.parse(showId), episode.seasonNumber, episode.episodeNumber, Operation.ADD)
       }
       (applicationContext as WidgetsProvider).requestShowsWidgetsUpdate()
     }

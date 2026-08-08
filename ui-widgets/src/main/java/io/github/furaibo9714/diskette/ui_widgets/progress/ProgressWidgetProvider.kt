@@ -20,7 +20,7 @@ import android.widget.RemoteViews
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import io.github.furaibo9714.diskette.common.Config.HOST_ACTIVITY_NAME
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.dimenToPx
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_widgets.BaseWidgetProvider
 import io.github.furaibo9714.diskette.ui_widgets.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -126,7 +126,7 @@ class ProgressWidgetProvider : BaseWidgetProvider() {
             context.applicationContext,
             episodeId,
             seasonId,
-            IdTrakt(showId),
+            MediaId.parse(showId),
           )
         }
         intent.extras?.containsKey(EXTRA_SHOW_ID) == true -> {

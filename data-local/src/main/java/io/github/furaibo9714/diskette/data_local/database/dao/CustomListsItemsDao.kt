@@ -18,16 +18,16 @@ interface CustomListsItemsDao : CustomListsItemsLocalDataSource {
   @Update(onConflict = OnConflictStrategy.REPLACE)
   override suspend fun update(items: List<CustomListItem>)
 
-  @Query("SELECT id_list FROM custom_list_item WHERE id_trakt = :idTrakt AND type = :type")
+  @Query("SELECT id_list FROM custom_list_item WHERE media_id = :mediaId AND type = :type")
   override suspend fun getListsForItem(
-    idTrakt: Long,
+    mediaId: String,
     type: String,
   ): List<Long>
 
-  @Query("SELECT * FROM custom_list_item WHERE id_list = :idList AND id_trakt = :idTrakt AND type = :type")
+  @Query("SELECT * FROM custom_list_item WHERE id_list = :idList AND media_id = :mediaId AND type = :type")
   override suspend fun getByIdTrakt(
     idList: Long,
-    idTrakt: Long,
+    mediaId: String,
     type: String,
   ): CustomListItem?
 
@@ -45,17 +45,17 @@ interface CustomListsItemsDao : CustomListsItemsLocalDataSource {
 
   @Transaction
   override suspend fun insertItem(item: CustomListItem) {
-    val localItem = getByIdTrakt(item.idList, item.idTrakt, item.type)
+    val localItem = getByIdTrakt(item.idList, item.mediaId, item.type)
     if (localItem != null) return
     val rank = getRankForList(item.idList) ?: 0L
     val rankedItem = item.copy(rank = rank + 1L)
     insert(listOf(rankedItem))
   }
 
-  @Query("DELETE FROM custom_list_item WHERE id_list = :idList AND id_trakt == :idTrakt AND type = :type")
+  @Query("DELETE FROM custom_list_item WHERE id_list = :idList AND media_id == :mediaId AND type = :type")
   override suspend fun deleteItem(
     idList: Long,
-    idTrakt: Long,
+    mediaId: String,
     type: String,
   )
 }

@@ -102,12 +102,12 @@ class ListsViewModel @Inject constructor(
 
         val updateItemImage = itemImage.copy(image = image)
         val updateImages = item.images.toMutableList()
-        updateImages.findReplace(updateItemImage) { it.getIds()?.trakt == updateItemImage.getIds()?.trakt }
+        updateImages.findReplace(updateItemImage) { it.getIds()?.media == updateItemImage.getIds()?.media }
         updateItem(item.copy(images = updateImages))
       } catch (t: Throwable) {
         val updateItemImage = itemImage.copy(image = Image.createUnavailable(itemImage.image.type))
         val updateImages = item.images.toMutableList()
-        updateImages.findReplace(updateItemImage) { it.getIds()?.trakt == updateItemImage.getIds()?.trakt }
+        updateImages.findReplace(updateItemImage) { it.getIds()?.media == updateItemImage.getIds()?.media }
         updateItem(item.copy(images = updateImages))
       }
     }

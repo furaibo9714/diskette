@@ -3,7 +3,7 @@ package io.github.furaibo9714.diskette.ui_show.cases
 import io.github.furaibo9714.diskette.common.Mode
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.ListsRepository
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.withContext
@@ -17,6 +17,6 @@ class ShowDetailsListsCase @Inject constructor(
 
   suspend fun getListsCount(show: Show) =
     withContext(dispatchers.IO) {
-      listsRepository.loadListIdsForItem(IdTrakt(show.traktId), Mode.SHOWS.type).size
+      listsRepository.loadListIdsForItem(MediaId.parse(show.mediaId), Mode.SHOWS.type).size
     }
 }

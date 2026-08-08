@@ -29,14 +29,14 @@ class ShowDetailsQuickProgressCase @Inject constructor(
     show: Show,
     customDate: ZonedDateTime?,
   ) = coroutineScope {
-    val isMyShows = async { showsRepository.myShows.exists(show.ids.trakt) }
-    val isWatchlist = async { showsRepository.watchlistShows.exists(show.ids.trakt) }
-    val isHidden = async { showsRepository.hiddenShows.exists(show.ids.trakt) }
+    val isMyShows = async { showsRepository.myShows.exists(show.ids.media) }
+    val isWatchlist = async { showsRepository.watchlistShows.exists(show.ids.media) }
+    val isHidden = async { showsRepository.hiddenShows.exists(show.ids.media) }
 
     val isCollection = isMyShows.await() || isWatchlist.await() || isHidden.await()
     val episodesAdded = mutableListOf<Episode>()
 
-    episodesManager.setAllUnwatched(show.ids.trakt, skipSpecials = true)
+    episodesManager.setAllUnwatched(show.ids.media, skipSpecials = true)
     val seasons = seasonsItems.map { it.season }
     seasons
       .filter { !it.isSpecial() && it.number < selectedItem.season.number }

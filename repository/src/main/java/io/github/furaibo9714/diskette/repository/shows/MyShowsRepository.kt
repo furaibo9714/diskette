@@ -7,7 +7,7 @@ import io.github.furaibo9714.diskette.data_local.sources.MyShowsLocalDataSource
 import io.github.furaibo9714.diskette.data_local.sources.WatchlistShowsLocalDataSource
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class MyShowsRepository @Inject constructor(
   private val cache: ShowsCollectionCache,
 ) {
 
-  suspend fun load(id: IdTrakt) =
+  suspend fun load(id: MediaId) =
     myShowsLocalSource.getById(id.id)?.let {
       mappers.show.fromDatabase(it)
     }
@@ -34,7 +34,7 @@ class MyShowsRepository @Inject constructor(
     return shows
   }
 
-  suspend fun loadAll(ids: List<IdTrakt>) =
+  suspend fun loadAll(ids: List<MediaId>) =
     myShowsLocalSource
       .getAll(ids.map { it.id })
       .map { mappers.show.fromDatabase(it) }
@@ -44,15 +44,15 @@ class MyShowsRepository @Inject constructor(
       .getAllRecent(amount)
       .map { mappers.show.fromDatabase(it) }
 
-  suspend fun loadAllIds() = myShowsLocalSource.getAllTraktIds()
+  suspend fun loadAllIds() = myShowsLocalSource.getAllMediaIds()
 
   suspend fun insert(
-    id: IdTrakt,
+    id: MediaId,
     lastWatchedAt: Long,
   ) {
     val nowUtc = nowUtcMillis()
-    val dbShow = MyShow.fromTraktId(
-      traktId = id.id,
+    val dbShow = MyShow.fromMediaId(
+      mediaId = id.id,
       createdAt = nowUtc,
       updatedAt = nowUtc,
       watchedAt = lastWatchedAt,
@@ -65,18 +65,18 @@ class MyShowsRepository @Inject constructor(
     cache.invalidate()
   }
 
-  suspend fun delete(id: IdTrakt) {
+  suspend fun delete(id: MediaId) {
     myShowsLocalSource.deleteById(id.id)
     cache.invalidate()
   }
 
-  suspend fun exists(id: IdTrakt) = myShowsLocalSource.checkExists(id.id)
+  suspend fun exists(id: MediaId) = myShowsLocalSource.checkExists(id.id)
 
   suspend fun updateWatchedAt(
-    idTrakt: Long,
+    mediaId: Long,
     watchedAt: Long,
   ) {
-    myShowsLocalSource.updateWatchedAt(idTrakt, watchedAt)
+    myShowsLocalSource.updateWatchedAt(mediaId, watchedAt)
     cache.invalidate()
   }
 }

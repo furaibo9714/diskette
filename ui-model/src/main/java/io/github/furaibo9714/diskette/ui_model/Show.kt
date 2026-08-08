@@ -24,7 +24,7 @@ data class Show(
   val runtimeMax: Int = -1,
 ) {
 
-  val traktId = ids.trakt.id
+  val mediaId = ids.media
 
   /** Only true when episode lengths genuinely vary (e.g. TMDB's per-show runtime was missing). */
   val hasRuntimeRange = runtimeMax > 0 && runtimeMax != runtime
@@ -36,12 +36,11 @@ data class Show(
   companion object {
     val EMPTY = Show(
       ids = Ids(
-        trakt = IdTrakt(id = 0),
+        media = MediaId.EMPTY,
         slug = IdSlug(id = ""),
         tvdb = IdTvdb(id = 0),
         imdb = IdImdb(id = ""),
         tmdb = IdTmdb(id = 0),
-        tvrage = IdTvRage(id = 0),
       ),
       title = "",
       year = 0,

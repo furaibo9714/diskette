@@ -11,7 +11,6 @@ import io.github.furaibo9714.diskette.data_remote.media.model.Show
 import io.github.furaibo9714.diskette.data_remote.media.model.Translation
 import io.github.furaibo9714.diskette.data_remote.tmdb.TmdbGenreSlugs
 import io.github.furaibo9714.diskette.data_remote.tmdb.TmdbModelConverter
-import io.github.furaibo9714.diskette.data_remote.tmdb.TmdbSyntheticIds
 import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbMoviesService
 import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbSearchService
 import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbService
@@ -55,12 +54,10 @@ internal class TmdbMediaRemoteDataSource(
   }
 
   override suspend fun fetchShow(
-    mediaId: Long,
-    tmdbId: Long?,
+    tmdbId: Long,
   ): Show {
-    val resolvedTmdbId = requireTmdbId(mediaId, tmdbId)
-    val details = tmdbShows.fetchShowDetails(resolvedTmdbId)
-    val show = TmdbModelConverter.toShow(resolvedTmdbId, details)
+    val details = tmdbShows.fetchShowDetails(tmdbId)
+    val show = TmdbModelConverter.toShow(tmdbId, details)
     if (!details.episode_run_time.isNullOrEmpty()) return show
 
     /**
@@ -74,7 +71,7 @@ internal class TmdbMediaRemoteDataSource(
       .filter { it != SPECIALS_SEASON }
     val episodeRuntimes = coroutineScope {
       seasonNumbers
-        .map { seasonNumber -> async { tmdbShows.fetchSeasonDetails(resolvedTmdbId, seasonNumber) } }
+        .map { seasonNumber -> async { tmdbShows.fetchSeasonDetails(tmdbId, seasonNumber) } }
         .awaitAll()
         .flatMap { it.episodes.orEmpty() }
         .mapNotNull { it.runtime }
@@ -86,44 +83,36 @@ internal class TmdbMediaRemoteDataSource(
   }
 
   override suspend fun fetchMovie(
-    mediaId: Long,
-    tmdbId: Long?,
+    tmdbId: Long,
   ): Movie {
-    val resolvedTmdbId = requireTmdbId(mediaId, tmdbId)
-    val details = tmdbMovies.fetchMovieDetails(resolvedTmdbId)
-    return TmdbModelConverter.toMovie(resolvedTmdbId, details)
+    val details = tmdbMovies.fetchMovieDetails(tmdbId)
+    return TmdbModelConverter.toMovie(tmdbId, details)
   }
 
   override suspend fun fetchShowTranslations(
-    mediaId: Long,
+    tmdbId: Long,
     code: String,
-    tmdbId: Long?,
   ): List<Translation> {
-    val resolvedTmdbId = resolveTmdbId(mediaId, tmdbId) ?: return emptyList()
-    val response = tmdbShows.fetchShowTranslations(resolvedTmdbId)
+    val response = tmdbShows.fetchShowTranslations(tmdbId)
     return TmdbModelConverter.toShowTranslations(response).filter { it.language == code }
   }
 
   override suspend fun fetchMovieTranslations(
-    mediaId: Long,
+    tmdbId: Long,
     code: String,
-    tmdbId: Long?,
   ): List<Translation> {
-    val resolvedTmdbId = resolveTmdbId(mediaId, tmdbId) ?: return emptyList()
-    val response = tmdbMovies.fetchMovieTranslations(resolvedTmdbId)
+    val response = tmdbMovies.fetchMovieTranslations(tmdbId)
     return TmdbModelConverter.toMovieTranslations(response).filter { it.language == code }
   }
 
   override suspend fun fetchSeasons(
-    mediaId: Long,
-    tmdbId: Long?,
+    tmdbId: Long,
   ): List<Season> {
-    val resolvedTmdbId = resolveTmdbId(mediaId, tmdbId) ?: return emptyList()
-    val showDetails = tmdbShows.fetchShowDetails(resolvedTmdbId)
+    val showDetails = tmdbShows.fetchShowDetails(tmdbId)
     val seasonNumbers = showDetails.seasons.orEmpty().mapNotNull { it.season_number }
     return coroutineScope {
       seasonNumbers
-        .map { seasonNumber -> async { tmdbShows.fetchSeasonDetails(resolvedTmdbId, seasonNumber) } }
+        .map { seasonNumber -> async { tmdbShows.fetchSeasonDetails(tmdbId, seasonNumber) } }
         .awaitAll()
         .map { TmdbModelConverter.toSeason(it) }
         .sortedByDescending { it.number }
@@ -141,78 +130,66 @@ internal class TmdbMediaRemoteDataSource(
     return null
   }
 
-  override suspend fun fetchNextEpisode(mediaId: Long): Episode? {
-    val resolvedTmdbId = resolveTmdbId(mediaId, null) ?: return null
-    val details = tmdbShows.fetchShowDetails(resolvedTmdbId)
+  override suspend fun fetchNextEpisode(tmdbId: Long): Episode? {
+    val details = tmdbShows.fetchShowDetails(tmdbId)
     return details.next_episode_to_air?.let { TmdbModelConverter.toEpisode(it) }
   }
 
   /** TMDB returns a season's episodes already localised when the request carries a `language`. */
   override suspend fun fetchSeasonTranslations(
-    showMediaId: Long,
+    showTmdbId: Long,
     seasonNumber: Int,
     code: String,
   ): List<SeasonTranslation> {
-    val resolvedTmdbId = resolveTmdbId(showMediaId, null) ?: return emptyList()
-    val details = tmdbShows.fetchSeasonDetails(resolvedTmdbId, seasonNumber, language = code)
+    val details = tmdbShows.fetchSeasonDetails(showTmdbId, seasonNumber, language = code)
     return TmdbModelConverter.toSeasonTranslations(details, code)
   }
 
   /**
    * A TMDB movie belongs to at most one collection, so this returns either zero or one entry.
    */
-  override suspend fun fetchMovieCollections(mediaId: Long): List<MovieCollection> {
-    val resolvedTmdbId = resolveTmdbId(mediaId, null) ?: return emptyList()
-    val details = tmdbMovies.fetchMovieDetails(resolvedTmdbId)
+  override suspend fun fetchMovieCollections(tmdbId: Long): List<MovieCollection> {
+    val details = tmdbMovies.fetchMovieDetails(tmdbId)
     val collection = details.belongs_to_collection ?: return emptyList()
     return listOfNotNull(TmdbModelConverter.toMovieCollection(collection))
   }
 
   override suspend fun fetchMovieCollectionItems(collectionId: Long): List<Movie> {
-    val resolvedTmdbId = resolveTmdbId(collectionId, null) ?: return emptyList()
-    val details = tmdbMovies.fetchCollection(resolvedTmdbId)
+    val details = tmdbMovies.fetchCollection(collectionId)
     return details.parts.orEmpty().mapNotNull { part ->
       part.id?.let { TmdbModelConverter.toMovie(it, part) }
     }
   }
 
   override suspend fun fetchRelatedShows(
-    mediaId: Long,
+    tmdbId: Long,
     addToLimit: Int,
-    tmdbId: Long?,
   ): List<Show> {
-    val resolvedTmdbId = resolveTmdbId(mediaId, tmdbId) ?: return emptyList()
-    return fetchPages(RELATED_PAGES) { page -> tmdbShows.fetchSimilarShows(resolvedTmdbId, page) }
+    return fetchPages(RELATED_PAGES) { page -> tmdbShows.fetchSimilarShows(tmdbId, page) }
       .mapNotNull { TmdbModelConverter.toShowSummary(it) }
   }
 
   override suspend fun fetchRelatedMovies(
-    mediaId: Long,
+    tmdbId: Long,
     addToLimit: Int,
-    tmdbId: Long?,
   ): List<Movie> {
-    val resolvedTmdbId = resolveTmdbId(mediaId, tmdbId) ?: return emptyList()
-    return fetchPages(RELATED_PAGES) { page -> tmdbMovies.fetchSimilarMovies(resolvedTmdbId, page) }
+    return fetchPages(RELATED_PAGES) { page -> tmdbMovies.fetchSimilarMovies(tmdbId, page) }
       .mapNotNull { TmdbModelConverter.toMovieSummary(it) }
   }
 
   override suspend fun fetchPersonShowsCredits(
-    mediaId: Long,
+    tmdbId: Long,
     type: TmdbPerson.Type,
-    tmdbId: Long?,
   ): List<PersonCredit> {
-    val resolvedTmdbId = resolveTmdbId(mediaId, tmdbId) ?: return emptyList()
-    val response = tmdbPeople.fetchPersonTvCredits(resolvedTmdbId)
+    val response = tmdbPeople.fetchPersonTvCredits(tmdbId)
     return TmdbModelConverter.toPersonShowCredits(response, isCast = type == TmdbPerson.Type.CAST)
   }
 
   override suspend fun fetchPersonMoviesCredits(
-    mediaId: Long,
+    tmdbId: Long,
     type: TmdbPerson.Type,
-    tmdbId: Long?,
   ): List<PersonCredit> {
-    val resolvedTmdbId = resolveTmdbId(mediaId, tmdbId) ?: return emptyList()
-    val response = tmdbPeople.fetchPersonMovieCredits(resolvedTmdbId)
+    val response = tmdbPeople.fetchPersonMovieCredits(tmdbId)
     return TmdbModelConverter.toPersonMovieCredits(response, isCast = type == TmdbPerson.Type.CAST)
   }
 
@@ -305,25 +282,4 @@ internal class TmdbMediaRemoteDataSource(
       .awaitAll()
       .flatMap { it.results.orEmpty() }
   }
-
-  /**
-   * Media ids are synthetic (see [TmdbSyntheticIds]) and reverse trivially to the real TMDB id.
-   * Callers that already hold a TMDB id from a local row can pass it directly instead. A null
-   * result means the caller supplied neither, which leaves nothing to fetch.
-   */
-  private fun resolveTmdbId(
-    mediaId: Long,
-    tmdbId: Long?,
-  ): Long? {
-    if (tmdbId != null && tmdbId > 0) return tmdbId
-    if (TmdbSyntheticIds.isSynthetic(mediaId)) return TmdbSyntheticIds.toTmdbId(mediaId)
-    return null
-  }
-
-  private fun requireTmdbId(
-    mediaId: Long,
-    tmdbId: Long?,
-  ): Long =
-    resolveTmdbId(mediaId, tmdbId)
-      ?: error("No TMDB id available for id=$mediaId. Cannot fetch details.")
 }

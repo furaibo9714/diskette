@@ -69,12 +69,12 @@ class ProgressMoviesWidgetViewsFactory(
       setTextViewText(R.id.progressMoviesWidgetItemSubtitle2, description)
 
       val fillIntent = Intent().apply {
-        putExtras(bundleOf(EXTRA_MOVIE_ID to item.movie.traktId))
+        putExtras(bundleOf(EXTRA_MOVIE_ID to item.movie.mediaId))
       }
       setOnClickFillInIntent(R.id.progressMoviesWidgetItem, fillIntent)
 
       val checkFillIntent = Intent().apply {
-        putExtras(bundleOf(EXTRA_CHECK_MOVIE_ID to item.movie.traktId))
+        putExtras(bundleOf(EXTRA_CHECK_MOVIE_ID to item.movie.mediaId))
       }
       setOnClickFillInIntent(R.id.progressMoviesWidgetItemCheckButton, checkFillIntent)
     }
@@ -115,7 +115,7 @@ class ProgressMoviesWidgetViewsFactory(
     }
   }
 
-  override fun getItemId(position: Int) = adapterItems[position].movie.traktId
+  override fun getItemId(position: Int) = adapterItems[position].movie.mediaId
 
   override fun getLoadingView() = RemoteViews(context.packageName, R.layout.widget_loading_item)
 

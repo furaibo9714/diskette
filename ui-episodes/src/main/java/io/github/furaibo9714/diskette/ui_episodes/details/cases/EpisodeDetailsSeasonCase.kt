@@ -4,7 +4,7 @@ import io.github.furaibo9714.diskette.data_local.sources.EpisodesLocalDataSource
 import io.github.furaibo9714.diskette.data_local.sources.MyShowsLocalDataSource
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.Episode
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
@@ -16,7 +16,7 @@ class EpisodeDetailsSeasonCase @Inject constructor(
 ) {
 
   suspend fun loadSeason(
-    showId: IdTrakt,
+    showId: MediaId,
     episode: Episode,
     seasonEpisodes: IntArray?,
   ): List<Episode> {

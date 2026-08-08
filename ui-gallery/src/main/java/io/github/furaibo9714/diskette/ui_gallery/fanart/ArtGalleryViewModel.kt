@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import io.github.furaibo9714.diskette.ui_gallery.fanart.cases.ArtLoadImagesCase
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageFamily
@@ -30,7 +30,7 @@ class ArtGalleryViewModel @Inject constructor(
   private val loadingState = MutableStateFlow(false)
 
   fun loadImages(
-    id: IdTrakt,
+    id: MediaId,
     family: ImageFamily,
     type: ImageType,
   ) {

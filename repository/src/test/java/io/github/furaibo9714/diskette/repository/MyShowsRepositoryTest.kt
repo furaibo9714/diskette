@@ -8,7 +8,7 @@ import io.github.furaibo9714.diskette.data_local.sources.WatchlistShowsLocalData
 import io.github.furaibo9714.diskette.repository.common.BaseMockTest
 import io.github.furaibo9714.diskette.repository.shows.MyShowsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsCollectionCache
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import io.mockk.coEvery
 import io.mockk.coJustRun
@@ -62,7 +62,7 @@ class MyShowsRepositoryTest : BaseMockTest() {
       coEvery { myShowsLocalSource.getById(any()) } returns showDb
       coEvery { mappers.show.fromDatabase(any()) } returns show
 
-      val testShow = SUT.load(IdTrakt(1L))
+      val testShow = SUT.load(MediaId.parse(1L))
 
       assertThat(testShow?.title).isEqualTo(show.title)
       coVerify(exactly = 1) { myShowsLocalSource.getById(any()) }
@@ -86,12 +86,12 @@ class MyShowsRepositoryTest : BaseMockTest() {
   @Test
   fun `Should load all shows ids`() {
     runBlocking {
-      coEvery { myShowsLocalSource.getAllTraktIds() } returns listOf(1L, 2L)
+      coEvery { myShowsLocalSource.getAllMediaIds() } returns listOf(1L, 2L)
 
       val ids = SUT.loadAllIds()
 
       assertThat(ids).containsExactly(1L, 2L)
-      coVerify(exactly = 1) { myShowsLocalSource.getAllTraktIds() }
+      coVerify(exactly = 1) { myShowsLocalSource.getAllMediaIds() }
     }
   }
 
@@ -101,7 +101,7 @@ class MyShowsRepositoryTest : BaseMockTest() {
       coEvery { myShowsLocalSource.getAll(any()) } returns listOf(showDb, showDb)
       coEvery { mappers.show.fromDatabase(any()) } returns Show.EMPTY
 
-      val shows = SUT.loadAll(listOf(IdTrakt(1), IdTrakt(2)))
+      val shows = SUT.loadAll(listOf(MediaId.parse(1), MediaId.parse(2)))
 
       assertThat(shows).hasSize(2)
       coVerify(exactly = 1) { myShowsLocalSource.getAll(listOf(1, 2)) }
@@ -129,11 +129,11 @@ class MyShowsRepositoryTest : BaseMockTest() {
       val slot = slot<List<MyShow>>()
       coJustRun { myShowsLocalSource.insert(capture(slot)) }
 
-      SUT.insert(IdTrakt(10L), 666)
+      SUT.insert(MediaId.parse(10L), 666)
 
       slot.captured[0].run {
         assertThat(id).isEqualTo(0)
-        assertThat(idTrakt).isEqualTo(10)
+        assertThat(mediaId).isEqualTo(10)
         assertThat(createdAt).isGreaterThan(0L)
         assertThat(updatedAt).isGreaterThan(0L)
         assertThat(lastWatchedAt).isEqualTo(666)
@@ -150,7 +150,7 @@ class MyShowsRepositoryTest : BaseMockTest() {
       val slot = slot<Long>()
       coJustRun { myShowsLocalSource.deleteById(capture(slot)) }
 
-      SUT.delete(IdTrakt(10L))
+      SUT.delete(MediaId.parse(10L))
 
       assertThat(slot.captured).isEqualTo(10L)
       coVerify(exactly = 1) { myShowsLocalSource.deleteById(10L) }

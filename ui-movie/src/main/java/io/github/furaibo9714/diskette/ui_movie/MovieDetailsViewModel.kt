@@ -21,7 +21,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.launchDelayed
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.rethrowCancellation
 import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageType
 import io.github.furaibo9714.diskette.ui_model.Movie
@@ -83,7 +83,7 @@ class MovieDetailsViewModel @Inject constructor(
   val parentMovieState = movieState.asStateFlow()
   val parentFollowedState = followedState.asStateFlow()
 
-  fun loadDetails(id: IdTrakt) {
+  fun loadDetails(id: MediaId) {
     viewModelScope.launch {
       val progressJob = launchDelayed(700) {
         movieLoadingState.value = true
@@ -244,7 +244,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
   }
 
-  fun removeMalformedMovie(id: IdTrakt) {
+  fun removeMalformedMovie(id: MediaId) {
     viewModelScope.launch {
       try {
         mainCase.removeMalformedMovie(id)

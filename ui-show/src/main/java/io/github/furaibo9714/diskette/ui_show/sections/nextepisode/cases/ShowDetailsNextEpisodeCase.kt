@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.Episode
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import javax.inject.Inject
 import kotlinx.coroutines.withContext
 
@@ -16,9 +16,9 @@ class ShowDetailsNextEpisodeCase @Inject constructor(
   private val mappers: Mappers,
 ) {
 
-  suspend fun loadNextEpisode(traktId: IdTrakt): Episode? =
+  suspend fun loadNextEpisode(mediaId: MediaId): Episode? =
     withContext(dispatchers.IO) {
-      val episode = remoteSource.media.fetchNextEpisode(traktId.id) ?: return@withContext null
+      val episode = remoteSource.media.fetchNextEpisode(tmdbId) ?: return@withContext null
       return@withContext mappers.episode.fromNetwork(episode)
     }
 }

@@ -8,7 +8,7 @@ import io.github.furaibo9714.diskette.repository.movies.MovieCollectionsReposito
 import io.github.furaibo9714.diskette.repository.movies.MyMoviesRepository
 import io.github.furaibo9714.diskette.repository.movies.WatchlistMoviesRepository
 import io.github.furaibo9714.diskette.repository.settings.SettingsSpoilersRepository
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ImageType.POSTER
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.Translation
@@ -31,7 +31,7 @@ class MovieDetailsCollectionMoviesCase @Inject constructor(
 ) {
 
   suspend fun loadCollectionMovies(
-    collectionId: IdTrakt,
+    collectionId: MediaId,
     language: String,
   ): List<MovieDetailsCollectionItem.MovieItem> =
     withContext(dispatchers.IO) {
@@ -43,8 +43,8 @@ class MovieDetailsCollectionMoviesCase @Inject constructor(
               rank = index + 1,
               movie = movie,
               image = imagesProvider.findCachedImage(movie, POSTER),
-              isMyMovie = myMoviesRepository.exists(movie.ids.trakt),
-              isWatchlist = watchlistMoviesRepository.exists(movie.ids.trakt),
+              isMyMovie = myMoviesRepository.exists(movie.ids.media),
+              isWatchlist = watchlistMoviesRepository.exists(movie.ids.media),
               translation = loadTranslation(movie, language),
               spoilers = settingsSpoilersRepository.getAll(),
               isLoading = false,

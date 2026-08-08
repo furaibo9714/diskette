@@ -10,12 +10,12 @@ import java.time.ZonedDateTime
 
 @Entity(
   tableName = "seasons",
-  indices = [Index("id_show_trakt")],
+  indices = [Index("show_media_id")],
 )
 @TypeConverters(DateConverter::class)
 data class Season(
-  @PrimaryKey @ColumnInfo(name = "id_trakt") val idTrakt: Long,
-  @ColumnInfo(name = "id_show_trakt") val idShowTrakt: Long,
+  @PrimaryKey @ColumnInfo(name = "media_id") val mediaId: String,
+  @ColumnInfo(name = "show_media_id") val showMediaId: String,
   @ColumnInfo(name = "season_number") val seasonNumber: Int,
   @ColumnInfo(name = "season_title") val seasonTitle: String,
   @ColumnInfo(name = "season_overview") val seasonOverview: String,

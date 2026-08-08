@@ -71,7 +71,7 @@ internal class BackupExportShowsRunner @Inject constructor(
 
       val collectionMyShows = myShows.map {
         BackupShow(
-          traktId = it.idTrakt,
+          mediaId = it.mediaId,
           tmdbId = it.idTmdb,
           title = it.title,
           addedAt = dateIsoStringFromMillis(it.createdAt),
@@ -80,7 +80,7 @@ internal class BackupExportShowsRunner @Inject constructor(
       }
       val collectionWatchlist = watchlistShows.map {
         BackupShow(
-          traktId = it.idTrakt,
+          mediaId = it.mediaId,
           tmdbId = it.idTmdb,
           title = it.title,
           addedAt = dateIsoStringFromMillis(it.createdAt),
@@ -89,7 +89,7 @@ internal class BackupExportShowsRunner @Inject constructor(
       }
       val collectionHidden = hiddenShows.map {
         BackupShow(
-          traktId = it.idTrakt,
+          mediaId = it.mediaId,
           tmdbId = it.idTmdb,
           title = it.title,
           addedAt = dateIsoStringFromMillis(it.createdAt),
@@ -112,22 +112,22 @@ internal class BackupExportShowsRunner @Inject constructor(
       val watchedEpisodes = watchedEpisodesAsync.await()
       val watchedSeasons = watchedSeasonsAsync.await()
 
-      val seasonsIds = watchedSeasons.map { it.idShowTrakt }.distinct()
+      val seasonsIds = watchedSeasons.map { it.showMediaId }.distinct()
       val shows = localSource.shows.getAllTmdbIds(traktIds = seasonsIds)
 
       val progressSeasons = watchedSeasons.map { season ->
         BackupSeason(
-          traktId = season.idTrakt,
-          showTraktId = season.idShowTrakt,
-          showTmdbId = shows.getOrDefault(season.idShowTrakt, -1),
+          mediaId = season.mediaId,
+          showTraktId = season.showMediaId,
+          showTmdbId = shows.getOrDefault(season.showMediaId, -1),
           seasonNumber = season.seasonNumber,
         )
       }
 
       val progressEpisodes = watchedEpisodes.map { episode ->
         BackupEpisode(
-          traktId = episode.idTrakt,
-          showTraktId = episode.idShowTrakt,
+          mediaId = episode.mediaId,
+          showTraktId = episode.showMediaId,
           showTmdbId = episode.idShowTmdb,
           episodeNumber = episode.episodeNumber,
           seasonNumber = episode.seasonNumber,
@@ -157,13 +157,13 @@ internal class BackupExportShowsRunner @Inject constructor(
     withContext(dispatchers.IO) {
       val ratings = ratingsRepository.loadShowsRatings()
 
-      val showsIds = ratings.map { it.idTrakt.id }
+      val showsIds = ratings.map { it.mediaId.id }
       val showsTmdbIds = localSource.shows.getAllTmdbIds(traktIds = showsIds)
 
       val showsRatings = ratings.map {
         BackupShowRating(
-          traktId = it.idTrakt.id,
-          tmdbId = showsTmdbIds.getOrDefault(it.idTrakt.id, -1),
+          mediaId = it.mediaId.id,
+          tmdbId = showsTmdbIds.getOrDefault(it.mediaId.id, -1),
           rating = it.rating,
           ratedAt = dateIsoStringFromMillis(it.ratedAt.toMillis()),
         )
@@ -177,18 +177,18 @@ internal class BackupExportShowsRunner @Inject constructor(
   private suspend fun exportSeasonsRatings(): BackupShows =
     withContext(dispatchers.IO) {
       val ratings = ratingsRepository.loadSeasonsRatings()
-      val seasons = localSource.seasons.getAll(ratings.map { it.idTrakt })
+      val seasons = localSource.seasons.getAll(ratings.map { it.mediaId })
 
-      val showsIds = seasons.map { it.idShowTrakt }.distinct()
+      val showsIds = seasons.map { it.showMediaId }.distinct()
       val showsTmdbIds = localSource.shows.getAllTmdbIds(traktIds = showsIds)
 
       val seasonsRatings = ratings.map { rating ->
-        val season = seasons.find { it.idTrakt == rating.idTrakt }
-        val showTraktId = season?.idShowTrakt ?: -1
+        val season = seasons.find { it.mediaId == rating.mediaId }
+        val showTraktId = season?.showMediaId ?: -1
         val showTmdbId = showsTmdbIds.getOrDefault(showTraktId, -1)
 
         BackupSeasonRating(
-          traktId = rating.idTrakt,
+          mediaId = rating.mediaId,
           showTraktId = showTraktId,
           showTmdbId = showTmdbId,
           seasonNumber = rating.seasonNumber ?: -1,
@@ -205,14 +205,14 @@ internal class BackupExportShowsRunner @Inject constructor(
   private suspend fun exportEpisodesRatings(): BackupShows =
     withContext(dispatchers.IO) {
       val ratings = ratingsRepository.loadEpisodesRatings()
-      val episodes = localSource.episodes.getAll(ratings.map { it.idTrakt })
+      val episodes = localSource.episodes.getAll(ratings.map { it.mediaId })
 
       val episodesRatings = ratings.map { rating ->
-        val episode = episodes.find { it.idTrakt == rating.idTrakt }
+        val episode = episodes.find { it.mediaId == rating.mediaId }
 
         BackupEpisodeRating(
-          traktId = rating.idTrakt,
-          showTraktId = episode?.idShowTrakt ?: -1,
+          mediaId = rating.mediaId,
+          showTraktId = episode?.showMediaId ?: -1,
           showTmdbId = episode?.idShowTmdb ?: -1,
           seasonNumber = rating.seasonNumber ?: -1,
           episodeNumber = rating.episodeNumber ?: -1,

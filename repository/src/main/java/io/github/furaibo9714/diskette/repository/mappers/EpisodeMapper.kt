@@ -6,7 +6,7 @@ import io.github.furaibo9714.diskette.data_remote.media.model.Episode as Episode
 import io.github.furaibo9714.diskette.ui_model.Episode
 import io.github.furaibo9714.diskette.ui_model.IdImdb
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.IdTvdb
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Season
@@ -52,15 +52,15 @@ class EpisodeMapper @Inject constructor(
   fun toDatabase(
     episode: Episode,
     season: Season,
-    showId: IdTrakt,
+    showId: MediaId,
     isWatched: Boolean,
     lastExportedAt: ZonedDateTime?,
     lastWatchedAt: ZonedDateTime?,
   ): EpisodeDb =
     EpisodeDb(
-      idTrakt = episode.ids.trakt.id,
-      idSeason = season.ids.trakt.id,
-      idShowTrakt = showId.id,
+      mediaId = episode.ids.media.id,
+      idSeason = season.ids.media.id,
+      showMediaId = showId.id,
       idShowTvdb = episode.ids.tvdb.id,
       idShowImdb = episode.ids.imdb.id,
       idShowTmdb = episode.ids.tmdb.id,
@@ -82,7 +82,7 @@ class EpisodeMapper @Inject constructor(
   fun fromDatabase(episodeDb: EpisodeDb) =
     Episode(
       ids = Ids.EMPTY.copy(
-        trakt = IdTrakt(episodeDb.idTrakt),
+        trakt = MediaId.parse(episodeDb.mediaId),
         tvdb = IdTvdb(episodeDb.idShowTvdb),
         imdb = IdImdb(episodeDb.idShowImdb),
         tmdb = IdTmdb(episodeDb.idShowTmdb),

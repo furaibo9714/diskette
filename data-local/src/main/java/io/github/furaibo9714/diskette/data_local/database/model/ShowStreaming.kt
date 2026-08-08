@@ -12,14 +12,14 @@ import java.time.ZonedDateTime
 @Entity(
   tableName = "shows_streamings",
   indices = [
-    Index(value = ["id_trakt"]),
+    Index(value = ["media_id"]),
     Index(value = ["id_tmdb"]),
   ],
   foreignKeys = [
     ForeignKey(
       entity = Show::class,
-      parentColumns = arrayOf("id_trakt"),
-      childColumns = arrayOf("id_trakt"),
+      parentColumns = arrayOf("media_id"),
+      childColumns = arrayOf("media_id"),
       onDelete = ForeignKey.CASCADE,
     ),
   ],
@@ -27,7 +27,7 @@ import java.time.ZonedDateTime
 @TypeConverters(DateConverter::class)
 data class ShowStreaming(
   @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
-  @ColumnInfo(name = "id_trakt") val idTrakt: Long,
+  @ColumnInfo(name = "media_id") val mediaId: String,
   @ColumnInfo(name = "id_tmdb") val idTmdb: Long,
   @ColumnInfo(name = "type") val type: String?,
   @ColumnInfo(name = "provider_id") val providerId: Long?,

@@ -7,7 +7,7 @@ class DiscoverMovieItemDiffCallback : DiffUtil.ItemCallback<DiscoverMovieListIte
   override fun areItemsTheSame(
     oldItem: DiscoverMovieListItem,
     newItem: DiscoverMovieListItem,
-  ) = oldItem.movie.ids.trakt == newItem.movie.ids.trakt
+  ) = oldItem.movie.ids.media == newItem.movie.ids.media
 
   override fun areContentsTheSame(
     oldItem: DiscoverMovieListItem,
