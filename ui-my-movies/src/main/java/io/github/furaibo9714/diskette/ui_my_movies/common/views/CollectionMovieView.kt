@@ -9,10 +9,10 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_HIDE_SYMBOL
-import io.github.furaibo9714.diskette.common.Config.SPOILERS_RATINGS_HIDE_SYMBOL
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_REGEX
 import io.github.furaibo9714.diskette.common.extensions.nowUtcDay
 import io.github.furaibo9714.diskette.ui_base.common.views.MovieView
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.bindRating
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.capitalizeWords
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.dimenToPx
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.gone
@@ -147,25 +147,12 @@ class CollectionMovieView : MovieView<CollectionListItem.MovieItem> {
   }
 
   private fun bindRating(item: CollectionListItem.MovieItem) {
-    with(binding) {
-      var rating = String.format(ENGLISH, "%.1f", item.movie.rating)
-
-      if (item.spoilers.isSpoilerRatingsHidden) {
-        collectionMovieRating.tag = rating
-        rating = SPOILERS_RATINGS_HIDE_SYMBOL
-
-        if (item.spoilers.isSpoilerTapToReveal) {
-          collectionMovieRating.onClick { view ->
-            view.tag?.let {
-              collectionMovieRating.text = it.toString()
-            }
-            view.isClickable = false
-          }
-        }
-      }
-
-      collectionMovieRating.text = rating
-    }
+    binding.collectionMovieRating.bindRating(
+      rating = item.movie.rating,
+      starIcon = binding.collectionMovieStarIcon,
+      isSpoilerHidden = item.spoilers.isSpoilerRatingsHidden,
+      isTapToReveal = item.spoilers.isSpoilerTapToReveal,
+    )
   }
 
   private fun loadTranslation() {

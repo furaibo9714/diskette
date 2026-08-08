@@ -26,6 +26,17 @@ data class Show(
 
   val mediaId = ids.media
 
+  /**
+   * Absent fields are stored as -1 rather than null. These say whether a value is real, so a
+   * placeholder never reaches the screen - an item TMDB doesn't know, such as a Floppy manual
+   * entry, has nothing but a title.
+   */
+  val hasRuntime = runtime > 0
+
+  val hasRating = rating > 0F
+
+  val hasYear = year > 0
+
   /** Only true when episode lengths genuinely vary (e.g. TMDB's per-show runtime was missing). */
   val hasRuntimeRange = runtimeMax > 0 && runtimeMax != runtime
 

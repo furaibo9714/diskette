@@ -8,7 +8,6 @@ import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_HIDE_SYMBOL
-import io.github.furaibo9714.diskette.common.Config.SPOILERS_RATINGS_HIDE_SYMBOL
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_REGEX
 import io.github.furaibo9714.diskette.ui_base.R
 import io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.ContextMenuBottomSheet
@@ -18,6 +17,7 @@ import io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.movie.h
 import io.github.furaibo9714.diskette.ui_base.common.sheets.date_selection.DateSelectionBottomSheet
 import io.github.furaibo9714.diskette.ui_base.common.sheets.date_selection.DateSelectionBottomSheet.Result
 import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.bindRating
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.capitalizeWords
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.launchAndRepeatStarted
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onClick
@@ -165,29 +165,17 @@ class MovieContextMenuBottomSheet : ContextMenuBottomSheet() {
 
   private fun renderItemRating(item: MovieContextItem) {
     with(binding) {
-      var rating = String.format(Locale.ENGLISH, "%.1f", item.movie.rating)
-
       val isMyHidden = item.spoilers.isMyMoviesRatingsHidden && item.isMyMovie
       val isWatchlistHidden = item.spoilers.isWatchlistMoviesRatingsHidden && item.isWatchlist
       val isHiddenShowHidden = item.spoilers.isHiddenMoviesRatingsHidden && item.isHidden
       val isNotCollectedHidden = item.spoilers.isNotCollectedMoviesRatingsHidden && (!item.isInCollection())
 
-      if (isMyHidden || isWatchlistHidden || isHiddenShowHidden || isNotCollectedHidden) {
-        contextMenuRating.tag = rating
-        rating = SPOILERS_RATINGS_HIDE_SYMBOL
-      }
-
-      contextMenuRating.visibleIf(item.movie.rating > 0)
-      contextMenuRatingStar.visibleIf(item.movie.rating > 0)
-      contextMenuRating.text = rating
-
-      if (item.spoilers.isTapToReveal) {
-        with(contextMenuRating) {
-          onClick {
-            tag?.let { text = it.toString() }
-          }
-        }
-      }
+      contextMenuRating.bindRating(
+        rating = item.movie.rating,
+        starIcon = contextMenuRatingStar,
+        isSpoilerHidden = isMyHidden || isWatchlistHidden || isHiddenShowHidden || isNotCollectedHidden,
+        isTapToReveal = item.spoilers.isTapToReveal,
+      )
     }
   }
 

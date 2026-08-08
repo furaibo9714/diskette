@@ -9,9 +9,9 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_HIDE_SYMBOL
-import io.github.furaibo9714.diskette.common.Config.SPOILERS_RATINGS_HIDE_SYMBOL
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_REGEX
 import io.github.furaibo9714.diskette.ui_base.common.views.MovieView
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.bindRating
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.addRipple
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.bump
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.colorStateListFromAttr
@@ -108,24 +108,13 @@ class ProgressMoviesItemView : MovieView<ProgressMovieListItem.MovieItem> {
     with(binding) {
       when (item.sortOrder) {
         RATING -> {
-          progressMovieItemRating.visible()
-          progressMovieItemRatingStar.visible()
           progressMovieItemRatingStar.imageTintList = context.colorStateListFromAttr(android.R.attr.colorAccent)
-          val rating = String.format(Locale.ENGLISH, "%.1f", item.movie.rating)
-          if (item.spoilers.isMyShowsRatingsHidden) {
-            progressMovieItemRating.tag = rating
-            progressMovieItemRating.text = SPOILERS_RATINGS_HIDE_SYMBOL
-            if (item.spoilers.isTapToReveal) {
-              progressMovieItemRating.onClick { view ->
-                view.tag?.let {
-                  progressMovieItemRating.text = it.toString()
-                }
-                view.isClickable = false
-              }
-            }
-          } else {
-            progressMovieItemRating.text = rating
-          }
+          progressMovieItemRating.bindRating(
+            rating = item.movie.rating,
+            starIcon = progressMovieItemRatingStar,
+            isSpoilerHidden = item.spoilers.isMyShowsRatingsHidden,
+            isTapToReveal = item.spoilers.isTapToReveal,
+          )
         }
         USER_RATING -> {
           val hasRating = item.userRating != null

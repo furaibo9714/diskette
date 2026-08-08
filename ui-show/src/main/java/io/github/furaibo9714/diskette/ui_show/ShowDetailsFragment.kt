@@ -55,7 +55,6 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.withFailListe
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.withSuccessListener
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
 import io.github.furaibo9714.diskette.ui_model.Genre
-import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageFamily.SHOW
 import io.github.furaibo9714.diskette.ui_model.ImageStatus.UNAVAILABLE
@@ -194,9 +193,15 @@ class ShowDetailsFragment : BaseFragment<ShowDetailsViewModel>(R.layout.fragment
               openWebUrl(show.trailer) ?: showSnack(MessageEvent.Info(R.string.errorCouldNotFindApp))
             }
           }
-          showDetailsActions.linksChip.onClick {
-            val args = LinksBottomSheet.createBundle(show)
-            navigateToSafe(R.id.actionShowDetailsFragmentToLinks, args)
+          showDetailsActions.linksChip.run {
+            // Every link in the sheet is built from a provider id, so there is nothing to open
+            // for an item no provider knows.
+            isEnabled = show.ids.tmdb.id > 0 || show.ids.imdb.id.isNotBlank()
+            alpha = if (isEnabled) 1.0F else 0.35F
+            onClick {
+              val args = LinksBottomSheet.createBundle(show)
+              navigateToSafe(R.id.actionShowDetailsFragmentToLinks, args)
+            }
           }
           showDetailsActions.shareChip.run {
             isEnabled = show.ids.imdb.id
@@ -289,27 +294,26 @@ class ShowDetailsFragment : BaseFragment<ShowDetailsViewModel>(R.layout.fragment
       .mapNotNull { Genre.fromSlug(it) }
       .joinToString(", ") { getString(it.displayName) }
 
-    val runtimeText = if (show.hasRuntimeRange) {
-      "${show.runtime}-${show.runtimeMax}"
-    } else {
-      "${show.runtime}"
+    val runtimeText = when {
+      !show.hasRuntime -> ""
+      show.hasRuntimeRange -> "⏲ ${show.runtime}-${show.runtimeMax} ${getString(R.string.textMinutesShort)}"
+      else -> "⏲ ${show.runtime} ${getString(R.string.textMinutesShort)}"
     }
 
-    var extraInfoText = getString(
-      R.string.textShowExtraInfo,
-      show.network,
-      year,
-      country.uppercase(),
-      "⏲ $runtimeText",
-      getString(R.string.textMinutesShort),
+    /**
+     * Built from the segments that actually have a value rather than from a fixed template, so an
+     * item TMDB doesn't know - a Floppy manual entry, which has only a title - shows nothing here
+     * instead of a row of placeholders.
+     */
+    val extraInfoText = listOf(
+      listOf(show.network, year, country.uppercase()).filter { it.isNotBlank() }.joinToString(" "),
+      runtimeText,
       genres,
-    )
-
-    if (genres.isEmpty()) {
-      extraInfoText = extraInfoText.trim().removeSuffix("|")
-    }
+    ).filter { it.isNotBlank() }
+      .joinToString(" | ")
 
     binding.showDetailsExtraInfo.text = extraInfoText
+    binding.showDetailsExtraInfo.visibleIf(extraInfoText.isNotBlank())
   }
 
   private fun renderRating(rating: RatingState) {

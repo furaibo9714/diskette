@@ -7,13 +7,13 @@ import androidx.core.os.bundleOf
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.viewModels
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_HIDE_SYMBOL
-import io.github.furaibo9714.diskette.common.Config.SPOILERS_RATINGS_HIDE_SYMBOL
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_REGEX
 import io.github.furaibo9714.diskette.ui_base.R
 import io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.ContextMenuBottomSheet
 import io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.events.FinishUiEvent
 import io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.show.helpers.ShowContextItem
 import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.bindRating
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.gone
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.launchAndRepeatStarted
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onClick
@@ -170,29 +170,17 @@ class ShowContextMenuBottomSheet : ContextMenuBottomSheet() {
 
   private fun renderItemRating(item: ShowContextItem) {
     with(binding) {
-      var rating = String.format(Locale.ENGLISH, "%.1f", item.show.rating)
-
       val isMyShowHidden = item.spoilers.isMyShowsRatingsHidden && item.isMyShow
       val isWatchlistHidden = item.spoilers.isWatchlistShowsRatingsHidden && item.isWatchlist
       val isHiddenShowHidden = item.spoilers.isHiddenShowsRatingsHidden && item.isHidden
       val isNotCollectedHidden = item.spoilers.isNotCollectedShowsRatingsHidden && (!item.isInCollection())
 
-      if (isMyShowHidden || isWatchlistHidden || isHiddenShowHidden || isNotCollectedHidden) {
-        contextMenuRating.tag = rating
-        rating = SPOILERS_RATINGS_HIDE_SYMBOL
-      }
-
-      contextMenuRating.visibleIf(item.show.rating > 0)
-      contextMenuRatingStar.visibleIf(item.show.rating > 0)
-      contextMenuRating.text = rating
-
-      if (item.spoilers.isTapToReveal) {
-        with(contextMenuRating) {
-          onClick {
-            tag?.let { text = it.toString() }
-          }
-        }
-      }
+      contextMenuRating.bindRating(
+        rating = item.show.rating,
+        starIcon = contextMenuRatingStar,
+        isSpoilerHidden = isMyShowHidden || isWatchlistHidden || isHiddenShowHidden || isNotCollectedHidden,
+        isTapToReveal = item.spoilers.isTapToReveal,
+      )
     }
   }
 
