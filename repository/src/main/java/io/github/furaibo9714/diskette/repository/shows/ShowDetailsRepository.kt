@@ -25,9 +25,22 @@ class ShowDetailsRepository @Inject constructor(
     force: Boolean = false,
   ): Show {
     val localShow = localSource.shows.getById(mediaId.key)
+
+    /**
+     * TMDB is the only metadata provider, so an item it doesn't know - a Floppy manual entry -
+     * has nothing to refresh from, and what the import wrote is all there is. Returning early
+     * also keeps the incomplete check below from re-fetching forever: a manual entry's runtime
+     * is always -1, so it always looks incomplete.
+     */
+    val tmdbId = localShow?.idTmdb?.takeIf { it > 0 } ?: mediaId.tmdbIdOrNull
+    if (tmdbId == null) {
+      val cached = localShow ?: error("No local row and no TMDB id for $mediaId. Nothing to load.")
+      return mappers.show.fromDatabase(cached)
+    }
+
     val isIncomplete = localShow != null && localShow.runtime <= 0
     if (force || localShow == null || isIncomplete || nowUtcMillis() - localShow.updatedAt > Config.SHOW_DETAILS_CACHE_DURATION) {
-      val remoteShow = remoteSource.media.fetchShow(requireTmdbId(mediaId, localShow?.idTmdb))
+      val remoteShow = remoteSource.media.fetchShow(tmdbId)
       val show = mappers.show.fromNetwork(remoteShow)
       localSource.shows.upsert(listOf(mappers.show.toDatabase(show)))
       return show
@@ -68,17 +81,4 @@ class ShowDetailsRepository @Inject constructor(
       }
     }
   }
-
-  /**
-   * TMDB is the only metadata provider, so a non-TMDB item (a Floppy manual entry) has nothing to
-   * fetch. The cached row's TMDB id wins when present, since it survives even for items whose
-   * identity is not TMDB-based.
-   */
-  private fun requireTmdbId(
-    mediaId: MediaId,
-    cachedTmdbId: Long?,
-  ): Long =
-    cachedTmdbId?.takeIf { it > 0 }
-      ?: mediaId.tmdbIdOrNull
-      ?: error("No TMDB id for $mediaId. Cannot fetch details.")
 }
