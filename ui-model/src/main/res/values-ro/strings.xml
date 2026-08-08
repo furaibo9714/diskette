@@ -59,7 +59,7 @@
     <string name="textGenreThriller">Suspans</string>
     <string name="textGenreWar">Război</string>
     <string name="textGenreWestern">Vest</string>
-    <string name="textTraktSyncSchedule">Program</string>
+    <string name="textSyncSchedule">Program</string>
     <string name="textTraktSyncOptionOff">Oprit</string>
     <string name="textTraktSyncOption1Hour">La fiecare oră</string>
     <string name="textTraktSyncOption3Hours">La fiecare 3 ore</string>

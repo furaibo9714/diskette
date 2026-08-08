@@ -6,6 +6,7 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.furaibo9714.diskette.ui_base.BaseBottomSheetFragment
 import io.github.furaibo9714.diskette.ui_base.R
 import io.github.furaibo9714.diskette.ui_base.common.views.RateValueView.Direction
@@ -21,9 +22,8 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visible
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visibleIf
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
-import io.github.furaibo9714.diskette.ui_model.TraktRating
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.parcelize.Parcelize
 
 @AndroidEntryPoint
@@ -106,10 +106,10 @@ class RatingsBottomSheet : BaseBottomSheetFragment(R.layout.view_rate_sheet) {
         rating?.let {
           viewRateSheetSaveButton.isEnabled = true
           if (isLoading != true) {
-            viewRateSheetRemoveButton.visibleIf(it != TraktRating.EMPTY)
+            viewRateSheetRemoveButton.visibleIf(it != UserRating.EMPTY)
           }
           viewRateSheetStarsLayout.visible()
-          if (it != TraktRating.EMPTY && isLoading != true) {
+          if (it != UserRating.EMPTY && isLoading != true) {
             renderRating(it.rating)
           }
         }

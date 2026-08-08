@@ -1,26 +1,25 @@
-package io.github.furaibo9714.diskette.data_remote.trakt
+package io.github.furaibo9714.diskette.data_remote.media
 
+import io.github.furaibo9714.diskette.data_remote.media.model.Episode
+import io.github.furaibo9714.diskette.data_remote.media.model.Movie
+import io.github.furaibo9714.diskette.data_remote.media.model.MovieCollection
+import io.github.furaibo9714.diskette.data_remote.media.model.PersonCredit
+import io.github.furaibo9714.diskette.data_remote.media.model.SearchResult
+import io.github.furaibo9714.diskette.data_remote.media.model.Season
+import io.github.furaibo9714.diskette.data_remote.media.model.SeasonTranslation
+import io.github.furaibo9714.diskette.data_remote.media.model.Show
+import io.github.furaibo9714.diskette.data_remote.media.model.Translation
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbPerson
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Episode
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Movie
-import io.github.furaibo9714.diskette.data_remote.trakt.model.MovieCollection
-import io.github.furaibo9714.diskette.data_remote.trakt.model.PersonCredit
-import io.github.furaibo9714.diskette.data_remote.trakt.model.SearchResult
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Season
-import io.github.furaibo9714.diskette.data_remote.trakt.model.SeasonTranslation
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Show
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Translation
 
 /**
- * Fetch remote show/movie metadata, search and discovery. Named for the Trakt API it was
- * originally shaped around; it is served entirely from TMDB now.
+ * Fetches show/movie metadata, search results and discovery feeds.
  */
-interface TraktRemoteDataSource {
+interface MediaRemoteDataSource {
 
   // Shows
 
   suspend fun fetchShow(
-    traktId: Long,
+    mediaId: Long,
     tmdbId: Long? = null,
   ): Show
 
@@ -43,26 +42,26 @@ interface TraktRemoteDataSource {
   ): List<Show>
 
   suspend fun fetchRelatedShows(
-    traktId: Long,
+    mediaId: Long,
     addToLimit: Int,
     tmdbId: Long? = null,
   ): List<Show>
 
   suspend fun fetchShowTranslations(
-    traktId: Long,
+    mediaId: Long,
     code: String,
     tmdbId: Long? = null,
   ): List<Translation>
 
-  suspend fun fetchNextEpisode(traktId: Long): Episode?
+  suspend fun fetchNextEpisode(mediaId: Long): Episode?
 
   suspend fun fetchSeasons(
-    traktId: Long,
+    mediaId: Long,
     tmdbId: Long? = null,
   ): List<Season>
 
   suspend fun fetchSeasonTranslations(
-    showTraktId: Long,
+    showMediaId: Long,
     seasonNumber: Int,
     code: String,
   ): List<SeasonTranslation>
@@ -70,7 +69,7 @@ interface TraktRemoteDataSource {
   // Movies
 
   suspend fun fetchMovie(
-    traktId: Long,
+    mediaId: Long,
     tmdbId: Long? = null,
   ): Movie
 
@@ -90,31 +89,31 @@ interface TraktRemoteDataSource {
   ): List<Movie>
 
   suspend fun fetchRelatedMovies(
-    traktId: Long,
+    mediaId: Long,
     addToLimit: Int,
     tmdbId: Long? = null,
   ): List<Movie>
 
   suspend fun fetchMovieTranslations(
-    traktId: Long,
+    mediaId: Long,
     code: String,
     tmdbId: Long? = null,
   ): List<Translation>
 
-  suspend fun fetchMovieCollections(traktId: Long): List<MovieCollection>
+  suspend fun fetchMovieCollections(mediaId: Long): List<MovieCollection>
 
   suspend fun fetchMovieCollectionItems(collectionId: Long): List<Movie>
 
   // People
 
   suspend fun fetchPersonShowsCredits(
-    traktId: Long,
+    mediaId: Long,
     type: TmdbPerson.Type,
     tmdbId: Long? = null,
   ): List<PersonCredit>
 
   suspend fun fetchPersonMoviesCredits(
-    traktId: Long,
+    mediaId: Long,
     type: TmdbPerson.Type,
     tmdbId: Long? = null,
   ): List<PersonCredit>

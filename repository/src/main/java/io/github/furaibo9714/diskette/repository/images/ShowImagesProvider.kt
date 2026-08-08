@@ -21,9 +21,9 @@ import io.github.furaibo9714.diskette.ui_model.ImageType.FANART
 import io.github.furaibo9714.diskette.ui_model.ImageType.FANART_WIDE
 import io.github.furaibo9714.diskette.ui_model.ImageType.POSTER
 import io.github.furaibo9714.diskette.ui_model.Show
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.withContext
 
 @Singleton
 class ShowImagesProvider @Inject constructor(
@@ -86,7 +86,7 @@ class ShowImagesProvider @Inject constructor(
 
       // If requested fanart is unavailable try backing up to an episode image
       if (typeImages.isEmpty() && type in arrayOf(FANART, FANART_WIDE)) {
-        val seasons = remoteSource.trakt.fetchSeasons(show.traktId)
+        val seasons = remoteSource.media.fetchSeasons(show.traktId)
         if (seasons.isNotEmpty()) {
           val episode = seasons[0].episodes?.firstOrNull()
           episode?.let { ep ->

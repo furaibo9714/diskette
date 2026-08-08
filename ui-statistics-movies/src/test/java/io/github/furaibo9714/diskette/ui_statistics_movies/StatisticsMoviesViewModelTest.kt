@@ -11,7 +11,7 @@ import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageType
 import io.github.furaibo9714.diskette.ui_model.Movie
-import io.github.furaibo9714.diskette.ui_model.TraktRating
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_statistics_movies.cases.StatisticsMoviesLoadRatingsCase
 import io.github.furaibo9714.diskette.ui_statistics_movies.views.ratings.recycler.StatisticsMoviesRatingItem
 import io.mockk.coEvery
@@ -59,7 +59,7 @@ class StatisticsMoviesViewModelTest : BaseMockTest() {
   internal fun `Should load ratings`() =
     runTest {
       val movieItem =
-        StatisticsMoviesRatingItem(Movie.EMPTY, Image.createUnknown(ImageType.POSTER), false, TraktRating.EMPTY)
+        StatisticsMoviesRatingItem(Movie.EMPTY, Image.createUnknown(ImageType.POSTER), false, UserRating.EMPTY)
       coEvery { ratingsCase.loadRatings() } returns listOf(movieItem)
 
       val job = launch(UnconfinedTestDispatcher()) { SUT.uiState.toList(stateResult) }

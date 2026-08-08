@@ -1,7 +1,7 @@
 package io.github.furaibo9714.diskette.ui_model
 
 data class RatingState(
-  val userRating: TraktRating? = null,
+  val userRating: UserRating? = null,
   val rateLoading: Boolean? = null,
 ) {
 

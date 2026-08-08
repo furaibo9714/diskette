@@ -59,7 +59,7 @@
   <string name="textGenreThriller">Thriller</string>
   <string name="textGenreWar">Guerra</string>
   <string name="textGenreWestern">Western</string>
-  <string name="textTraktSyncSchedule">Programar</string>
+  <string name="textSyncSchedule">Programar</string>
   <string name="textTraktSyncOptionOff">Apagado</string>
   <string name="textTraktSyncOption1Hour">Cada Hora</string>
   <string name="textTraktSyncOption3Hours">Cada 3 Horas</string>

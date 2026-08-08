@@ -59,7 +59,7 @@
   <string name="textGenreRomance">رومانسي</string>
   <string name="textGenreWar">حرب</string>
   <string name="textGenreWestern">ويسترن</string>
-  <string name="textTraktSyncSchedule">جدولة المزامنة</string>
+  <string name="textSyncSchedule">جدولة المزامنة</string>
   <string name="textTraktSyncOptionOff">تعطيل</string>
   <string name="textTraktSyncOption1Hour">كُل ساعة</string>
   <string name="textTraktSyncOption3Hours">كُل 3 ساعات</string>

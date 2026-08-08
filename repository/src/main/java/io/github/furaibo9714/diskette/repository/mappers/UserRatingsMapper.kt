@@ -7,14 +7,14 @@ import io.github.furaibo9714.diskette.ui_model.IdTrakt
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.Season
 import io.github.furaibo9714.diskette.ui_model.Show
-import io.github.furaibo9714.diskette.ui_model.TraktRating
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class UserRatingsMapper @Inject constructor() {
 
   fun fromDatabase(entity: Rating) =
-    TraktRating(
+    UserRating(
       idTrakt = IdTrakt(entity.idTrakt),
       rating = entity.rating,
       ratedAt = entity.ratedAt,

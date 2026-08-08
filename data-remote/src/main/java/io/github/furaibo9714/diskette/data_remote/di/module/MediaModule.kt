@@ -1,18 +1,18 @@
 package io.github.furaibo9714.diskette.data_remote.di.module
 
-import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbMoviesService
-import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbSearchService
-import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbService
-import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbShowsService
-import io.github.furaibo9714.diskette.data_remote.trakt.TmdbBackedTraktRemoteDataSource
-import io.github.furaibo9714.diskette.data_remote.trakt.TraktRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
+import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.TmdbMediaRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbMoviesService
+import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbSearchService
+import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbService
+import io.github.furaibo9714.diskette.data_remote.tmdb.api.TmdbShowsService
 import javax.inject.Named
 import javax.inject.Singleton
+import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -22,8 +22,8 @@ object MediaModule {
   @Singleton
   fun providesMediaRemoteDataSource(
     @Named("retrofitTmdb") tmdbRetrofit: Retrofit,
-  ): TraktRemoteDataSource =
-    TmdbBackedTraktRemoteDataSource(
+  ): MediaRemoteDataSource =
+    TmdbMediaRemoteDataSource(
       tmdbSearch = tmdbRetrofit.create(TmdbSearchService::class.java),
       tmdbShows = tmdbRetrofit.create(TmdbShowsService::class.java),
       tmdbMovies = tmdbRetrofit.create(TmdbMoviesService::class.java),

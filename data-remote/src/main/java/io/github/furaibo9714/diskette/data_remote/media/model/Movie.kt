@@ -1,15 +1,12 @@
-package io.github.furaibo9714.diskette.data_remote.trakt.model
+package io.github.furaibo9714.diskette.data_remote.media.model
 
-data class Show(
+data class Movie(
   val ids: Ids?,
   val title: String?,
   val year: Int?,
   val overview: String?,
-  val first_aired: String?,
+  val released: String?,
   val runtime: Int?,
-  val airs: AirTime?,
-  val certification: String?,
-  val network: String?,
   val country: String?,
   val trailer: String?,
   val homepage: String?,
@@ -18,6 +15,5 @@ data class Show(
   val votes: Long?,
   val comment_count: Long?,
   val genres: List<String>?,
-  val aired_episodes: Int?,
-  val runtime_max: Int? = null,
+  val language: String?,
 )

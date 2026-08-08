@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.common.extensions.nowUtcMillis
 import io.github.furaibo9714.diskette.data_local.database.dao.RelatedShowsDao
 import io.github.furaibo9714.diskette.data_local.database.dao.ShowsDao
 import io.github.furaibo9714.diskette.data_local.database.model.RelatedShow
-import io.github.furaibo9714.diskette.data_remote.trakt.TraktRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
 import io.github.furaibo9714.diskette.repository.common.BaseMockTest
 import io.github.furaibo9714.diskette.repository.shows.RelatedShowsRepository
 import io.mockk.Runs
@@ -18,15 +18,15 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.mockk
+import java.util.concurrent.TimeUnit.HOURS
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import java.util.concurrent.TimeUnit.HOURS
 
 class RelatedShowsRepositoryTest : BaseMockTest() {
 
   @MockK
-  lateinit var traktApi: TraktRemoteDataSource
+  lateinit var traktApi: MediaRemoteDataSource
 
   @RelaxedMockK
   lateinit var relatedShowsDao: RelatedShowsDao
@@ -41,7 +41,7 @@ class RelatedShowsRepositoryTest : BaseMockTest() {
     super.setUp()
     every { database.shows } returns showsDao
     every { database.relatedShows } returns relatedShowsDao
-    every { cloud.trakt } returns traktApi
+    every { cloud.media } returns traktApi
 
     SUT = RelatedShowsRepository(cloud, database, transactions, mappers)
   }

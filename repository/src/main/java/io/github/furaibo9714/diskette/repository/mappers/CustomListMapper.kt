@@ -2,6 +2,9 @@ package io.github.furaibo9714.diskette.repository.mappers
 
 import io.github.furaibo9714.diskette.common.Mode
 import io.github.furaibo9714.diskette.common.extensions.toMillis
+import io.github.furaibo9714.diskette.data_local.database.model.CustomList as CustomListDb
+import io.github.furaibo9714.diskette.data_remote.media.model.CustomList as CustomListNetwork
+import io.github.furaibo9714.diskette.data_remote.media.model.CustomList.Ids as IdsList
 import io.github.furaibo9714.diskette.ui_model.CustomList
 import io.github.furaibo9714.diskette.ui_model.SortOrder
 import io.github.furaibo9714.diskette.ui_model.SortType
@@ -10,9 +13,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import io.github.furaibo9714.diskette.data_local.database.model.CustomList as CustomListDb
-import io.github.furaibo9714.diskette.data_remote.trakt.model.CustomList as CustomListNetwork
-import io.github.furaibo9714.diskette.data_remote.trakt.model.CustomList.Ids as IdsList
 
 class CustomListMapper @Inject constructor() {
 

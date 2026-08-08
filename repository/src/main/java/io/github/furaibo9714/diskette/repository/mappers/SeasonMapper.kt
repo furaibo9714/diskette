@@ -1,13 +1,13 @@
 package io.github.furaibo9714.diskette.repository.mappers
 
 import io.github.furaibo9714.diskette.data_local.database.model.Episode
+import io.github.furaibo9714.diskette.data_local.database.model.Season as SeasonDb
+import io.github.furaibo9714.diskette.data_remote.media.model.Season as SeasonNetwork
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Season
 import java.time.ZonedDateTime
 import javax.inject.Inject
-import io.github.furaibo9714.diskette.data_local.database.model.Season as SeasonDb
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Season as SeasonNetwork
 
 class SeasonMapper @Inject constructor(
   private val idsMapper: IdsMapper,

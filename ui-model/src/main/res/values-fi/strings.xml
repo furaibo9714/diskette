@@ -59,7 +59,7 @@
   <string name="textGenreThriller">Jännitys</string>
   <string name="textGenreWar">Sota</string>
   <string name="textGenreWestern">Länkkäri</string>
-  <string name="textTraktSyncSchedule">Ajoitus</string>
+  <string name="textSyncSchedule">Ajoitus</string>
   <string name="textTraktSyncOptionOff">Ei käytössä</string>
   <string name="textTraktSyncOption1Hour">Kerran tunnissa</string>
   <string name="textTraktSyncOption3Hours">3 tunnin välein</string>

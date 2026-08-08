@@ -1,5 +1,15 @@
 package io.github.furaibo9714.diskette.data_remote.tmdb
 
+import io.github.furaibo9714.diskette.data_remote.media.model.Episode
+import io.github.furaibo9714.diskette.data_remote.media.model.Ids
+import io.github.furaibo9714.diskette.data_remote.media.model.Movie
+import io.github.furaibo9714.diskette.data_remote.media.model.MovieCollection
+import io.github.furaibo9714.diskette.data_remote.media.model.PersonCredit
+import io.github.furaibo9714.diskette.data_remote.media.model.SearchResult
+import io.github.furaibo9714.diskette.data_remote.media.model.Season
+import io.github.furaibo9714.diskette.data_remote.media.model.SeasonTranslation
+import io.github.furaibo9714.diskette.data_remote.media.model.Show
+import io.github.furaibo9714.diskette.data_remote.media.model.Translation
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbCollectionSummary
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbEpisodeDetails
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbMovieDetails
@@ -9,25 +19,13 @@ import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbSeasonDetails
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbShowDetails
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbTranslationsResponse
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbVideosResponse
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Episode
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Ids
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Movie
-import io.github.furaibo9714.diskette.data_remote.trakt.model.MovieCollection
-import io.github.furaibo9714.diskette.data_remote.trakt.model.PersonCredit
-import io.github.furaibo9714.diskette.data_remote.trakt.model.SearchResult
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Season
-import io.github.furaibo9714.diskette.data_remote.trakt.model.SeasonTranslation
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Show
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Translation
 
 /**
- * Converts TMDB's response shapes into the existing Trakt-shaped internal DTOs
- * (`data_remote.trakt.model.*`), so the rest of the app - repository mappers, ui_model types,
- * ViewModels - can keep consuming the same shape regardless of which backend produced it.
- * `ids.trakt` is always a [TmdbSyntheticIds] synthetic value here; `ids.tmdb` is always the real
- * TMDB id.
+ * Converts TMDB's response shapes into the internal DTOs in `data_remote.media.model`, which the
+ * repository mappers and ui_model types consume. `ids.trakt` always holds a [TmdbSyntheticIds]
+ * synthetic value; `ids.tmdb` always holds the real TMDB id.
  */
-object TmdbToTraktModelConverter {
+object TmdbModelConverter {
 
   private const val MEDIA_TYPE_MOVIE = "movie"
   private const val MEDIA_TYPE_TV = "tv"
@@ -39,8 +37,8 @@ object TmdbToTraktModelConverter {
     val tmdbId = item.id ?: return null
     val ids = toIds(tmdbId)
     return when (item.media_type) {
-      MEDIA_TYPE_MOVIE -> SearchResult(order = order, score = item.popularity, show = null, movie = toMovie(item, ids), person = null)
-      MEDIA_TYPE_TV -> SearchResult(order = order, score = item.popularity, show = toShow(item, ids), movie = null, person = null)
+      MEDIA_TYPE_MOVIE -> SearchResult(order = order, score = item.popularity, show = null, movie = toMovie(item, ids))
+      MEDIA_TYPE_TV -> SearchResult(order = order, score = item.popularity, show = toShow(item, ids), movie = null)
       else -> null
     }
   }

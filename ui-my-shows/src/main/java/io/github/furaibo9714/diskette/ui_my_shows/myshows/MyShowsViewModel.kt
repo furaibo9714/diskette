@@ -2,15 +2,17 @@ package io.github.furaibo9714.diskette.ui_my_shows.myshows
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.furaibo9714.diskette.common.Config
 import io.github.furaibo9714.diskette.repository.images.ShowImagesProvider
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.ui_base.common.ListViewMode
+import io.github.furaibo9714.diskette.ui_base.events.Event as EventSync
 import io.github.furaibo9714.diskette.ui_base.events.EventsManager
-import io.github.furaibo9714.diskette.ui_base.events.ReloadData
 import io.github.furaibo9714.diskette.ui_base.events.FloppySyncError
 import io.github.furaibo9714.diskette.ui_base.events.FloppySyncProgress
 import io.github.furaibo9714.diskette.ui_base.events.FloppySyncSuccess
+import io.github.furaibo9714.diskette.ui_base.events.ReloadData
 import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.findReplace
@@ -25,7 +27,7 @@ import io.github.furaibo9714.diskette.ui_model.Show
 import io.github.furaibo9714.diskette.ui_model.SortOrder
 import io.github.furaibo9714.diskette.ui_model.SortType
 import io.github.furaibo9714.diskette.ui_model.SpoilersSettings
-import io.github.furaibo9714.diskette.ui_model.TraktRating
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_my_shows.main.FollowedShowsUiState
 import io.github.furaibo9714.diskette.ui_my_shows.myshows.cases.MyShowsLoadShowsCase
 import io.github.furaibo9714.diskette.ui_my_shows.myshows.cases.MyShowsRatingsCase
@@ -33,7 +35,7 @@ import io.github.furaibo9714.diskette.ui_my_shows.myshows.cases.MyShowsSortingCa
 import io.github.furaibo9714.diskette.ui_my_shows.myshows.cases.MyShowsTranslationsCase
 import io.github.furaibo9714.diskette.ui_my_shows.myshows.recycler.MyShowsItem
 import io.github.furaibo9714.diskette.ui_my_shows.myshows.recycler.MyShowsItem.Type
-import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -44,8 +46,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
-import io.github.furaibo9714.diskette.ui_base.events.Event as EventSync
 
 @HiltViewModel
 class MyShowsViewModel @Inject constructor(
@@ -210,7 +210,7 @@ class MyShowsViewModel @Inject constructor(
     itemType: Type,
     show: Show,
     type: ImageType = POSTER,
-    userRating: TraktRating?,
+    userRating: UserRating?,
     sortOrder: SortOrder?,
     spoilers: SpoilersSettings,
   ) = async {

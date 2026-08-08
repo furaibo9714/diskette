@@ -30,7 +30,7 @@ class RelatedMoviesRepository @Inject constructor(
         .map { mappers.movie.fromDatabase(it) }
     }
 
-    val remote = remoteSource.trakt
+    val remote = remoteSource.media
       .fetchRelatedMovies(movie.ids.trakt.id, min(0, 15), movie.ids.tmdb.id)
       .map { mappers.movie.fromNetwork(it) }
 

@@ -1,15 +1,15 @@
 package io.github.furaibo9714.diskette.ui_base.common.sheets.ratings.cases
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.RatingsRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Season
-import io.github.furaibo9714.diskette.ui_model.TraktRating
-import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.withContext
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 @ViewModelScoped
 class RatingsSeasonCase @Inject constructor(
@@ -22,11 +22,11 @@ class RatingsSeasonCase @Inject constructor(
     private val RATING_VALID_RANGE = 1..10
   }
 
-  suspend fun loadRating(idTrakt: IdTrakt): TraktRating =
+  suspend fun loadRating(idTrakt: IdTrakt): UserRating =
     withContext(dispatchers.IO) {
       val season = Season.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = idTrakt))
       val rating = ratingsRepository.shows.loadRatingsSeasons(listOf(season))
-      rating.firstOrNull() ?: TraktRating.EMPTY
+      rating.firstOrNull() ?: UserRating.EMPTY
     }
 
   suspend fun saveRating(

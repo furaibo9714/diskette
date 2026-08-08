@@ -2,14 +2,16 @@ package io.github.furaibo9714.diskette.ui_my_movies.mymovies
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.furaibo9714.diskette.common.Config.DEFAULT_LANGUAGE
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.ui_base.common.ListViewMode
+import io.github.furaibo9714.diskette.ui_base.events.Event as EventSync
 import io.github.furaibo9714.diskette.ui_base.events.EventsManager
-import io.github.furaibo9714.diskette.ui_base.events.ReloadData
 import io.github.furaibo9714.diskette.ui_base.events.FloppySyncError
 import io.github.furaibo9714.diskette.ui_base.events.FloppySyncProgress
 import io.github.furaibo9714.diskette.ui_base.events.FloppySyncSuccess
+import io.github.furaibo9714.diskette.ui_base.events.ReloadData
 import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.findReplace
@@ -24,7 +26,7 @@ import io.github.furaibo9714.diskette.ui_model.MyMoviesSection.RECENTS
 import io.github.furaibo9714.diskette.ui_model.SortOrder
 import io.github.furaibo9714.diskette.ui_model.SortType
 import io.github.furaibo9714.diskette.ui_model.SpoilersSettings
-import io.github.furaibo9714.diskette.ui_model.TraktRating
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_my_movies.main.FollowedMoviesUiState
 import io.github.furaibo9714.diskette.ui_my_movies.mymovies.cases.MyMoviesLoadCase
 import io.github.furaibo9714.diskette.ui_my_movies.mymovies.cases.MyMoviesRatingsCase
@@ -33,7 +35,8 @@ import io.github.furaibo9714.diskette.ui_my_movies.mymovies.recycler.MyMoviesIte
 import io.github.furaibo9714.diskette.ui_my_movies.mymovies.recycler.MyMoviesItem.Type
 import io.github.furaibo9714.diskette.ui_my_movies.mymovies.recycler.MyMoviesItem.Type.ALL_MOVIES_ITEM
 import io.github.furaibo9714.diskette.ui_my_movies.mymovies.recycler.MyMoviesItem.Type.RECENT_MOVIES
-import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -44,9 +47,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.format.DateTimeFormatter
-import javax.inject.Inject
-import io.github.furaibo9714.diskette.ui_base.events.Event as EventSync
 
 @HiltViewModel
 class MyMoviesViewModel @Inject constructor(
@@ -210,7 +210,7 @@ class MyMoviesViewModel @Inject constructor(
     movie: Movie,
     dateFormat: DateTimeFormatter,
     type: ImageType = POSTER,
-    userRating: TraktRating?,
+    userRating: UserRating?,
     sortOrder: SortOrder?,
     spoilers: SpoilersSettings,
   ) = async {

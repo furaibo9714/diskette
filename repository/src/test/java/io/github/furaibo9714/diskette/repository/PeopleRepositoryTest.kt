@@ -10,10 +10,11 @@ import io.github.furaibo9714.diskette.data_local.database.dao.PeopleDao
 import io.github.furaibo9714.diskette.data_local.database.dao.PeopleShowsMoviesDao
 import io.github.furaibo9714.diskette.data_local.database.dao.ShowsDao
 import io.github.furaibo9714.diskette.data_local.database.model.Movie
+import io.github.furaibo9714.diskette.data_local.database.model.Person as PersonDb
 import io.github.furaibo9714.diskette.data_local.database.model.Show
+import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.model.PersonCredit
 import io.github.furaibo9714.diskette.data_remote.tmdb.TmdbRemoteDataSource
-import io.github.furaibo9714.diskette.data_remote.trakt.TraktRemoteDataSource
-import io.github.furaibo9714.diskette.data_remote.trakt.model.PersonCredit
 import io.github.furaibo9714.diskette.repository.common.BaseMockTest
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
@@ -31,7 +32,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import io.github.furaibo9714.diskette.data_local.database.model.Person as PersonDb
 
 class PeopleRepositoryTest : BaseMockTest() {
 
@@ -42,7 +42,7 @@ class PeopleRepositoryTest : BaseMockTest() {
   @RelaxedMockK lateinit var peopleCreditsDao: PeopleCreditsDao
   @RelaxedMockK lateinit var person: PersonDb
   @RelaxedMockK lateinit var tmdbApi: TmdbRemoteDataSource
-  @RelaxedMockK lateinit var traktApi: TraktRemoteDataSource
+  @RelaxedMockK lateinit var traktApi: MediaRemoteDataSource
   @RelaxedMockK lateinit var settingsRepository: SettingsRepository
 
   private lateinit var SUT: PeopleRepository
@@ -57,7 +57,7 @@ class PeopleRepositoryTest : BaseMockTest() {
     coEvery { database.peopleCredits } returns peopleCreditsDao
     coEvery { database.peopleShowsMovies } returns peopleShowsMoviesDao
     coEvery { cloud.tmdb } returns tmdbApi
-    coEvery { cloud.trakt } returns traktApi
+    coEvery { cloud.media } returns traktApi
   }
 
   @After

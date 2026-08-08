@@ -1,4 +1,4 @@
-package io.github.furaibo9714.diskette.data_remote.trakt.model
+package io.github.furaibo9714.diskette.data_remote.media.model
 
 data class AirTime(
   val day: String?,

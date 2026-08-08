@@ -1,12 +1,12 @@
 package io.github.furaibo9714.diskette.ui_my_movies.hidden.cases
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.RatingsRepository
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
-import io.github.furaibo9714.diskette.ui_model.TraktRating
-import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.withContext
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 @ViewModelScoped
 class HiddenRatingsCase @Inject constructor(
@@ -14,7 +14,7 @@ class HiddenRatingsCase @Inject constructor(
   private val ratingsRepository: RatingsRepository,
 ) {
 
-  suspend fun loadRatings(): Map<IdTrakt, TraktRating?> =
+  suspend fun loadRatings(): Map<IdTrakt, UserRating?> =
     withContext(dispatchers.IO) {
       ratingsRepository.movies.loadMoviesRatings().associateBy { it.idTrakt }
     }

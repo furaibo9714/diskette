@@ -1,12 +1,12 @@
 package io.github.furaibo9714.diskette.repository.mappers
 
 import io.github.furaibo9714.diskette.common.extensions.nowUtcMillis
+import io.github.furaibo9714.diskette.data_local.database.model.Movie as MovieDb
+import io.github.furaibo9714.diskette.data_remote.media.model.Movie as MovieNetwork
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.MovieStatus
 import java.time.LocalDate
 import javax.inject.Inject
-import io.github.furaibo9714.diskette.data_local.database.model.Movie as MovieDb
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Movie as MovieNetwork
 
 class MovieMapper @Inject constructor(
   private val idsMapper: IdsMapper,

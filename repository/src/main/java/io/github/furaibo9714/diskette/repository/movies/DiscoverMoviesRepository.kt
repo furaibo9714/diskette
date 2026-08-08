@@ -5,8 +5,8 @@ import io.github.furaibo9714.diskette.common.extensions.nowUtcMillis
 import io.github.furaibo9714.diskette.data_local.LocalDataSource
 import io.github.furaibo9714.diskette.data_local.database.model.DiscoverMovie
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
-import io.github.furaibo9714.diskette.data_remote.Config.TRAKT_ANTICIPATED_LIMIT
-import io.github.furaibo9714.diskette.data_remote.Config.TRAKT_DISCOVER_LIMIT
+import io.github.furaibo9714.diskette.data_remote.Config.ANTICIPATED_LIMIT
+import io.github.furaibo9714.diskette.data_remote.Config.DISCOVER_LIMIT
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.DiscoverFeed
@@ -16,9 +16,9 @@ import io.github.furaibo9714.diskette.ui_model.DiscoverFeed.RECENT
 import io.github.furaibo9714.diskette.ui_model.DiscoverFeed.TRENDING
 import io.github.furaibo9714.diskette.ui_model.Genre
 import io.github.furaibo9714.diskette.ui_model.Movie
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import javax.inject.Inject
 
 class DiscoverMoviesRepository @Inject constructor(
   private val remoteSource: RemoteDataSource,
@@ -64,20 +64,20 @@ class DiscoverMoviesRepository @Inject constructor(
 
       val limit =
         if (showCollection) {
-          TRAKT_DISCOVER_LIMIT
+          DISCOVER_LIMIT
         } else {
-          TRAKT_DISCOVER_LIMIT + (collectionSize / 2)
+          DISCOVER_LIMIT + (collectionSize / 2)
         }
 
       val trendingMoviesAsync = async {
-        remoteSource.trakt
+        remoteSource.media
           .fetchTrendingMovies(genresQuery, limit)
           .map { mappers.movie.fromNetwork(it) }
       }
 
       val anticipatedMoviesAsync = async {
-        remoteSource.trakt
-          .fetchAnticipatedMovies(genresQuery, TRAKT_ANTICIPATED_LIMIT)
+        remoteSource.media
+          .fetchAnticipatedMovies(genresQuery, ANTICIPATED_LIMIT)
           .map { mappers.movie.fromNetwork(it) }
       }
 
@@ -98,15 +98,15 @@ class DiscoverMoviesRepository @Inject constructor(
 
   private suspend fun loadRemotePopular(genres: List<Genre>): List<Movie> {
     val genresQuery = genres.joinToString(",") { it.slug }
-    return remoteSource.trakt
-      .fetchPopularMovies(genresQuery, TRAKT_DISCOVER_LIMIT)
+    return remoteSource.media
+      .fetchPopularMovies(genresQuery, DISCOVER_LIMIT)
       .map { mappers.movie.fromNetwork(it) }
   }
 
   private suspend fun loadRemoteAnticipated(genres: List<Genre>): List<Movie> {
     val genresQuery = genres.joinToString(",") { it.slug }
-    return remoteSource.trakt
-      .fetchAnticipatedMovies(genresQuery, TRAKT_DISCOVER_LIMIT)
+    return remoteSource.media
+      .fetchAnticipatedMovies(genresQuery, DISCOVER_LIMIT)
       .map { mappers.movie.fromNetwork(it) }
   }
 

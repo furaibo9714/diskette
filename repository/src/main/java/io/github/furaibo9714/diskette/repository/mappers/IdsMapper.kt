@@ -1,6 +1,8 @@
 package io.github.furaibo9714.diskette.repository.mappers
 
 import io.github.furaibo9714.diskette.data_local.database.model.Movie
+import io.github.furaibo9714.diskette.data_local.database.model.Show as ShowDb
+import io.github.furaibo9714.diskette.data_remote.media.model.Ids as IdsNetwork
 import io.github.furaibo9714.diskette.ui_model.IdImdb
 import io.github.furaibo9714.diskette.ui_model.IdSlug
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
@@ -9,8 +11,6 @@ import io.github.furaibo9714.diskette.ui_model.IdTvRage
 import io.github.furaibo9714.diskette.ui_model.IdTvdb
 import io.github.furaibo9714.diskette.ui_model.Ids
 import javax.inject.Inject
-import io.github.furaibo9714.diskette.data_local.database.model.Show as ShowDb
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Ids as IdsNetwork
 
 class IdsMapper @Inject constructor() {
 

@@ -1,6 +1,8 @@
 package io.github.furaibo9714.diskette.repository.mappers
 
 import io.github.furaibo9714.diskette.common.extensions.toZonedDateTime
+import io.github.furaibo9714.diskette.data_local.database.model.Episode as EpisodeDb
+import io.github.furaibo9714.diskette.data_remote.media.model.Episode as EpisodeNetwork
 import io.github.furaibo9714.diskette.ui_model.Episode
 import io.github.furaibo9714.diskette.ui_model.IdImdb
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
@@ -10,8 +12,6 @@ import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Season
 import java.time.ZonedDateTime
 import javax.inject.Inject
-import io.github.furaibo9714.diskette.data_local.database.model.Episode as EpisodeDb
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Episode as EpisodeNetwork
 
 class EpisodeMapper @Inject constructor(
   private val idsMapper: IdsMapper,

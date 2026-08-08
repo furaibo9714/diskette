@@ -98,7 +98,7 @@
 -keep,allowobfuscation interface <1>
 
 -keep class io.github.furaibo9714.diskette.data_remote.tmdb.model.** { *; }
--keep class io.github.furaibo9714.diskette.data_remote.trakt.model.** { *; }
+-keep class io.github.furaibo9714.diskette.data_remote.media.model.** { *; }
 -keep class io.github.furaibo9714.diskette.data_remote.gcloud.model.** { *; }
 
 ### OkHttp

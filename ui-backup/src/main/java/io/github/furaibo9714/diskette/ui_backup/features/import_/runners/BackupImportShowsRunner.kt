@@ -25,12 +25,12 @@ import io.github.furaibo9714.diskette.ui_backup.model.BackupShow
 import io.github.furaibo9714.diskette.ui_backup.model.BackupShows
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.rethrowCancellation
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
-import javax.inject.Inject
 
 internal class BackupImportShowsRunner @Inject constructor(
   private val dispatchers: CoroutineDispatchers,
@@ -327,7 +327,7 @@ internal class BackupImportShowsRunner @Inject constructor(
     backupShows: BackupShows,
   ): Pair<List<Season>, List<Episode>> =
     coroutineScope {
-      val remoteSeasons = remoteSource.trakt.fetchSeasons(showId)
+      val remoteSeasons = remoteSource.media.fetchSeasons(showId)
 
       val localEpisodesAsync = async { localSource.episodes.getAllWatchedIdsForShows(listOf(showId)) }
       val localSeasonsAsync = async { localSource.seasons.getAllWatchedIdsForShows(listOf(showId)) }

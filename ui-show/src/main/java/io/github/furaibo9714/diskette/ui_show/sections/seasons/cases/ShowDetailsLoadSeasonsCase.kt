@@ -1,5 +1,6 @@
 package io.github.furaibo9714.diskette.ui_show.sections.seasons.cases
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.common.extensions.nowUtcMillis
 import io.github.furaibo9714.diskette.data_local.LocalDataSource
@@ -18,12 +19,11 @@ import io.github.furaibo9714.diskette.ui_model.Show
 import io.github.furaibo9714.diskette.ui_show.episodes.recycler.EpisodeListItem
 import io.github.furaibo9714.diskette.ui_show.sections.seasons.helpers.SeasonsBundle
 import io.github.furaibo9714.diskette.ui_show.sections.seasons.recycler.SeasonListItem
-import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @ViewModelScoped
 class ShowDetailsLoadSeasonsCase @Inject constructor(
@@ -48,7 +48,7 @@ class ShowDetailsLoadSeasonsCase @Inject constructor(
           loadLocalSeasons(show, showSpecialSeasons)
         }
 
-        val remoteSeasons = remoteSource.trakt
+        val remoteSeasons = remoteSource.media
           .fetchSeasons(show.traktId, show.ids.tmdb.id)
           .map { mappers.season.fromNetwork(it) }
           .filter { it.episodes.isNotEmpty() }

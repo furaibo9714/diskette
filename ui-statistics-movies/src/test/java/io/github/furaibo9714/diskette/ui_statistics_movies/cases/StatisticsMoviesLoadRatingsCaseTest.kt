@@ -10,15 +10,15 @@ import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageType
 import io.github.furaibo9714.diskette.ui_model.Movie
-import io.github.furaibo9714.diskette.ui_model.TraktRating
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_statistics_movies.views.ratings.recycler.StatisticsMoviesRatingItem
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class StatisticsMoviesLoadRatingsCaseTest : BaseMockTest() {
@@ -44,9 +44,9 @@ class StatisticsMoviesLoadRatingsCaseTest : BaseMockTest() {
   fun `Should load sorted ratings properly`() =
     runTest {
       val ratings = listOf(
-        TraktRating.EMPTY.copy(IdTrakt(1), ratedAt = ZonedDateTime.of(2000, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
-        TraktRating.EMPTY.copy(IdTrakt(2), ratedAt = ZonedDateTime.of(2001, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
-        TraktRating.EMPTY.copy(IdTrakt(3), ratedAt = ZonedDateTime.of(2002, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
+        UserRating.EMPTY.copy(IdTrakt(1), ratedAt = ZonedDateTime.of(2000, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
+        UserRating.EMPTY.copy(IdTrakt(2), ratedAt = ZonedDateTime.of(2001, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
+        UserRating.EMPTY.copy(IdTrakt(3), ratedAt = ZonedDateTime.of(2002, 3, 1, 1, 1, 1, 1, ZoneId.systemDefault())),
       )
 
       val movies = listOf(

@@ -59,7 +59,7 @@
   <string name="textGenreRomance">Romans</string>
   <string name="textGenreWar">Wojna</string>
   <string name="textGenreWestern">Western</string>
-  <string name="textTraktSyncSchedule">Zaplanuj</string>
+  <string name="textSyncSchedule">Zaplanuj</string>
   <string name="textTraktSyncOptionOff">Wyłączone</string>
   <string name="textTraktSyncOption1Hour">Co Godzinę</string>
   <string name="textTraktSyncOption3Hours">Co 3 Godziny</string>

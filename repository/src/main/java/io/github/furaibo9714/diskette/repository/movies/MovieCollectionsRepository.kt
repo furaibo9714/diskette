@@ -9,21 +9,21 @@ import io.github.furaibo9714.diskette.data_local.sources.MovieCollectionsItemsLo
 import io.github.furaibo9714.diskette.data_local.sources.MovieCollectionsLocalDataSource
 import io.github.furaibo9714.diskette.data_local.sources.MoviesLocalDataSource
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
-import io.github.furaibo9714.diskette.data_remote.trakt.TraktRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
 import io.github.furaibo9714.diskette.repository.mappers.CollectionMapper
 import io.github.furaibo9714.diskette.repository.mappers.MovieMapper
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.MovieCollection
-import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.withContext
 
 @Singleton
 class MovieCollectionsRepository @Inject constructor(
   private val dispatchers: CoroutineDispatchers,
-  private val remoteSource: TraktRemoteDataSource,
+  private val remoteSource: MediaRemoteDataSource,
   private val moviesLocalSource: MoviesLocalDataSource,
   private val movieCollectionsLocalSource: MovieCollectionsLocalDataSource,
   private val movieCollectionsItemsLocalSource: MovieCollectionsItemsLocalDataSource,

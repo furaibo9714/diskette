@@ -4,7 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import io.github.furaibo9714.diskette.common.extensions.nowUtcMillis
 import io.github.furaibo9714.diskette.data_local.database.dao.ShowsDao
 import io.github.furaibo9714.diskette.data_local.database.model.Show
-import io.github.furaibo9714.diskette.data_remote.trakt.TraktRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.model.Show as ShowRemote
 import io.github.furaibo9714.diskette.repository.common.BaseMockTest
 import io.github.furaibo9714.diskette.repository.shows.ShowDetailsRepository
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
@@ -16,15 +17,14 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import java.util.concurrent.TimeUnit
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Show as ShowRemote
 
 class ShowDetailsRepositoryTest : BaseMockTest() {
 
-  @MockK lateinit var traktApi: TraktRemoteDataSource
+  @MockK lateinit var traktApi: MediaRemoteDataSource
   @MockK lateinit var showsDao: ShowsDao
 
   private lateinit var SUT: ShowDetailsRepository
@@ -33,7 +33,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
   override fun setUp() {
     super.setUp()
     every { database.shows } returns showsDao
-    every { cloud.trakt } returns traktApi
+    every { cloud.media } returns traktApi
 
     SUT = ShowDetailsRepository(cloud, database, transactions, mappers)
   }

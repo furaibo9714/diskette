@@ -11,6 +11,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.ShowTranslation
 import io.github.furaibo9714.diskette.data_local.database.model.TranslationsMoviesSyncLog
 import io.github.furaibo9714.diskette.data_local.database.model.TranslationsSyncLog
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.model.Translation as TranslationRemote
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository.Key.LANGUAGE
 import io.github.furaibo9714.diskette.ui_model.Episode
@@ -23,7 +24,6 @@ import io.github.furaibo9714.diskette.ui_model.Translation
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Translation as TranslationRemote
 
 @Singleton
 class TranslationsRepository @Inject constructor(
@@ -66,7 +66,7 @@ class TranslationsRepository @Inject constructor(
     }
 
     val remoteTranslation = try {
-      remoteSource.trakt
+      remoteSource.media
         .fetchShowTranslations(show.traktId, language, show.ids.tmdb.id)
         .firstOrNull { chineseLanguagePredicate(it) && frenchLanguagePredicate(it) }
     } catch (error: Throwable) {
@@ -107,7 +107,7 @@ class TranslationsRepository @Inject constructor(
     }
 
     val remoteTranslation = try {
-      remoteSource.trakt
+      remoteSource.media
         .fetchMovieTranslations(movie.traktId, language, movie.ids.tmdb.id)
         .firstOrNull { chineseLanguagePredicate(it) && frenchLanguagePredicate(it) }
     } catch (error: Throwable) {
@@ -151,7 +151,7 @@ class TranslationsRepository @Inject constructor(
 
     if (onlyLocal) return null
 
-    val remoteTranslations = remoteSource.trakt
+    val remoteTranslations = remoteSource.media
       .fetchSeasonTranslations(showId.id, episode.season, language)
       .map { mappers.translation.fromNetwork(it) }
 
@@ -205,7 +205,7 @@ class TranslationsRepository @Inject constructor(
       }
     }
 
-    val remoteTranslation = remoteSource.trakt
+    val remoteTranslation = remoteSource.media
       .fetchSeasonTranslations(showId.id, season.number, language)
       .map { mappers.translation.fromNetwork(it) }
 

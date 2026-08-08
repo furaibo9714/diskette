@@ -2,9 +2,10 @@ package io.github.furaibo9714.diskette.ui_movie
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.furaibo9714.diskette.common.errors.ErrorHelper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.furaibo9714.diskette.common.errors.DisketteError.CoroutineCancellation
 import io.github.furaibo9714.diskette.common.errors.DisketteError.ResourceNotFoundError
+import io.github.furaibo9714.diskette.common.errors.ErrorHelper
 import io.github.furaibo9714.diskette.common.extensions.dateFromMillis
 import io.github.furaibo9714.diskette.common.extensions.nowUtc
 import io.github.furaibo9714.diskette.common.extensions.toUtcZone
@@ -27,8 +28,8 @@ import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.ProgressDateSelectionType.ALWAYS_ASK
 import io.github.furaibo9714.diskette.ui_model.RatingState
 import io.github.furaibo9714.diskette.ui_model.SpoilersSettings
-import io.github.furaibo9714.diskette.ui_model.TraktRating
 import io.github.furaibo9714.diskette.ui_model.Translation
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_movie.MovieDetailsEvent.Finish
 import io.github.furaibo9714.diskette.ui_movie.MovieDetailsEvent.RequestWidgetsUpdate
 import io.github.furaibo9714.diskette.ui_movie.MovieDetailsUiState.FollowedState
@@ -40,7 +41,9 @@ import io.github.furaibo9714.diskette.ui_movie.cases.MovieDetailsTranslationCase
 import io.github.furaibo9714.diskette.ui_movie.cases.MovieDetailsWatchlistCase
 import io.github.furaibo9714.diskette.ui_movie.helpers.MovieDetailsMeta
 import io.github.furaibo9714.diskette.ui_movie.sections.ratings.cases.MovieDetailsRatingCase
-import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.ZonedDateTime
+import javax.inject.Inject
+import kotlin.properties.Delegates.notNull
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -48,9 +51,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.ZonedDateTime
-import javax.inject.Inject
-import kotlin.properties.Delegates.notNull
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -184,7 +184,7 @@ class MovieDetailsViewModel @Inject constructor(
         ratingState.value = RatingState(rateLoading = true)
         val rating = ratingsCase.loadRating(movie)
         ratingState.value =
-          RatingState(rateLoading = false, userRating = rating ?: TraktRating.EMPTY)
+          RatingState(rateLoading = false, userRating = rating ?: UserRating.EMPTY)
       } catch (error: Throwable) {
         ratingState.value = RatingState(rateLoading = false)
         rethrowCancellation(error)

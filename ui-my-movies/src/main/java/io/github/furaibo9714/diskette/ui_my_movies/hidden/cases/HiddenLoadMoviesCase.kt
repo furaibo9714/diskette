@@ -1,5 +1,6 @@
 package io.github.furaibo9714.diskette.ui_my_movies.hidden.cases
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.furaibo9714.diskette.common.Config
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.TranslationsRepository
@@ -14,18 +15,17 @@ import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.SortOrder
 import io.github.furaibo9714.diskette.ui_model.SortType
 import io.github.furaibo9714.diskette.ui_model.SpoilersSettings
-import io.github.furaibo9714.diskette.ui_model.TraktRating
 import io.github.furaibo9714.diskette.ui_model.Translation
 import io.github.furaibo9714.diskette.ui_model.UpcomingFilter
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_my_movies.common.helpers.CollectionItemSorter
 import io.github.furaibo9714.diskette.ui_my_movies.common.recycler.CollectionListItem
-import dagger.hilt.android.scopes.ViewModelScoped
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
 @ViewModelScoped
 class HiddenLoadMoviesCase @Inject constructor(
@@ -131,7 +131,7 @@ class HiddenLoadMoviesCase @Inject constructor(
   private fun CoroutineScope.toListItemAsync(
     movie: Movie,
     translation: Translation?,
-    userRating: TraktRating?,
+    userRating: UserRating?,
     dateFormat: DateTimeFormatter,
     fullDateFormat: DateTimeFormatter,
     sortOrder: SortOrder,

@@ -2,9 +2,9 @@ package io.github.furaibo9714.diskette.ui_search.cases
 
 import com.google.common.truth.Truth.assertThat
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
-import io.github.furaibo9714.diskette.data_remote.trakt.TraktRemoteDataSource
-import io.github.furaibo9714.diskette.data_remote.trakt.model.SearchResult
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Show
+import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.model.SearchResult
+import io.github.furaibo9714.diskette.data_remote.media.model.Show
 import io.github.furaibo9714.diskette.repository.TranslationsRepository
 import io.github.furaibo9714.diskette.repository.images.MovieImagesProvider
 import io.github.furaibo9714.diskette.repository.images.ShowImagesProvider
@@ -31,7 +31,7 @@ import org.junit.Test
 class SearchQueryCaseTest : BaseMockTest() {
 
   @RelaxedMockK lateinit var cloud: RemoteDataSource
-  @RelaxedMockK lateinit var traktApi: TraktRemoteDataSource
+  @RelaxedMockK lateinit var traktApi: MediaRemoteDataSource
   @RelaxedMockK lateinit var mappers: Mappers
   @RelaxedMockK lateinit var settingsRepository: SettingsRepository
   @RelaxedMockK lateinit var showsRepository: ShowsRepository
@@ -46,7 +46,7 @@ class SearchQueryCaseTest : BaseMockTest() {
   override fun setUp() {
     super.setUp()
 
-    coEvery { cloud.trakt } returns traktApi
+    coEvery { cloud.media } returns traktApi
     coEvery { settingsRepository.isMoviesEnabled } returns true
     coEvery { translationsRepository.getLanguage() } returns "en"
 
@@ -82,9 +82,9 @@ class SearchQueryCaseTest : BaseMockTest() {
       val show = mockk<Show> {
         coEvery { votes } returnsMany listOf(10, 20, 30)
       }
-      val item1 = SearchResult(order = 3, score = 1F, show = show, movie = null, person = null)
-      val item2 = SearchResult(order = 2, score = 2F, show = show, movie = null, person = null)
-      val item3 = SearchResult(order = 1, score = 3F, show = show, movie = null, person = null)
+      val item1 = SearchResult(order = 3, score = 1F, show = show, movie = null)
+      val item2 = SearchResult(order = 2, score = 2F, show = show, movie = null)
+      val item3 = SearchResult(order = 1, score = 3F, show = show, movie = null)
 
       coEvery { traktApi.fetchSearch(any(), any()) } returns listOf(item1, item2, item3)
 

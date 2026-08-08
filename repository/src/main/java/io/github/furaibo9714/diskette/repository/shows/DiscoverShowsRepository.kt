@@ -5,8 +5,8 @@ import io.github.furaibo9714.diskette.common.extensions.nowUtcMillis
 import io.github.furaibo9714.diskette.data_local.LocalDataSource
 import io.github.furaibo9714.diskette.data_local.database.model.DiscoverShow
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
-import io.github.furaibo9714.diskette.data_remote.Config.TRAKT_ANTICIPATED_LIMIT
-import io.github.furaibo9714.diskette.data_remote.Config.TRAKT_DISCOVER_LIMIT
+import io.github.furaibo9714.diskette.data_remote.Config.ANTICIPATED_LIMIT
+import io.github.furaibo9714.diskette.data_remote.Config.DISCOVER_LIMIT
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.DiscoverFeed
@@ -17,9 +17,9 @@ import io.github.furaibo9714.diskette.ui_model.DiscoverFeed.TRENDING
 import io.github.furaibo9714.diskette.ui_model.Genre
 import io.github.furaibo9714.diskette.ui_model.Network
 import io.github.furaibo9714.diskette.ui_model.Show
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import javax.inject.Inject
 
 class DiscoverShowsRepository @Inject constructor(
   private val remoteSource: RemoteDataSource,
@@ -68,20 +68,20 @@ class DiscoverShowsRepository @Inject constructor(
 
       val limit =
         if (showCollection) {
-          TRAKT_DISCOVER_LIMIT
+          DISCOVER_LIMIT
         } else {
-          TRAKT_DISCOVER_LIMIT + (collectionSize / 2)
+          DISCOVER_LIMIT + (collectionSize / 2)
         }
 
       val trendingShowsAsync = async {
-        remoteSource.trakt
+        remoteSource.media
           .fetchTrendingShows(genresQuery, networksQuery, limit)
           .map { mappers.show.fromNetwork(it) }
       }
 
       val anticipatedShowsAsync = async {
-        remoteSource.trakt
-          .fetchAnticipatedShows(genresQuery, networksQuery, TRAKT_ANTICIPATED_LIMIT)
+        remoteSource.media
+          .fetchAnticipatedShows(genresQuery, networksQuery, ANTICIPATED_LIMIT)
           .map { mappers.show.fromNetwork(it) }
       }
 
@@ -107,11 +107,11 @@ class DiscoverShowsRepository @Inject constructor(
     val genresQuery = genres.joinToString(",") { it.slug }
     val networksQuery = networks.joinToString(",") { it.channels.joinToString(",") }
 
-    return remoteSource.trakt
+    return remoteSource.media
       .fetchPopularShows(
         genres = genresQuery,
         networks = networksQuery,
-        limit = TRAKT_DISCOVER_LIMIT,
+        limit = DISCOVER_LIMIT,
       ).map { mappers.show.fromNetwork(it) }
   }
 
@@ -122,11 +122,11 @@ class DiscoverShowsRepository @Inject constructor(
     val genresQuery = genres.joinToString(",") { it.slug }
     val networksQuery = networks.joinToString(",") { it.channels.joinToString(",") }
 
-    return remoteSource.trakt
+    return remoteSource.media
       .fetchAnticipatedShows(
         genres = genresQuery,
         networks = networksQuery,
-        limit = TRAKT_DISCOVER_LIMIT,
+        limit = DISCOVER_LIMIT,
       ).map { mappers.show.fromNetwork(it) }
   }
 

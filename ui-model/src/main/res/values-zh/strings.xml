@@ -59,7 +59,7 @@
   <string name="textGenreThriller">惊悚</string>
   <string name="textGenreWar">战争</string>
   <string name="textGenreWestern">西部</string>
-  <string name="textTraktSyncSchedule">定时同步时间</string>
+  <string name="textSyncSchedule">定时同步时间</string>
   <string name="textTraktSyncOptionOff">关闭</string>
   <string name="textTraktSyncOption1Hour">每隔 1 小时</string>
   <string name="textTraktSyncOption3Hours">每隔 3 小时</string>

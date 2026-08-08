@@ -49,7 +49,7 @@
   <string name="textGenreThriller">Suspense</string>
   <string name="textGenreWar">Guerra</string>
   <string name="textGenreWestern">Faroeste</string>
-  <string name="textTraktSyncSchedule">Programação</string>
+  <string name="textSyncSchedule">Programação</string>
   <string name="textTraktSyncOptionOff">Desligado</string>
   <string name="textTraktSyncOption1Hour">A cada hora</string>
   <string name="textTraktSyncOption3Hours">A cada 3 horas</string>

@@ -1,13 +1,13 @@
 package io.github.furaibo9714.diskette.repository.mappers
 
 import io.github.furaibo9714.diskette.common.extensions.nowUtcMillis
+import io.github.furaibo9714.diskette.data_local.database.model.Show as ShowDb
+import io.github.furaibo9714.diskette.data_remote.media.model.AirTime as AirTimeNetwork
+import io.github.furaibo9714.diskette.data_remote.media.model.Show as ShowNetwork
 import io.github.furaibo9714.diskette.ui_model.AirTime
 import io.github.furaibo9714.diskette.ui_model.Show
 import io.github.furaibo9714.diskette.ui_model.ShowStatus
 import javax.inject.Inject
-import io.github.furaibo9714.diskette.data_local.database.model.Show as ShowDb
-import io.github.furaibo9714.diskette.data_remote.trakt.model.AirTime as AirTimeNetwork
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Show as ShowNetwork
 
 class ShowMapper @Inject constructor(
   private val idsMapper: IdsMapper,

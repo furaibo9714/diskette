@@ -2,16 +2,16 @@ package io.github.furaibo9714.diskette.ui.main.cases.deeplink
 
 import io.github.furaibo9714.diskette.data_local.sources.MoviesLocalDataSource
 import io.github.furaibo9714.diskette.data_local.sources.ShowsLocalDataSource
-import io.github.furaibo9714.diskette.data_remote.trakt.TraktRemoteDataSource
+import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.repository.movies.MovieDetailsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowDetailsRepository
-import io.github.furaibo9714.diskette.utilities.deeplink.DeepLinkBundle
 import io.github.furaibo9714.diskette.ui_model.IdImdb
+import io.github.furaibo9714.diskette.utilities.deeplink.DeepLinkBundle
 import javax.inject.Inject
 
 class ImdbDeepLinkCase @Inject constructor(
-  private val traktRemoteSource: TraktRemoteDataSource,
+  private val mediaRemoteSource: MediaRemoteDataSource,
   private val showsLocalSource: ShowsLocalDataSource,
   private val moviesLocalSource: MoviesLocalDataSource,
   private val showDetailsRepository: ShowDetailsRepository,
@@ -30,7 +30,7 @@ class ImdbDeepLinkCase @Inject constructor(
       return DeepLinkBundle(movie = movie)
     }
 
-    val searchResult = traktRemoteSource.findByImdbId(imdbId.id) ?: return DeepLinkBundle.EMPTY
+    val searchResult = mediaRemoteSource.findByImdbId(imdbId.id) ?: return DeepLinkBundle.EMPTY
     val showSearch = searchResult.show
     val movieSearch = searchResult.movie
     return when {

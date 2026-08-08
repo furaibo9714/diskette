@@ -59,7 +59,7 @@
   <string name="textGenreThriller">Триллер</string>
   <string name="textGenreWar">Военный</string>
   <string name="textGenreWestern">Вестерн</string>
-  <string name="textTraktSyncSchedule">Расписание</string>
+  <string name="textSyncSchedule">Расписание</string>
   <string name="textTraktSyncOptionOff">Выкл</string>
   <string name="textTraktSyncOption1Hour">Каждый час</string>
   <string name="textTraktSyncOption3Hours">Каждые 3 часа</string>

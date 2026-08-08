@@ -1,8 +1,11 @@
 package io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.show.cases
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.common.extensions.toMillis
 import io.github.furaibo9714.diskette.data_local.LocalDataSource
+import io.github.furaibo9714.diskette.data_local.database.model.Episode as EpisodeDb
+import io.github.furaibo9714.diskette.data_local.database.model.Season as SeasonDb
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
 import io.github.furaibo9714.diskette.repository.PinnedItemsRepository
@@ -13,11 +16,8 @@ import io.github.furaibo9714.diskette.ui_base.notifications.AnnouncementManager
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Show
-import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import io.github.furaibo9714.diskette.data_local.database.model.Episode as EpisodeDb
-import io.github.furaibo9714.diskette.data_local.database.model.Season as SeasonDb
+import kotlinx.coroutines.withContext
 
 @ViewModelScoped
 class ShowContextMenuMyShowsCase @Inject constructor(
@@ -36,7 +36,7 @@ class ShowContextMenuMyShowsCase @Inject constructor(
     withContext(dispatchers.IO) {
       val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(traktId))
 
-      val seasons = remoteSource.trakt
+      val seasons = remoteSource.media
         .fetchSeasons(traktId.id)
         .map { mappers.season.fromNetwork(it) }
         .filter { it.episodes.isNotEmpty() }

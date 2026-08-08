@@ -33,7 +33,7 @@ class RelatedShowsRepository @Inject constructor(
         .map { mappers.show.fromDatabase(it) }
     }
 
-    val remoteShows = remoteSource.trakt
+    val remoteShows = remoteSource.media
       .fetchRelatedShows(show.traktId, min(hiddenCount, 10), show.ids.tmdb.id)
       .map { mappers.show.fromNetwork(it) }
 

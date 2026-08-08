@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.data_local.LocalDataSource
 import io.github.furaibo9714.diskette.data_local.database.model.Rating
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.Movie
-import io.github.furaibo9714.diskette.ui_model.TraktRating
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,14 +20,14 @@ class MoviesRatingsRepository @Inject constructor(
     private const val TYPE_MOVIE = "movie"
   }
 
-  suspend fun loadMoviesRatings(): List<TraktRating> {
+  suspend fun loadMoviesRatings(): List<UserRating> {
     val ratings = localSource.ratings.getAllByType(TYPE_MOVIE)
     return ratings.map {
       mappers.userRatings.fromDatabase(it)
     }
   }
 
-  suspend fun loadRatings(movies: List<Movie>): List<TraktRating> {
+  suspend fun loadRatings(movies: List<Movie>): List<UserRating> {
     val ratings = mutableListOf<Rating>()
     movies.chunked(250).forEach { chunk ->
       val items = localSource.ratings.getAllByType(chunk.map { it.traktId }, TYPE_MOVIE)

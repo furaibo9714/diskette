@@ -65,7 +65,7 @@
   <string name="textGenreWar">War</string>
   <string name="textGenreWestern">Western</string>
 
-  <string name="textTraktSyncSchedule">Schedule</string>
+  <string name="textSyncSchedule">Schedule</string>
   <string name="textTraktSyncOptionOff">Off</string>
   <string name="textTraktSyncOption1Hour">Every Hour</string>
   <string name="textTraktSyncOption3Hours">Every 3 Hours</string>

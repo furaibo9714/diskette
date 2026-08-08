@@ -26,7 +26,7 @@ class MovieDetailsRepository @Inject constructor(
     val local = localSource.movies.getById(idTrakt.id)
     val isIncomplete = local != null && local.runtime <= 0
     if (force || local == null || isIncomplete || nowUtcMillis() - local.updatedAt > Config.MOVIE_DETAILS_CACHE_DURATION) {
-      val remote = remoteSource.trakt.fetchMovie(idTrakt.id, local?.idTmdb)
+      val remote = remoteSource.media.fetchMovie(idTrakt.id, local?.idTmdb)
       val movie = mappers.movie.fromNetwork(remote)
       localSource.movies.upsert(listOf(mappers.movie.toDatabase(movie)))
       localSource.moviesSyncLog.upsert(MoviesSyncLog(movie.traktId, nowUtcMillis()))

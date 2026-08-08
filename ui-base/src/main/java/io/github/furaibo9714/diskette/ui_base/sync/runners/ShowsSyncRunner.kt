@@ -10,10 +10,10 @@ import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_model.ShowStatus.CANCELED
 import io.github.furaibo9714.diskette.ui_model.ShowStatus.ENDED
-import kotlinx.coroutines.delay
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.delay
+import timber.log.Timber
 
 /**
  * This class is responsible for fetching and syncing missing/updated episodes data for current progress shows.
@@ -79,7 +79,7 @@ class ShowsSyncRunner @Inject constructor(
         try {
           Timber.i("Syncing ${show.title}(${show.ids.trakt}) episodes...")
 
-          val remoteSeasons = remoteSource.trakt
+          val remoteSeasons = remoteSource.media
             .fetchSeasons(show.traktId)
             .map { mappers.season.fromNetwork(it) }
           episodesManager.invalidateSeasons(show, remoteSeasons)

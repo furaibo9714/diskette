@@ -2,9 +2,10 @@ package io.github.furaibo9714.diskette.ui_base.common.sheets.ratings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.furaibo9714.diskette.common.errors.ErrorHelper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.furaibo9714.diskette.common.errors.DisketteError.CoroutineCancellation
 import io.github.furaibo9714.diskette.common.errors.DisketteError.UnauthorizedError
+import io.github.furaibo9714.diskette.common.errors.ErrorHelper
 import io.github.furaibo9714.diskette.ui_base.R
 import io.github.furaibo9714.diskette.ui_base.common.sheets.ratings.RatingsBottomSheet.Options.Operation
 import io.github.furaibo9714.diskette.ui_base.common.sheets.ratings.RatingsBottomSheet.Options.Type
@@ -17,14 +18,13 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STO
 import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
 import io.github.furaibo9714.diskette.ui_model.IdTrakt
-import io.github.furaibo9714.diskette.ui_model.TraktRating
-import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.furaibo9714.diskette.ui_model.UserRating
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class RatingsSheetViewModel @Inject constructor(
@@ -36,7 +36,7 @@ class RatingsSheetViewModel @Inject constructor(
   ChannelsDelegate by DefaultChannelsDelegate() {
 
   private val loadingState = MutableStateFlow(false)
-  private val ratingState = MutableStateFlow<TraktRating?>(null)
+  private val ratingState = MutableStateFlow<UserRating?>(null)
 
   fun loadRating(
     idTrakt: IdTrakt,

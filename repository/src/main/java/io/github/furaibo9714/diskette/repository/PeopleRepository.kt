@@ -19,10 +19,10 @@ import io.github.furaibo9714.diskette.ui_model.ImageType
 import io.github.furaibo9714.diskette.ui_model.Person
 import io.github.furaibo9714.diskette.ui_model.Person.Department
 import io.github.furaibo9714.diskette.ui_model.PersonCredit
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import javax.inject.Inject
 
 class PeopleRepository @Inject constructor(
   private val settingsRepository: SettingsRepository,
@@ -107,8 +107,8 @@ class PeopleRepository @Inject constructor(
 
       // Return remote fetched data if available and cache it locally
       val type = if (person.department == Department.ACTING) Type.CAST else Type.CREW
-      val showsCreditsAsync = async { remoteSource.trakt.fetchPersonShowsCredits(idTrakt!!, type, idTmdb) }
-      val moviesCreditsAsync = async { remoteSource.trakt.fetchPersonMoviesCredits(idTrakt!!, type, idTmdb) }
+      val showsCreditsAsync = async { remoteSource.media.fetchPersonShowsCredits(idTrakt!!, type, idTmdb) }
+      val moviesCreditsAsync = async { remoteSource.media.fetchPersonMoviesCredits(idTrakt!!, type, idTmdb) }
       val remoteCredits = awaitAll(showsCreditsAsync, moviesCreditsAsync)
         .flatten()
         .map {

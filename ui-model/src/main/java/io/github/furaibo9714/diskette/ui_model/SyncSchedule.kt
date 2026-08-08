@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit.DAYS
 import java.util.concurrent.TimeUnit.HOURS
 import java.util.concurrent.TimeUnit.SECONDS
 
-enum class TraktSyncSchedule(
+enum class SyncSchedule(
   val duration: Long,
   val durationUnit: TimeUnit,
   @StringRes val stringRes: Int,
@@ -18,7 +18,7 @@ enum class TraktSyncSchedule(
     SECONDS,
     R.string.textTraktSyncOptionOff,
     R.string.textTraktSyncOptionOffMessage,
-    R.string.textTraktSyncSchedule,
+    R.string.textSyncSchedule,
   ),
   EVERY_HOUR(
     1,

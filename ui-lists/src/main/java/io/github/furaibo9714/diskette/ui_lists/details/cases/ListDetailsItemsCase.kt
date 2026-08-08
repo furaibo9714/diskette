@@ -1,5 +1,6 @@
 package io.github.furaibo9714.diskette.ui_lists.details.cases
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.furaibo9714.diskette.common.Config
 import io.github.furaibo9714.diskette.common.Mode
 import io.github.furaibo9714.diskette.common.Mode.MOVIES
@@ -27,17 +28,16 @@ import io.github.furaibo9714.diskette.ui_model.Show
 import io.github.furaibo9714.diskette.ui_model.SortOrder
 import io.github.furaibo9714.diskette.ui_model.SortType
 import io.github.furaibo9714.diskette.ui_model.SpoilersSettings
-import io.github.furaibo9714.diskette.ui_model.TraktRating
 import io.github.furaibo9714.diskette.ui_model.Translation
-import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Collections
 import javax.inject.Inject
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 
 @ViewModelScoped
 class ListDetailsItemsCase @Inject constructor(
@@ -173,7 +173,7 @@ class ListDetailsItemsCase @Inject constructor(
     movie: Movie,
     listItem: CustomListItem,
     translation: Translation?,
-    userRating: TraktRating?,
+    userRating: UserRating?,
     isRankSort: Boolean,
     listedAt: ZonedDateTime,
     moviesEnabled: Boolean,
@@ -206,7 +206,7 @@ class ListDetailsItemsCase @Inject constructor(
     show: Show,
     listItem: CustomListItem,
     translation: Translation?,
-    userRating: TraktRating?,
+    userRating: UserRating?,
     isRankSort: Boolean,
     listedAt: ZonedDateTime,
     sortOrder: SortOrder,

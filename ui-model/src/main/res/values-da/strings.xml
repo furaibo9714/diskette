@@ -59,7 +59,7 @@
   <string name="textGenreThriller">Thriller</string>
   <string name="textGenreWar">Krig</string>
   <string name="textGenreWestern">Western</string>
-  <string name="textTraktSyncSchedule">Tidsplan</string>
+  <string name="textSyncSchedule">Tidsplan</string>
   <string name="textTraktSyncOptionOff">Fra</string>
   <string name="textTraktSyncOption1Hour">Hver Time</string>
   <string name="textTraktSyncOption3Hours">Hver 3. Time</string>

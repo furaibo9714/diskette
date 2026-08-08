@@ -59,7 +59,7 @@
   <string name="textGenreRomance">Романтика</string>
   <string name="textGenreWar">Військовий</string>
   <string name="textGenreWestern">Вестерн</string>
-  <string name="textTraktSyncSchedule">Розклад</string>
+  <string name="textSyncSchedule">Розклад</string>
   <string name="textTraktSyncOptionOff">Вимкнено</string>
   <string name="textTraktSyncOption1Hour">Щогодини</string>
   <string name="textTraktSyncOption3Hours">Кожні 3 години</string>

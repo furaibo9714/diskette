@@ -59,7 +59,7 @@
   <string name="textGenreThriller">Gerilim</string>
   <string name="textGenreWar">Savaş</string>
   <string name="textGenreWestern">Western</string>
-  <string name="textTraktSyncSchedule">Zamanla</string>
+  <string name="textSyncSchedule">Zamanla</string>
   <string name="textTraktSyncOptionOff">Kapalı</string>
   <string name="textTraktSyncOption1Hour">Saatte Bir</string>
   <string name="textTraktSyncOption3Hours">Her 3 Saatte Bir</string>

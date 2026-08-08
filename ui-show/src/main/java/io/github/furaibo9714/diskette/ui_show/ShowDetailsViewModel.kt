@@ -3,9 +3,10 @@ package io.github.furaibo9714.diskette.ui_show
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.furaibo9714.diskette.common.errors.ErrorHelper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.furaibo9714.diskette.common.errors.DisketteError.CoroutineCancellation
 import io.github.furaibo9714.diskette.common.errors.DisketteError.ResourceNotFoundError
+import io.github.furaibo9714.diskette.common.errors.ErrorHelper
 import io.github.furaibo9714.diskette.repository.images.ShowImagesProvider
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.ui_base.Logger
@@ -22,8 +23,8 @@ import io.github.furaibo9714.diskette.ui_model.ImageType.FANART
 import io.github.furaibo9714.diskette.ui_model.RatingState
 import io.github.furaibo9714.diskette.ui_model.Show
 import io.github.furaibo9714.diskette.ui_model.SpoilersSettings
-import io.github.furaibo9714.diskette.ui_model.TraktRating
 import io.github.furaibo9714.diskette.ui_model.Translation
+import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_show.ShowDetailsEvent.Finish
 import io.github.furaibo9714.diskette.ui_show.ShowDetailsUiState.FollowedState
 import io.github.furaibo9714.diskette.ui_show.cases.ShowDetailsHiddenCase
@@ -34,7 +35,7 @@ import io.github.furaibo9714.diskette.ui_show.cases.ShowDetailsTranslationCase
 import io.github.furaibo9714.diskette.ui_show.cases.ShowDetailsWatchlistCase
 import io.github.furaibo9714.diskette.ui_show.sections.ratings.cases.ShowDetailsRatingCase
 import io.github.furaibo9714.diskette.ui_show.sections.seasons.helpers.SeasonsCache
-import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +45,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @SuppressLint("StaticFieldLeak")
 @HiltViewModel
@@ -167,7 +167,7 @@ class ShowDetailsViewModel @Inject constructor(
         ratingState.value = RatingState(rateLoading = true)
         val rating = ratingsCase.loadRating(show)
         ratingState.value =
-          RatingState(rateLoading = false, userRating = rating ?: TraktRating.EMPTY)
+          RatingState(rateLoading = false, userRating = rating ?: UserRating.EMPTY)
       } catch (error: Throwable) {
         ratingState.value = RatingState(rateLoading = false)
         rethrowCancellation(error)

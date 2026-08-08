@@ -1,5 +1,6 @@
 package io.github.furaibo9714.diskette.ui_search.cases
 
+import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.furaibo9714.diskette.common.Config
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
@@ -16,12 +17,11 @@ import io.github.furaibo9714.diskette.ui_model.SearchResult
 import io.github.furaibo9714.diskette.ui_model.Show
 import io.github.furaibo9714.diskette.ui_model.Translation
 import io.github.furaibo9714.diskette.ui_search.recycler.SearchListItem
-import dagger.hilt.android.scopes.ViewModelScoped
+import java.util.UUID
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import java.util.UUID
-import javax.inject.Inject
 
 @ViewModelScoped
 class SearchQueryCase @Inject constructor(
@@ -45,7 +45,7 @@ class SearchQueryCase @Inject constructor(
       val watchlistMoviesIds = moviesRepository.watchlistMovies.loadAllIds()
       val spoilers = settingsRepository.spoilers.getAll()
 
-      remoteSource.trakt
+      remoteSource.media
         .fetchSearch(query, withMovies)
         .mapIndexed { index, item ->
           val order = index + 1

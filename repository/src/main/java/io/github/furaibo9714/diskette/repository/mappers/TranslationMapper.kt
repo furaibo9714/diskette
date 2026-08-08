@@ -3,11 +3,11 @@ package io.github.furaibo9714.diskette.repository.mappers
 import io.github.furaibo9714.diskette.data_local.database.model.EpisodeTranslation
 import io.github.furaibo9714.diskette.data_local.database.model.MovieTranslation
 import io.github.furaibo9714.diskette.data_local.database.model.ShowTranslation
+import io.github.furaibo9714.diskette.data_remote.media.model.SeasonTranslation as SeasonTranslationNetwork
+import io.github.furaibo9714.diskette.data_remote.media.model.Translation as TranslationNetwork
 import io.github.furaibo9714.diskette.ui_model.SeasonTranslation
 import io.github.furaibo9714.diskette.ui_model.Translation
 import javax.inject.Inject
-import io.github.furaibo9714.diskette.data_remote.trakt.model.SeasonTranslation as SeasonTranslationNetwork
-import io.github.furaibo9714.diskette.data_remote.trakt.model.Translation as TranslationNetwork
 
 class TranslationMapper @Inject constructor(
   private val idsMapper: IdsMapper,

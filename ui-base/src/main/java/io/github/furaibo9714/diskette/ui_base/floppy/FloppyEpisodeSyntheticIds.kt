@@ -4,7 +4,7 @@ package io.github.furaibo9714.diskette.ui_base.floppy
  * Floppy addresses watched episodes by (show, season_number, episode_number), not by any
  * TMDB-internal per-episode id - unlike shows/movies, TMDB's own per-episode `id` field (which
  * the normal TMDB-fetch path keys episode identity off, see [TmdbSyntheticIds] and
- * `TmdbToTraktModelConverter.toEpisode`) can't be derived from season/episode numbers alone, so a
+ * `TmdbModelConverter.toEpisode`) can't be derived from season/episode numbers alone, so a
  * thin episode row created from a Floppy import can't predict the id a later real fetch would
  * assign to the same episode.
  *
