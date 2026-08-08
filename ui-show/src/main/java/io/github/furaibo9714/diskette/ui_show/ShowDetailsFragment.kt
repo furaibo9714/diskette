@@ -45,7 +45,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.navigateToSaf
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onClick
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onLongClick
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.openWebUrl
-import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireLong
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireMediaId
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.screenHeight
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.screenWidth
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.showInfoSnackbar
@@ -87,7 +87,7 @@ class ShowDetailsFragment : BaseFragment<ShowDetailsViewModel>(R.layout.fragment
 
   override val viewModel by viewModels<ShowDetailsViewModel>()
 
-  private val showId by lazy { MediaId.parse(requireLong(ARG_SHOW_ID)) }
+  private val showId by lazy { requireMediaId(ARG_SHOW_ID) }
 
   private val imageHeight by lazy {
     if (resources.configuration.orientation == ORIENTATION_PORTRAIT) {
@@ -128,7 +128,7 @@ class ShowDetailsFragment : BaseFragment<ShowDetailsViewModel>(R.layout.fragment
       showDetailsBackArrow.onClick { requireActivity().onBackPressed() }
       showDetailsImage.onClick {
         val bundle = bundleOf(
-          ARG_SHOW_ID to showId.id,
+          ARG_SHOW_ID to showId.key,
           ARG_FAMILY to SHOW,
           ARG_TYPE to FANART,
         )
@@ -403,7 +403,7 @@ class ShowDetailsFragment : BaseFragment<ShowDetailsViewModel>(R.layout.fragment
     }
     setFragmentResultListener(REQUEST_MANAGE_LISTS) { _, _ -> viewModel.loadListsCount() }
     val bundle = bundleOf(
-      ARG_ID to showId.id,
+      ARG_ID to showId.key,
       ARG_TYPE to Mode.SHOWS.type,
     )
     navigateToSafe(R.id.actionShowDetailsFragmentToManageLists, bundle)

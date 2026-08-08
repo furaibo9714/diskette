@@ -44,9 +44,8 @@ internal class BackupImportListsRunner @Inject constructor(
         statusListener?.invoke(Importing(backupList.name, index + 1, total))
 
         val idCheck = localLists.any { it.id == backupList.id }
-        val traktIdCheck = backupList.mediaId != null && localLists.any { it.mediaId == backupList.mediaId }
 
-        if (traktIdCheck || idCheck) {
+        if (idCheck) {
           // Custom lists already exists locally
           importExistingCustomList(backupList)
         } else {
@@ -59,7 +58,6 @@ internal class BackupImportListsRunner @Inject constructor(
 
   private suspend fun importNewCustomList(backupList: BackupList) {
     val list = CustomList.create().copy(
-      mediaId = backupList.mediaId,
       idSlug = backupList.slugId,
       name = backupList.name,
       description = backupList.description,

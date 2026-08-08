@@ -17,6 +17,6 @@ class MovieDetailsListsCase @Inject constructor(
 
   suspend fun countLists(movie: Movie) =
     withContext(dispatchers.IO) {
-      listsRepository.loadListIdsForItem(MediaId.parse(movie.mediaId), Mode.MOVIES.type).size
+      listsRepository.loadListIdsForItem(movie.mediaId, Mode.MOVIES.type).size
     }
 }

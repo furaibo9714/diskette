@@ -19,7 +19,7 @@ class CreateListCase @Inject constructor(
     description: String?,
   ): CustomList {
     val idFloppy = createFloppyList(name, description)
-    return listsRepository.createList(name, description, mediaId = null, idFloppy = idFloppy, idSlug = null)
+    return listsRepository.createList(name, description, idFloppy = idFloppy, idSlug = null)
   }
 
   suspend fun updateList(list: CustomList): CustomList {
@@ -31,7 +31,7 @@ class CreateListCase @Inject constructor(
         Timber.w(error, "Failed to update list on Floppy. Local update proceeds regardless.")
       }
     }
-    return listsRepository.updateList(list.id, mediaId = null, idFloppy = idFloppy, idSlug = null, list.name, list.description)
+    return listsRepository.updateList(list.id, idFloppy = idFloppy, idSlug = null, name = list.name, description = list.description)
   }
 
   private suspend fun createFloppyList(

@@ -119,22 +119,22 @@ class ProgressWidgetProvider : BaseWidgetProvider() {
     if (intent.action.equals(ACTION_CLICK)) {
       when {
         intent.extras?.containsKey(EXTRA_EPISODE_ID) == true -> {
-          val episodeId = intent.getLongExtra(EXTRA_EPISODE_ID, -1L)
-          val seasonId = intent.getLongExtra(EXTRA_SEASON_ID, -1L)
-          val showId = intent.getLongExtra(EXTRA_SHOW_ID, -1L)
+          val episodeId = intent.getStringExtra(EXTRA_EPISODE_ID).orEmpty()
+          val seasonId = intent.getStringExtra(EXTRA_SEASON_ID).orEmpty()
+          val showId = intent.getStringExtra(EXTRA_SHOW_ID).orEmpty()
           ProgressWidgetEpisodeCheckService.initialize(
             context.applicationContext,
-            episodeId,
-            seasonId,
+            MediaId.parse(episodeId),
+            MediaId.parse(seasonId),
             MediaId.parse(showId),
           )
         }
         intent.extras?.containsKey(EXTRA_SHOW_ID) == true -> {
-          val showId = intent.getLongExtra(EXTRA_SHOW_ID, -1L)
+          val showId = intent.getStringExtra(EXTRA_SHOW_ID).orEmpty()
           context.startActivity(
             Intent().apply {
               setClassName(context, HOST_ACTIVITY_NAME)
-              putExtra(EXTRA_SHOW_ID, showId.toString())
+              putExtra(EXTRA_SHOW_ID, showId)
               flags = Intent.FLAG_ACTIVITY_NEW_TASK
             },
           )

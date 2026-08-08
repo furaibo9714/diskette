@@ -88,7 +88,7 @@ internal class BackupExportMoviesRunner @Inject constructor(
 
   private suspend fun exportMoviesProgress(): BackupMovies =
     withContext(dispatchers.IO) {
-      val pinnedMoviesIds = pinnedItemsRepository.getAllMovies()
+      val pinnedMoviesIds = pinnedItemsRepository.getAllMovies().map { it.key }
       BackupMovies(
         progressPinned = pinnedMoviesIds,
       )
@@ -101,7 +101,7 @@ internal class BackupExportMoviesRunner @Inject constructor(
       val ratings = ratingsRepository.loadMoviesRatings()
 
       val moviesIds = ratings.map { it.mediaId.key }
-      val moviesTmdbIds = localSource.movies.getAllTmdbIds(traktIds = moviesIds)
+      val moviesTmdbIds = localSource.movies.getAllTmdbIds(mediaIds = moviesIds)
 
       val ratingsMovies = ratings.map {
         BackupMovieRating(

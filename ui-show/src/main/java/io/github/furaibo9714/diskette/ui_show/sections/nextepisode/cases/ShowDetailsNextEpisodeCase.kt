@@ -18,6 +18,8 @@ class ShowDetailsNextEpisodeCase @Inject constructor(
 
   suspend fun loadNextEpisode(mediaId: MediaId): Episode? =
     withContext(dispatchers.IO) {
+      // A show with no TMDB id is a Floppy manual entry, which has no next episode to look up.
+      val tmdbId = mediaId.tmdbIdOrNull ?: return@withContext null
       val episode = remoteSource.media.fetchNextEpisode(tmdbId) ?: return@withContext null
       return@withContext mappers.episode.fromNetwork(episode)
     }

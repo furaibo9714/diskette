@@ -20,6 +20,6 @@ class EpisodeDetailsWatchedCase @Inject constructor(
     episode: Episode,
   ): ZonedDateTime? =
     withContext(dispatchers.IO) {
-      episodesDataSource.getById(showId.id, episode.ids.media.key)?.lastWatchedAt
+      episodesDataSource.getById(showId.key, episode.ids.media.key)?.lastWatchedAt
     }
 }

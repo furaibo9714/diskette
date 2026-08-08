@@ -99,7 +99,7 @@ internal class GetHistoryItemsCase @Inject constructor(
       val language = translationsRepository.getLanguage()
       val dateFormat = dateFormatProvider.loadFullHourFormat()
 
-      val showsById = shows.associateBy { it.mediaId }
+      val showsById = shows.associateBy { it.mediaId.key }
       val seasonsByShowAndNumber = localSeasons.associateBy { it.showMediaId to it.seasonNumber }
       val episodesByShowAndSeason = pageEpisodes.groupBy { it.showMediaId to it.seasonNumber }
 

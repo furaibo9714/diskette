@@ -29,7 +29,7 @@ class ProgressMoviesWidgetCheckService :
       movieId: MediaId,
     ) {
       val intent = Intent().apply {
-        putExtra(EXTRA_MOVIE_ID, movieId.id)
+        putExtra(EXTRA_MOVIE_ID, movieId.key)
       }
       enqueueWork(
         context,
@@ -45,8 +45,8 @@ class ProgressMoviesWidgetCheckService :
   @Inject lateinit var progressMoviesCase: ProgressMoviesMainCase
 
   override fun onHandleWork(intent: Intent) {
-    val movieId = intent.getLongExtra(EXTRA_MOVIE_ID, -1)
-    if (movieId == -1L) {
+    val movieId = intent.getStringExtra(EXTRA_MOVIE_ID)
+    if (movieId.isNullOrBlank()) {
       val error = Throwable("Invalid ID.")
       Logger.record(error, "ProgressMoviesWidgetCheckService::onHandleWork()")
       return

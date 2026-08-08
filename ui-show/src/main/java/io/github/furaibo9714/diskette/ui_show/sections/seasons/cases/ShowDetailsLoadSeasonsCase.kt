@@ -49,7 +49,7 @@ class ShowDetailsLoadSeasonsCase @Inject constructor(
         }
 
         val remoteSeasons = remoteSource.media
-          .fetchSeasons(show.mediaId, show.ids.tmdb.id)
+          .fetchSeasons(show.ids.tmdb.id)
           .map { mappers.season.fromNetwork(it) }
           .filter { it.episodes.isNotEmpty() }
           .filter { if (!showSpecialSeasons) !it.isSpecial() else true }
@@ -70,9 +70,9 @@ class ShowDetailsLoadSeasonsCase @Inject constructor(
     show: Show,
     showSpecials: Boolean,
   ): SeasonsBundle {
-    val localEpisodes = localSource.episodes.getAllByShowId(show.mediaId)
+    val localEpisodes = localSource.episodes.getAllByShowId(show.mediaId.key)
     val localSeasons = localSource.seasons
-      .getAllByShowId(show.mediaId)
+      .getAllByShowId(show.mediaId.key)
       .map { season ->
         val seasonEpisodes = localEpisodes.filter { ep -> ep.idSeason == season.mediaId }
         mappers.season.fromDatabase(season, seasonEpisodes)

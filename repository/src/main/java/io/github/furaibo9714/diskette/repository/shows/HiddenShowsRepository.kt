@@ -35,7 +35,7 @@ class HiddenShowsRepository @Inject constructor(
       mappers.show.fromDatabase(it)
     }
 
-  suspend fun loadAllIds() = localSource.archiveShows.getAllMediaIds()
+  suspend fun loadAllIds() = localSource.archiveShows.getAllMediaIds().map { MediaId.parse(it) }
 
   suspend fun insert(id: MediaId) {
     val dbShow = ArchiveShow.fromMediaId(id.key, nowUtcMillis())

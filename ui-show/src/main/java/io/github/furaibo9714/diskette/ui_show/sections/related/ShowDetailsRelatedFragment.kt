@@ -64,7 +64,7 @@ class ShowDetailsRelatedFragment : BaseFragment<ShowDetailsRelatedViewModel>(R.l
   }
 
   private fun openDetails(item: RelatedListItem) {
-    val bundle = Bundle().apply { putLong(ARG_SHOW_ID, item.show.mediaId) }
+    val bundle = Bundle().apply { putString(ARG_SHOW_ID, item.show.mediaId.key) }
     navigateToSafe(R.id.actionShowDetailsFragmentToSelf, bundle)
   }
 

@@ -149,16 +149,16 @@ class PersonDetailsBottomSheet : BaseBottomSheetFragment(R.layout.view_person_de
         firstVisibleItemPosition = (layoutManager?.findLastVisibleItemPosition() ?: 0),
       ),
     )
-    if (item is PersonDetailsItem.CreditsShowItem && item.show.mediaId != sourceId.id) {
+    if (item is PersonDetailsItem.CreditsShowItem && item.show.mediaId != sourceId) {
       setFragmentResult(REQUEST_DETAILS, personBundle)
-      val bundle = bundleOf(NavigationArgs.ARG_SHOW_ID to item.show.mediaId)
+      val bundle = bundleOf(NavigationArgs.ARG_SHOW_ID to item.show.mediaId.key)
       requireParentFragment()
         .findNavController()
         .navigate(R.id.actionPersonDetailsDialogToShow, bundle)
     }
-    if (item is PersonDetailsItem.CreditsMovieItem && item.movie.mediaId != sourceId.id) {
+    if (item is PersonDetailsItem.CreditsMovieItem && item.movie.mediaId != sourceId) {
       setFragmentResult(REQUEST_DETAILS, personBundle)
-      val bundle = bundleOf(NavigationArgs.ARG_MOVIE_ID to item.movie.mediaId)
+      val bundle = bundleOf(NavigationArgs.ARG_MOVIE_ID to item.movie.mediaId.key)
       requireParentFragment()
         .findNavController()
         .navigate(R.id.actionPersonDetailsDialogToMovie, bundle)

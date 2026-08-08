@@ -27,11 +27,11 @@ class PinnedItemsRepository @Inject constructor(
 
   fun removePinnedItem(movie: Movie) = sharedPreferencesMovies.edit().remove(movie.mediaId.key).apply()
 
-  fun isItemPinned(show: Show) = sharedPreferences.contains(show.mediaId.toString())
+  fun isItemPinned(show: Show) = sharedPreferences.contains(show.mediaId.key)
 
-  fun isItemPinned(movie: Movie) = sharedPreferencesMovies.contains(movie.mediaId.toString())
+  fun isItemPinned(movie: Movie) = sharedPreferencesMovies.contains(movie.mediaId.key)
 
-  fun getAllMovies(): List<Long> = sharedPreferencesMovies.all.values.map { it as Long }
+  fun getAllMovies(): List<MediaId> = sharedPreferencesMovies.all.keys.map { MediaId.parse(it) }
 
-  fun getAllShows(): List<Long> = sharedPreferences.all.values.map { it as Long }
+  fun getAllShows(): List<MediaId> = sharedPreferences.all.keys.map { MediaId.parse(it) }
 }

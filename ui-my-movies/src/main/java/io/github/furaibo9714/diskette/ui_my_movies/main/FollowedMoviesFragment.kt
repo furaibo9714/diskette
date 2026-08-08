@@ -219,7 +219,7 @@ class FollowedMoviesFragment :
     hideNavigation()
     binding.followedMoviesRoot
       .fadeOut(150) {
-        val bundle = Bundle().apply { putLong(ARG_MOVIE_ID, movie.mediaId) }
+        val bundle = Bundle().apply { putString(ARG_MOVIE_ID, movie.mediaId.key) }
         navigateToSafe(R.id.actionFollowedMoviesFragmentToMovieDetailsFragment, bundle)
         exitSearch()
       }.add(animations)

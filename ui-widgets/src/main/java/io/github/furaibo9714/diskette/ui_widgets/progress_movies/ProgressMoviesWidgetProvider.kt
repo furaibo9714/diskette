@@ -111,17 +111,17 @@ class ProgressMoviesWidgetProvider : BaseWidgetProvider() {
     if (intent.action == ACTION_CLICK) {
       when {
         intent.extras?.containsKey(EXTRA_MOVIE_ID) == true -> {
-          val movieId = intent.getLongExtra(EXTRA_MOVIE_ID, -1L)
+          val movieId = intent.getStringExtra(EXTRA_MOVIE_ID).orEmpty()
           context.startActivity(
             Intent().apply {
               setClassName(context, Config.HOST_ACTIVITY_NAME)
-              putExtra(EXTRA_MOVIE_ID, movieId.toString())
+              putExtra(EXTRA_MOVIE_ID, movieId)
               flags = Intent.FLAG_ACTIVITY_NEW_TASK
             },
           )
         }
         intent.extras?.containsKey(EXTRA_CHECK_MOVIE_ID) == true -> {
-          val movieId = intent.getLongExtra(EXTRA_CHECK_MOVIE_ID, -1L)
+          val movieId = intent.getStringExtra(EXTRA_CHECK_MOVIE_ID).orEmpty()
           ProgressMoviesWidgetCheckService.initialize(
             context.applicationContext,
             MediaId.parse(movieId),

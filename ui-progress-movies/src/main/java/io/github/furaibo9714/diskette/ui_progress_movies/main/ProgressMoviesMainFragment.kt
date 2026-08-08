@@ -194,7 +194,7 @@ class ProgressMoviesMainFragment :
     hideNavigation()
     binding.progressMoviesRoot
       .fadeOut(150) {
-        val bundle = Bundle().apply { putLong(ARG_MOVIE_ID, movie.ids.media.key) }
+        val bundle = Bundle().apply { putString(ARG_MOVIE_ID, movie.ids.media.key) }
         navigateTo(R.id.actionProgressMoviesFragmentToMovieDetailsFragment, bundle)
         exitSearch()
       }.add(animations)

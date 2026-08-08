@@ -228,7 +228,7 @@ class FollowedShowsFragment :
     hideNavigation()
     binding.followedShowsRoot
       .fadeOut(150) {
-        val bundle = Bundle().apply { putLong(ARG_SHOW_ID, show.mediaId) }
+        val bundle = Bundle().apply { putString(ARG_SHOW_ID, show.mediaId.key) }
         navigateToSafe(R.id.actionFollowedShowsFragmentToShowDetailsFragment, bundle)
         exitSearch()
       }.add(animations)

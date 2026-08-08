@@ -50,8 +50,8 @@ class ShowDetailsMyShowsCase @Inject constructor(
     episodes: List<Episode>,
   ) = withContext(dispatchers.IO) {
     transactions.withTransaction {
-      val localSeasons = localSource.seasons.getAllByShowId(show.mediaId)
-      val localEpisodes = localSource.episodes.getAllByShowId(show.mediaId)
+      val localSeasons = localSource.seasons.getAllByShowId(show.mediaId.key)
+      val localEpisodes = localSource.episodes.getAllByShowId(show.mediaId.key)
       val lastWatchedAt = localEpisodes.maxByOrNull { it.lastWatchedAt != null }?.lastWatchedAt?.toMillis() ?: 0L
 
       showsRepository.myShows.insert(show.ids.media, lastWatchedAt)
@@ -87,9 +87,9 @@ class ShowDetailsMyShowsCase @Inject constructor(
       showsRepository.myShows.delete(show.ids.media)
 
       if (removeLocalData) {
-        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId)
-        val seasons = localSource.seasons.getAllByShowId(show.mediaId)
-        val episodes = localSource.episodes.getAllByShowId(show.mediaId)
+        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId.key)
+        val seasons = localSource.seasons.getAllByShowId(show.mediaId.key)
+        val episodes = localSource.episodes.getAllByShowId(show.mediaId.key)
         val toDelete = mutableListOf<SeasonDb>()
         seasons.forEach { season ->
           if (episodes.none { it.idSeason == season.mediaId }) {

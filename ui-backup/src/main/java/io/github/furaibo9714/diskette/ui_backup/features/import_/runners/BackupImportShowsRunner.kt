@@ -73,7 +73,7 @@ internal class BackupImportShowsRunner @Inject constructor(
     withContext(dispatchers.IO) {
       val localCollection = showsRepository
         .loadCollection()
-        .map { it.mediaId }
+        .map { it.mediaId.key }
 
       importedCount = 0
       importedTotal = backup.collectionHistory.size + backup.collectionWatchlist.size + backup.collectionHidden.size
@@ -86,7 +86,7 @@ internal class BackupImportShowsRunner @Inject constructor(
 
   private suspend fun importMyShows(
     backupShows: BackupShows,
-    localCollection: List<Long>,
+    localCollection: List<String>,
   ) {
     for (show in backupShows.collectionHistory) {
       Timber.d("Importing show ${show.mediaId} ...")
@@ -119,7 +119,7 @@ internal class BackupImportShowsRunner @Inject constructor(
       )
 
       Timber.d("New show in My Shows. Importing season, episodes ...")
-      val (seasons, episodes) = loadSeasonsEpisodes(show.mediaId, backupShows)
+      val (seasons, episodes) = loadSeasonsEpisodes(MediaId.parse(show.mediaId), backupShows)
 
       transactions.withTransaction {
         localSource.seasons.upsert(seasons)
@@ -133,7 +133,7 @@ internal class BackupImportShowsRunner @Inject constructor(
 
   private suspend fun importWatchlistShows(
     backupShows: BackupShows,
-    localCollection: List<Long>,
+    localCollection: List<String>,
   ) {
     for (show in backupShows.collectionWatchlist) {
       Timber.d("Importing show ${show.mediaId} ...")
@@ -162,7 +162,7 @@ internal class BackupImportShowsRunner @Inject constructor(
 
   private suspend fun importHiddenShows(
     backupShows: BackupShows,
-    localCollection: List<Long>,
+    localCollection: List<String>,
   ) {
     for (show in backupShows.collectionHidden) {
       Timber.d("Importing show ${show.mediaId} ...")
@@ -191,7 +191,7 @@ internal class BackupImportShowsRunner @Inject constructor(
 
   private suspend fun importShowsPinned(backup: BackupShows) {
     withContext(dispatchers.IO) {
-      val localPinned = pinnedItemsRepository.getAllShows()
+      val localPinned = pinnedItemsRepository.getAllShows().map { it.key }
       for (pinned in backup.progressPinned) {
         if (!localPinned.contains(pinned)) {
           pinnedItemsRepository.addShowPinnedItem(MediaId.parse(pinned))
@@ -202,7 +202,7 @@ internal class BackupImportShowsRunner @Inject constructor(
 
   private suspend fun importShowsOnHold(backup: BackupShows) {
     withContext(dispatchers.IO) {
-      val localOnHold = onHoldItemsRepository.getAll().map { it.id }
+      val localOnHold = onHoldItemsRepository.getAll().map { it.key }
       for (onHoldShow in backup.progressOnHold) {
         if (!localOnHold.contains(onHoldShow)) {
           onHoldItemsRepository.addItem(MediaId.parse(onHoldShow))
@@ -292,9 +292,9 @@ internal class BackupImportShowsRunner @Inject constructor(
   ) {
     Timber.d("Show already in My Shows. Importing episodes ...")
     withContext(dispatchers.IO) {
-      val show = localSource.shows.getById(showId.id) ?: return@withContext
+      val show = localSource.shows.getById(showId.key) ?: return@withContext
       val importEpisodes = backup.progressEpisodes
-        .filter { it.showTraktId == showId.id }
+        .filter { it.showMediaId == showId.key }
 
       val localEpisodesAsync = async { localSource.episodes.getAllByShowId(show.mediaId) }
       val localEpisodes = localEpisodesAsync.await()
@@ -323,23 +323,26 @@ internal class BackupImportShowsRunner @Inject constructor(
   }
 
   private suspend fun loadSeasonsEpisodes(
-    showId: Long,
+    showId: MediaId,
     backupShows: BackupShows,
   ): Pair<List<Season>, List<Episode>> =
     coroutineScope {
-      val remoteSeasons = remoteSource.media.fetchSeasons(showId)
+      // A show with no TMDB id is a Floppy manual entry, which has no seasons to fetch.
+      val remoteSeasons = showId.tmdbIdOrNull
+        ?.let { remoteSource.media.fetchSeasons(it) }
+        .orEmpty()
 
-      val localEpisodesAsync = async { localSource.episodes.getAllWatchedIdsForShows(listOf(showId)) }
-      val localSeasonsAsync = async { localSource.seasons.getAllWatchedIdsForShows(listOf(showId)) }
+      val localEpisodesAsync = async { localSource.episodes.getAllWatchedIdsForShows(listOf(showId.key)) }
+      val localSeasonsAsync = async { localSource.seasons.getAllWatchedIdsForShows(listOf(showId.key)) }
       val localEpisodesIds = localEpisodesAsync.await()
       val localSeasonsIds = localSeasonsAsync.await()
 
-      val backupSeason = backupShows.progressSeasons.filter { it.showTraktId == showId }
-      val backupEpisodes = backupShows.progressEpisodes.filter { it.showTraktId == showId }
+      val backupSeason = backupShows.progressSeasons.filter { it.showMediaId == showId.key }
+      val backupEpisodes = backupShows.progressEpisodes.filter { it.showMediaId == showId.key }
 
       val seasons = remoteSeasons
-        .filterNot { localSeasonsIds.contains(it.ids?.media) }
         .map { mappers.season.fromNetwork(it) }
+        .filterNot { localSeasonsIds.contains(it.ids.media.key) }
         .map { remoteSeason ->
           val isWatchedNumber = backupSeason
             .any { it.seasonNumber == remoteSeason.number }
@@ -349,14 +352,14 @@ internal class BackupImportShowsRunner @Inject constructor(
 
           mappers.season.toDatabase(
             season = remoteSeason,
-            showId = MediaId.parse(showId),
+            showId = showId,
             isWatched = isWatchedNumber && isWatchedSize,
           )
         }
 
       val episodes = remoteSeasons.flatMap { season ->
         season.episodes
-          ?.filterNot { localEpisodesIds.contains(it.ids?.media) }
+          ?.filterNot { localEpisodesIds.contains(mappers.ids.fromNetwork(it.ids).media.key) }
           ?.map { episode ->
             val importEpisode = backupEpisodes
               .find {
@@ -370,7 +373,7 @@ internal class BackupImportShowsRunner @Inject constructor(
             }
 
             mappers.episode.toDatabase(
-              showId = MediaId.parse(showId),
+              showId = showId,
               season = mappers.season.fromNetwork(season),
               episode = mappers.episode.fromNetwork(episode),
               isWatched = importEpisode != null,

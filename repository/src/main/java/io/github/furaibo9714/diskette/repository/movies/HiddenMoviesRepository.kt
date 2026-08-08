@@ -35,7 +35,7 @@ class HiddenMoviesRepository @Inject constructor(
       mappers.movie.fromDatabase(it)
     }
 
-  suspend fun loadAllIds() = localSource.archiveMovies.getAllMediaIds()
+  suspend fun loadAllIds() = localSource.archiveMovies.getAllMediaIds().map { MediaId.parse(it) }
 
   suspend fun insert(id: MediaId) {
     val dbMovie = ArchiveMovie.fromMediaId(id.key, nowUtcMillis())

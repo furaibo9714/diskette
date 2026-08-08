@@ -119,11 +119,11 @@ class ShowDetailsViewModel @Inject constructor(
           is ResourceNotFoundError -> {
             // Malformed Trakt data or duplicate show.
             messageChannel.send(MessageEvent.Info(R.string.errorMalformedShow))
-            Logger.record(error, "ShowDetailsViewModel::loadDetails(${id.id})")
+            Logger.record(error, "ShowDetailsViewModel::loadDetails(${id.key})")
           }
           else -> {
             messageChannel.send(MessageEvent.Error(R.string.errorCouldNotLoadShow))
-            Logger.record(error, "ShowDetailsViewModel::loadDetails(${id.id})")
+            Logger.record(error, "ShowDetailsViewModel::loadDetails(${id.key})")
           }
         }
       }

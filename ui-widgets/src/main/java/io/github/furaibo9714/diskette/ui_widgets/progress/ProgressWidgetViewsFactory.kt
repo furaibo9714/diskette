@@ -134,14 +134,14 @@ class ProgressWidgetViewsFactory(
               item.episode
                 ?.ids
                 ?.media
-                ?.id,
+                ?.key,
             )
             putExtra(
               EXTRA_SEASON_ID,
               item.season
                 ?.ids
                 ?.media
-                ?.id,
+                ?.key,
             )
             putExtra(EXTRA_SHOW_ID, item.show.mediaId)
           },
@@ -199,7 +199,7 @@ class ProgressWidgetViewsFactory(
     }
   }
 
-  override fun getItemId(position: Int) = adapterItems[position].show.mediaId
+  override fun getItemId(position: Int) = adapterItems[position].show.mediaId.stableLongId
 
   override fun getLoadingView() = RemoteViews(context.packageName, R.layout.widget_loading_item)
 

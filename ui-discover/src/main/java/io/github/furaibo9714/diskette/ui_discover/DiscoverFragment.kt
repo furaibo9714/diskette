@@ -286,7 +286,7 @@ internal class DiscoverFragment :
           startDelay = 350,
           endAction = {
             if (!isResumed) return@fadeOut
-            val bundle = Bundle().apply { putLong(ARG_SHOW_ID, item.show.mediaId) }
+            val bundle = Bundle().apply { putString(ARG_SHOW_ID, item.show.mediaId.key) }
             navigateToSafe(R.id.actionDiscoverFragmentToShowDetailsFragment, bundle)
           },
         ).add(animations)

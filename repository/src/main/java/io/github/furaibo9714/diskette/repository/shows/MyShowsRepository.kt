@@ -44,7 +44,7 @@ class MyShowsRepository @Inject constructor(
       .getAllRecent(amount)
       .map { mappers.show.fromDatabase(it) }
 
-  suspend fun loadAllIds() = myShowsLocalSource.getAllMediaIds()
+  suspend fun loadAllIds() = myShowsLocalSource.getAllMediaIds().map { MediaId.parse(it) }
 
   suspend fun insert(
     id: MediaId,

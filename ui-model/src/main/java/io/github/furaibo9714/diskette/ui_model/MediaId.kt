@@ -58,6 +58,14 @@ data class MediaId(
   val tmdbIdOrNull: Long?
     get() = if (source == MediaSource.TMDB) providerId.toLongOrNull() else null
 
+  /**
+   * A stable number derived from [key], for the Android APIs that insist on a numeric row id -
+   * `RemoteViewsFactory.getItemId` and PendingIntent request codes. It is not an identity: two
+   * items can collide, so nothing may be stored under it or addressed by it.
+   */
+  val stableLongId: Long
+    get() = key.hashCode().toLong()
+
   override fun toString() = key
 
   companion object {

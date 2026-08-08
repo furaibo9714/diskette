@@ -52,7 +52,7 @@ internal class BackupImportMoviesRunner @Inject constructor(
 
   private suspend fun importMoviesPinned(backup: BackupMovies) {
     withContext(dispatchers.IO) {
-      val localPinned = pinnedItemsRepository.getAllMovies()
+      val localPinned = pinnedItemsRepository.getAllMovies().map { it.key }
       for (pinned in backup.progressPinned) {
         if (!localPinned.contains(pinned)) {
           pinnedItemsRepository.addMoviePinnedItem(MediaId.parse(pinned))
@@ -90,7 +90,7 @@ internal class BackupImportMoviesRunner @Inject constructor(
     withContext(dispatchers.IO) {
       val localCollection = moviesRepository
         .loadCollection()
-        .map { it.mediaId }
+        .map { it.mediaId.key }
 
       importedCount = 0
       importedTotal = backup.collectionHistory.size + backup.collectionWatchlist.size + backup.collectionHidden.size
@@ -103,7 +103,7 @@ internal class BackupImportMoviesRunner @Inject constructor(
 
   private suspend fun importMyMovies(
     backupMovies: BackupMovies,
-    localCollection: List<Long>,
+    localCollection: List<String>,
   ) {
     for (movie in backupMovies.collectionHistory) {
       Timber.d("Importing movie ${movie.mediaId} ...")
@@ -132,7 +132,7 @@ internal class BackupImportMoviesRunner @Inject constructor(
 
   private suspend fun importWatchlistMovies(
     backupMovies: BackupMovies,
-    localCollection: List<Long>,
+    localCollection: List<String>,
   ) {
     for (movie in backupMovies.collectionWatchlist) {
       Timber.d("Importing movie ${movie.mediaId} ...")
@@ -161,7 +161,7 @@ internal class BackupImportMoviesRunner @Inject constructor(
 
   private suspend fun importHiddenMovies(
     backupMovies: BackupMovies,
-    localCollection: List<Long>,
+    localCollection: List<String>,
   ) {
     for (movie in backupMovies.collectionHidden) {
       Timber.d("Importing movie ${movie.mediaId} ...")

@@ -63,9 +63,9 @@ data class ListDetailsItem(
     throw IllegalStateException()
   }
 
-  fun getTraktId(): MediaId {
-    if (isShow()) return MediaId.parse(requireShow().mediaId)
-    if (isMovie()) return MediaId.parse(requireMovie().mediaId)
+  fun getMediaId(): MediaId {
+    if (isShow()) return requireShow().mediaId
+    if (isMovie()) return requireMovie().mediaId
     throw IllegalStateException()
   }
 

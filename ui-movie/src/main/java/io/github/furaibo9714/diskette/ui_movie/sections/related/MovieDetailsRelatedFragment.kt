@@ -67,7 +67,7 @@ class MovieDetailsRelatedFragment :
   }
 
   private fun openDetails(item: RelatedListItem) {
-    val bundle = Bundle().apply { putLong(ARG_MOVIE_ID, item.movie.mediaId) }
+    val bundle = Bundle().apply { putString(ARG_MOVIE_ID, item.movie.mediaId.key) }
     navigateToSafe(R.id.actionMovieDetailsFragmentToSelf, bundle)
   }
 

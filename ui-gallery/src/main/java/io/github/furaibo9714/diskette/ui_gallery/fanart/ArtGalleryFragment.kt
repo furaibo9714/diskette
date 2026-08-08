@@ -52,8 +52,8 @@ class ArtGalleryFragment : BaseFragment<ArtGalleryViewModel>(R.layout.fragment_a
   override val viewModel by viewModels<ArtGalleryViewModel>()
   private val binding by viewBinding(FragmentArtGalleryBinding::bind)
 
-  private val showId by lazy { MediaId.parse(arguments?.getLong(ARG_SHOW_ID, -1) ?: -1) }
-  private val movieId by lazy { MediaId.parse(arguments?.getLong(ARG_MOVIE_ID, -1) ?: -1) }
+  private val showId by lazy { MediaId.parse(arguments?.getString(ARG_SHOW_ID).orEmpty()) }
+  private val movieId by lazy { MediaId.parse(arguments?.getString(ARG_MOVIE_ID).orEmpty()) }
   private val family by lazy { arguments?.getSerializable(ARG_FAMILY) as ImageFamily }
   private val type by lazy { arguments?.getSerializable(ARG_TYPE) as ImageType }
 

@@ -145,11 +145,11 @@ class CalendarWidgetProvider : BaseWidgetProvider() {
     intent: Intent,
   ) {
     fun onListItemClick() {
-      val showId = intent.getLongExtra(EXTRA_SHOW_ID, -1L)
+      val showId = intent.getStringExtra(EXTRA_SHOW_ID).orEmpty()
       context.startActivity(
         Intent().apply {
           setClassName(context, Config.HOST_ACTIVITY_NAME)
-          putExtra(EXTRA_SHOW_ID, showId.toString())
+          putExtra(EXTRA_SHOW_ID, showId)
           flags = Intent.FLAG_ACTIVITY_NEW_TASK
         },
       )

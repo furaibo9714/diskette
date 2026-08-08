@@ -25,7 +25,7 @@ class WatchlistShowsRepository @Inject constructor(
     return shows
   }
 
-  suspend fun loadAllIds() = localSource.watchlistShows.getAllMediaIds()
+  suspend fun loadAllIds() = localSource.watchlistShows.getAllMediaIds().map { MediaId.parse(it) }
 
   suspend fun load(id: MediaId) =
     localSource.watchlistShows.getById(id.key)?.let {

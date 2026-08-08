@@ -37,8 +37,8 @@ internal class BackupExportListsRunner @Inject constructor(
         val localShowIds = localItems.filter { it.type == "show" }.map { it.mediaId }
         val localMovieIds = localItems.filter { it.type == "movie" }.map { it.mediaId }
 
-        val localShowTmdbIdsAsync = async { localSource.shows.getAllTmdbIds(traktIds = localShowIds) }
-        val localMovieTmdbIdsAsync = async { localSource.movies.getAllTmdbIds(traktIds = localMovieIds) }
+        val localShowTmdbIdsAsync = async { localSource.shows.getAllTmdbIds(mediaIds = localShowIds) }
+        val localMovieTmdbIdsAsync = async { localSource.movies.getAllTmdbIds(mediaIds = localMovieIds) }
         val (localShowTmdbIds, localMovieTmdbIds) = awaitAll(localShowTmdbIdsAsync, localMovieTmdbIdsAsync)
 
         val backupItems = localItems.map {
@@ -61,7 +61,6 @@ internal class BackupExportListsRunner @Inject constructor(
 
         val backupList = BackupList(
           id = list.id,
-          mediaId = list.mediaId,
           slugId = list.idSlug,
           name = list.name,
           description = list.description,

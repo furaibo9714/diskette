@@ -26,10 +26,10 @@ class StatisticsLoadRatingsCase @Inject constructor(
     val myShows = showsRepository.myShows.loadAll(ratingsIds)
 
     return ratings
-      .filter { rating -> myShows.any { it.mediaId == rating.mediaId.key } }
+      .filter { rating -> myShows.any { it.mediaId == rating.mediaId } }
       .take(LIMIT)
       .map { rating ->
-        val show = myShows.first { it.mediaId == rating.mediaId.key }
+        val show = myShows.first { it.mediaId == rating.mediaId }
         StatisticsRatingItem(
           isLoading = false,
           show = show,

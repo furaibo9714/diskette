@@ -38,9 +38,9 @@ class ShowDetailsHiddenCase @Inject constructor(
       showsRepository.hiddenShows.insert(show.ids.media)
 
       if (removeLocalData) {
-        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId)
-        val seasons = localSource.seasons.getAllByShowId(show.mediaId)
-        val episodes = localSource.episodes.getAllByShowId(show.mediaId)
+        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId.key)
+        val seasons = localSource.seasons.getAllByShowId(show.mediaId.key)
+        val episodes = localSource.episodes.getAllByShowId(show.mediaId.key)
         val toDelete = mutableListOf<Season>()
         seasons.forEach { season ->
           if (episodes.none { it.idSeason == season.mediaId }) {

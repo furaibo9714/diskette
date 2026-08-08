@@ -259,7 +259,7 @@ internal class DiscoverMoviesFragment :
           startDelay = 350,
           endAction = {
             if (!isResumed) return@fadeOut
-            val bundle = Bundle().apply { putLong(NavigationArgs.ARG_MOVIE_ID, item.movie.mediaId) }
+            val bundle = Bundle().apply { putString(NavigationArgs.ARG_MOVIE_ID, item.movie.mediaId.key) }
             navigateToSafe(R.id.actionDiscoverMoviesFragmentToMovieDetailsFragment, bundle)
           },
         ).add(animations)

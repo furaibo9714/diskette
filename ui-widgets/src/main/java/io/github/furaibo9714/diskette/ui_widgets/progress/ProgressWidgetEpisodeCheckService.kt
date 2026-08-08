@@ -31,14 +31,14 @@ class ProgressWidgetEpisodeCheckService :
 
     fun initialize(
       context: Context,
-      episodeId: Long,
-      seasonId: Long,
+      episodeId: MediaId,
+      seasonId: MediaId,
       showId: MediaId,
     ) {
       val intent = Intent().apply {
-        putExtra(EXTRA_EPISODE_ID, episodeId)
-        putExtra(EXTRA_SEASON_ID, seasonId)
-        putExtra(EXTRA_SHOW_ID, showId.id)
+        putExtra(EXTRA_EPISODE_ID, episodeId.key)
+        putExtra(EXTRA_SEASON_ID, seasonId.key)
+        putExtra(EXTRA_SHOW_ID, showId.key)
       }
       enqueueWork(
         context,
@@ -56,11 +56,11 @@ class ProgressWidgetEpisodeCheckService :
   @Inject lateinit var localSource: LocalDataSource
 
   override fun onHandleWork(intent: Intent) {
-    val episodeId = intent.getLongExtra(EXTRA_EPISODE_ID, -1)
-    val seasonId = intent.getLongExtra(EXTRA_SEASON_ID, -1)
-    val showId = intent.getLongExtra(EXTRA_SHOW_ID, -1)
+    val episodeId = intent.getStringExtra(EXTRA_EPISODE_ID)
+    val seasonId = intent.getStringExtra(EXTRA_SEASON_ID)
+    val showId = intent.getStringExtra(EXTRA_SHOW_ID)
 
-    if (episodeId == -1L || seasonId == -1L || showId == -1L) {
+    if (episodeId.isNullOrBlank() || seasonId.isNullOrBlank() || showId.isNullOrBlank()) {
       val error = Throwable("Invalid ID.")
       Logger.record(error, "ProgressWidgetEpisodeCheckService::onHandleWork()")
       return

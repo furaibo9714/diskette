@@ -162,7 +162,7 @@ class CalendarMoviesWidgetViewsFactory(
     }
   }
 
-  override fun getItemId(position: Int) = adapterItems[position].movie.mediaId
+  override fun getItemId(position: Int) = adapterItems[position].movie.mediaId.stableLongId
 
   override fun getLoadingView() = RemoteViews(context.packageName, R.layout.widget_loading_item)
 

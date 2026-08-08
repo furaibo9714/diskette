@@ -48,7 +48,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.navigateToSaf
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onClick
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onLongClick
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.openWebUrl
-import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireLong
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireMediaId
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireParcelable
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.screenHeight
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.screenWidth
@@ -98,7 +98,7 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
 
   override val viewModel by viewModels<MovieDetailsViewModel>()
 
-  private val movieId by lazy { MediaId.parse(requireLong(ARG_MOVIE_ID)) }
+  private val movieId by lazy { requireMediaId(ARG_MOVIE_ID) }
 
   private val imageHeight by lazy {
     if (resources.configuration.orientation == ORIENTATION_PORTRAIT) {
@@ -139,7 +139,7 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
       movieDetailsBackArrow.onClick { requireActivity().onBackPressed() }
       movieDetailsImage.onClick {
         val bundle = bundleOf(
-          ARG_MOVIE_ID to movieId.id,
+          ARG_MOVIE_ID to movieId.key,
           ARG_FAMILY to MOVIE,
           ARG_TYPE to FANART,
         )
@@ -429,7 +429,7 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
   private fun openListsDialog() {
     setFragmentResultListener(REQUEST_MANAGE_LISTS) { _, _ -> viewModel.loadListsCount() }
     val bundle = bundleOf(
-      ARG_ID to movieId.id,
+      ARG_ID to movieId.key,
       ARG_TYPE to Mode.MOVIES.type,
     )
     navigateToSafe(R.id.actionMovieDetailsFragmentToManageLists, bundle)

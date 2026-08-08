@@ -35,17 +35,17 @@ class TranslationsRepository @Inject constructor(
 
   fun getLanguage() = miscPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
 
-  suspend fun loadAllShowsLocal(language: String = DEFAULT_LANGUAGE): Map<String, Translation> {
+  suspend fun loadAllShowsLocal(language: String = DEFAULT_LANGUAGE): Map<MediaId, Translation> {
     val local = localSource.showTranslations.getAll(language)
     return local.associate {
-      Pair(it.mediaId, mappers.translation.fromDatabase(it))
+      Pair(MediaId.parse(it.mediaId), mappers.translation.fromDatabase(it))
     }
   }
 
-  suspend fun loadAllMoviesLocal(language: String = DEFAULT_LANGUAGE): Map<String, Translation> {
+  suspend fun loadAllMoviesLocal(language: String = DEFAULT_LANGUAGE): Map<MediaId, Translation> {
     val local = localSource.movieTranslations.getAll(language)
     return local.associate {
-      Pair(it.mediaId, mappers.translation.fromDatabase(it))
+      Pair(MediaId.parse(it.mediaId), mappers.translation.fromDatabase(it))
     }
   }
 

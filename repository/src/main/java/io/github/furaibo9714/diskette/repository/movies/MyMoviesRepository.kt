@@ -43,7 +43,7 @@ class MyMoviesRepository @Inject constructor(
       .getAllRecent(amount)
       .map { mappers.movie.fromDatabase(it) }
 
-  suspend fun loadAllIds() = localSource.myMovies.getAllMediaIds()
+  suspend fun loadAllIds() = localSource.myMovies.getAllMediaIds().map { MediaId.parse(it) }
 
   suspend fun insert(
     id: MediaId,

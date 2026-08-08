@@ -17,6 +17,6 @@ class ShowDetailsListsCase @Inject constructor(
 
   suspend fun getListsCount(show: Show) =
     withContext(dispatchers.IO) {
-      listsRepository.loadListIdsForItem(MediaId.parse(show.mediaId), Mode.SHOWS.type).size
+      listsRepository.loadListIdsForItem(show.mediaId, Mode.SHOWS.type).size
     }
 }

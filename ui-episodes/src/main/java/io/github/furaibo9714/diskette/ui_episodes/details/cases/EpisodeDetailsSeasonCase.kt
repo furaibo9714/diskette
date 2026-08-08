@@ -20,7 +20,7 @@ class EpisodeDetailsSeasonCase @Inject constructor(
     episode: Episode,
     seasonEpisodes: IntArray?,
   ): List<Episode> {
-    val isMyShow = myShowsDataSource.checkExists(showId.id)
+    val isMyShow = myShowsDataSource.checkExists(showId.key)
     if (!isMyShow) {
       return seasonEpisodes?.map {
         Episode.EMPTY.copy(season = episode.season, number = it)
@@ -28,7 +28,7 @@ class EpisodeDetailsSeasonCase @Inject constructor(
     }
 
     val episodes = episodesDataSource
-      .getAllByShowId(showId.id, episode.season)
+      .getAllByShowId(showId.key, episode.season)
       .map { mappers.episode.fromDatabase(it) }
       .sortedBy { it.number }
 

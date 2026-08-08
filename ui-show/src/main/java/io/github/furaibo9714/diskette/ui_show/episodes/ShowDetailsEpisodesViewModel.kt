@@ -77,7 +77,7 @@ class ShowDetailsEpisodesViewModel @Inject constructor(
       this@ShowDetailsEpisodesViewModel.show = loadShowCase.loadDetails(showId)
 
       val seasons = seasonsCache.loadSeasons(showId)
-      val season = seasons?.find { it.id == seasonId.id }
+      val season = seasons?.find { it.id == seasonId.key }
       if (seasons == null || season == null) {
         eventChannel.send(ShowDetailsEpisodesEvent.Finish)
         return@launch

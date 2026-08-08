@@ -48,10 +48,10 @@ abstract class BaseActivity : AppCompatActivity() {
     key: String,
     action: () -> Unit,
   ) {
-    val itemId = extras.getString(key)?.toLong() ?: -1
+    val itemId = extras.getString(key).orEmpty()
     val bundle = Bundle().apply {
-      putLong(ARG_SHOW_ID, itemId)
-      putLong(ARG_MOVIE_ID, itemId)
+      putString(ARG_SHOW_ID, itemId)
+      putString(ARG_MOVIE_ID, itemId)
     }
 
     findNavHostFragment()?.findNavController()?.run {

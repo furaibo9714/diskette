@@ -240,7 +240,7 @@ class ProgressMainFragment :
       progressMainRoot
         .fadeOut(150) {
           if (findNavControl()?.currentDestination?.id == R.id.progressMainFragment) {
-            val bundle = Bundle().apply { putLong(ARG_SHOW_ID, show.mediaId) }
+            val bundle = Bundle().apply { putString(ARG_SHOW_ID, show.mediaId.key) }
             navigateToSafe(R.id.actionProgressFragmentToShowDetailsFragment, bundle)
             exitSearch()
           } else {

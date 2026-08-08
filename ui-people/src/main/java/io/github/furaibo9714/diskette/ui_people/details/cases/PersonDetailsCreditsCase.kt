@@ -11,6 +11,7 @@ import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_model.ImageType
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.Person
 import io.github.furaibo9714.diskette.ui_model.PersonCredit
@@ -105,8 +106,8 @@ class PersonDetailsCreditsCase @Inject constructor(
 
   private suspend fun createShowItem(
     show: Show,
-    myShowsIds: List<Long>,
-    watchlistShowsId: List<Long>,
+    myShowsIds: List<MediaId>,
+    watchlistShowsId: List<MediaId>,
     spoilersSettings: SpoilersSettings,
   ) = show.let {
     val isMyShow = it.mediaId in myShowsIds
@@ -128,8 +129,8 @@ class PersonDetailsCreditsCase @Inject constructor(
 
   private suspend fun createMovieItem(
     movie: Movie,
-    myMoviesIds: List<Long>,
-    watchlistMoviesId: List<Long>,
+    myMoviesIds: List<MediaId>,
+    watchlistMoviesId: List<MediaId>,
     spoilersSettings: SpoilersSettings,
   ) = movie.let {
     val isWatched = it.mediaId in myMoviesIds

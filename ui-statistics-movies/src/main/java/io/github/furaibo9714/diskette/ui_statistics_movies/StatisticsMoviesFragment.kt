@@ -14,6 +14,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.doOnApplyWind
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.fadeIf
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visibleIf
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs.ARG_MOVIE_ID
 import io.github.furaibo9714.diskette.ui_statistics_movies.databinding.FragmentStatisticsMoviesBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,8 +83,8 @@ class StatisticsMoviesFragment : BaseFragment<StatisticsMoviesViewModel>(R.layou
     }
   }
 
-  private fun openMovieDetails(mediaId: Long) {
-    val bundle = bundleOf(ARG_MOVIE_ID to mediaId)
+  private fun openMovieDetails(mediaId: MediaId) {
+    val bundle = bundleOf(ARG_MOVIE_ID to mediaId.key)
     navigateTo(R.id.actionStatisticsMoviesFragmentToMovieDetailsFragment, bundle)
   }
 }

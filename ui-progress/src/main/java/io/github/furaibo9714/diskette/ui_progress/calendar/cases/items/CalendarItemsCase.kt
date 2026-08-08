@@ -72,7 +72,7 @@ abstract class CalendarItemsCase(
 
       val shows = myShows + watchlistShows
 
-      val showsIds = shows.map { it.mediaId }.chunked(250)
+      val showsIds = shows.map { it.mediaId.key }.chunked(250)
       val watchlistShowsIds = watchlistShows.map { it.mediaId }
 
       /**
@@ -112,7 +112,7 @@ abstract class CalendarItemsCase(
         .sortedWith(sortEpisodes())
         .map { episode ->
           async {
-            val show = shows.firstOrNull { it.mediaId == episode.showMediaId }
+            val show = shows.firstOrNull { it.mediaId.key == episode.showMediaId }
             val season = filteredSeasons.firstOrNull {
               it.showMediaId == episode.showMediaId && it.seasonNumber == episode.seasonNumber
             }

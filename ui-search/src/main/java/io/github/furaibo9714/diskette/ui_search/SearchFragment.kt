@@ -294,10 +294,10 @@ class SearchFragment :
 
   private fun openDetails(item: SearchListItem) {
     if (item.isShow) {
-      val bundle = Bundle().apply { putLong(ARG_SHOW_ID, item.show.mediaId) }
+      val bundle = Bundle().apply { putString(ARG_SHOW_ID, item.show.mediaId.key) }
       navigateToSafe(R.id.actionSearchFragmentToShowDetailsFragment, bundle)
     } else if (item.isMovie) {
-      val bundle = Bundle().apply { putLong(ARG_MOVIE_ID, item.movie.mediaId) }
+      val bundle = Bundle().apply { putString(ARG_MOVIE_ID, item.movie.mediaId.key) }
       navigateToSafe(R.id.actionSearchFragmentToMovieDetailsFragment, bundle)
     }
   }
