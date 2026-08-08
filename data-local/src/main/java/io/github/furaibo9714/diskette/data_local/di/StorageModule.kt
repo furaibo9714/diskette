@@ -28,7 +28,15 @@ class StorageModule {
         context.applicationContext,
         AppDatabase::class.java,
         DATABASE_NAME,
-      ).build()
+      )
+      /**
+       * Schema history restarted at 1 when identity moved onto Floppy, so a device carrying a
+       * higher-numbered Trakt-era database has nothing to migrate from - every table is keyed
+       * differently. Recreating it is the only outcome available; without this the app crashes
+       * on launch instead. Upgrades still fail loudly, as they should.
+       */
+      .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
+      .build()
   }
 
   @Provides
