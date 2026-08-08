@@ -24,7 +24,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visibleIf
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.withFailListener
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.withSuccessListener
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageStatus
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs.ARG_ID
@@ -38,11 +38,11 @@ abstract class ContextMenuBottomSheet : BaseBottomSheetFragment(R.layout.view_co
     private const val ARG_DETAILS_ENABLED = "ARG_DETAILS_ENABLED"
 
     fun createBundle(
-      idTrakt: IdTrakt,
+      mediaId: MediaId,
       showPinButtons: Boolean = false,
       detailsEnabled: Boolean = true,
     ) = bundleOf(
-      ARG_ID to idTrakt,
+      ARG_ID to mediaId,
       ARG_OPTIONS to bundleOf(
         ARG_SHOW_PIN_BUTTONS to showPinButtons,
         ARG_DETAILS_ENABLED to detailsEnabled,
@@ -52,7 +52,7 @@ abstract class ContextMenuBottomSheet : BaseBottomSheetFragment(R.layout.view_co
 
   protected val binding by viewBinding(ViewContextMenuBinding::bind)
 
-  protected val itemId by lazy { requireParcelable<IdTrakt>(ARG_ID) }
+  protected val itemId by lazy { requireParcelable<MediaId>(ARG_ID) }
   private val showPinButtons by lazy { requireParcelable<Bundle>(ARG_OPTIONS).getBoolean(ARG_SHOW_PIN_BUTTONS) }
   private val detailsEnabled by lazy { requireParcelable<Bundle>(ARG_OPTIONS).getBoolean(ARG_DETAILS_ENABLED) }
 

@@ -12,9 +12,9 @@ interface ShowTranslationsDao :
   BaseDao<ShowTranslation>,
   ShowTranslationsLocalDataSource {
 
-  @Query("SELECT * FROM shows_translations WHERE id_trakt == :traktId AND language == :language")
+  @Query("SELECT * FROM shows_translations WHERE media_id == :mediaId AND language == :language")
   override suspend fun getById(
-    traktId: Long,
+    mediaId: String,
     language: String,
   ): ShowTranslation?
 

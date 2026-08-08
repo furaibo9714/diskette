@@ -11,6 +11,7 @@ import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_model.ImageType
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.Person
 import io.github.furaibo9714.diskette.ui_model.PersonCredit
@@ -64,7 +65,7 @@ class PersonDetailsCreditsCase @Inject constructor(
         val filterByRelease = (it.releaseDate != null || (it.releaseDate == null && it.isUpcoming))
 
         val filterByCollection = if (onlyCollection) {
-          it.show?.traktId in showsCollectionIds || it.movie?.traktId in moviesCollectionIds
+          it.show?.mediaId in showsCollectionIds || it.movie?.mediaId in moviesCollectionIds
         } else {
           true
         }
@@ -105,12 +106,12 @@ class PersonDetailsCreditsCase @Inject constructor(
 
   private suspend fun createShowItem(
     show: Show,
-    myShowsIds: List<Long>,
-    watchlistShowsId: List<Long>,
+    myShowsIds: List<MediaId>,
+    watchlistShowsId: List<MediaId>,
     spoilersSettings: SpoilersSettings,
   ) = show.let {
-    val isMyShow = it.traktId in myShowsIds
-    val isWatchlist = it.traktId in watchlistShowsId
+    val isMyShow = it.mediaId in myShowsIds
+    val isWatchlist = it.mediaId in watchlistShowsId
     val image = showImagesProvider.findCachedImage(it, ImageType.POSTER)
     val translation = when (val language = translationsRepository.getLanguage()) {
       Config.DEFAULT_LANGUAGE -> null
@@ -128,12 +129,12 @@ class PersonDetailsCreditsCase @Inject constructor(
 
   private suspend fun createMovieItem(
     movie: Movie,
-    myMoviesIds: List<Long>,
-    watchlistMoviesId: List<Long>,
+    myMoviesIds: List<MediaId>,
+    watchlistMoviesId: List<MediaId>,
     spoilersSettings: SpoilersSettings,
   ) = movie.let {
-    val isWatched = it.traktId in myMoviesIds
-    val isWatchlist = it.traktId in watchlistMoviesId
+    val isWatched = it.mediaId in myMoviesIds
+    val isWatchlist = it.mediaId in watchlistMoviesId
     val image = movieImagesProvider.findCachedImage(it, ImageType.POSTER)
     val translation = when (val language = translationsRepository.getLanguage()) {
       Config.DEFAULT_LANGUAGE -> null

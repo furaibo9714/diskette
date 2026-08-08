@@ -23,9 +23,20 @@ data class Movie(
   val createdAt: Long,
 ) {
 
-  val traktId = ids.trakt.id
+  val mediaId = ids.media
 
   val titleNoThe = title.removePrefix("The").trim()
+
+  /**
+   * Absent fields are stored as -1 rather than null. These say whether a value is real, so a
+   * placeholder never reaches the screen - an item TMDB doesn't know, such as a Floppy manual
+   * entry, has nothing but a title.
+   */
+  val hasRuntime = runtime > 0
+
+  val hasRating = rating > 0F
+
+  val hasYear = year > 0
 
   fun hasNoDate() = released == null && year <= 0
 

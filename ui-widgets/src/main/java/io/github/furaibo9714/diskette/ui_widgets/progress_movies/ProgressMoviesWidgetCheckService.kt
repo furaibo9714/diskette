@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import io.github.furaibo9714.diskette.ui_base.Logger
 import io.github.furaibo9714.diskette.ui_base.common.WidgetsProvider
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_progress_movies.main.cases.ProgressMoviesMainCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -26,10 +26,10 @@ class ProgressMoviesWidgetCheckService :
 
     fun initialize(
       context: Context,
-      movieId: IdTrakt,
+      movieId: MediaId,
     ) {
       val intent = Intent().apply {
-        putExtra(EXTRA_MOVIE_ID, movieId.id)
+        putExtra(EXTRA_MOVIE_ID, movieId.key)
       }
       enqueueWork(
         context,
@@ -45,15 +45,15 @@ class ProgressMoviesWidgetCheckService :
   @Inject lateinit var progressMoviesCase: ProgressMoviesMainCase
 
   override fun onHandleWork(intent: Intent) {
-    val movieId = intent.getLongExtra(EXTRA_MOVIE_ID, -1)
-    if (movieId == -1L) {
+    val movieId = intent.getStringExtra(EXTRA_MOVIE_ID)
+    if (movieId.isNullOrBlank()) {
       val error = Throwable("Invalid ID.")
       Logger.record(error, "ProgressMoviesWidgetCheckService::onHandleWork()")
       return
     }
 
     runBlocking {
-      progressMoviesCase.addToMyMovies(IdTrakt(movieId))
+      progressMoviesCase.addToMyMovies(MediaId.parse(movieId))
       (applicationContext as WidgetsProvider).requestMoviesWidgetsUpdate()
     }
   }

@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "sync_episodes_log")
 data class EpisodesSyncLog(
-  @PrimaryKey @ColumnInfo(name = "id_show_trakt", defaultValue = "-1") val idTrakt: Long,
+  @PrimaryKey @ColumnInfo(name = "show_media_id", defaultValue = "") val mediaId: String,
   @ColumnInfo(name = "synced_at", defaultValue = "0") val syncedAt: Long,
 )

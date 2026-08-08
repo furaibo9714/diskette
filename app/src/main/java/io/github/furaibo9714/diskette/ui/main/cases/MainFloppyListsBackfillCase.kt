@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.repository.ListsRepository
 import io.github.furaibo9714.diskette.repository.floppy.FloppyConnectionManager
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
@@ -36,7 +36,7 @@ class MainFloppyListsBackfillCase @Inject constructor(
       .forEach { list ->
         listsRepository.loadItemsById(list.id).forEach { item ->
           val mode = Mode.fromType(item.type)
-          floppySyncManager.scheduleListItemAdd(IdTrakt(item.idTrakt), mode, list.idFloppy)
+          floppySyncManager.scheduleListItemAdd(MediaId.parse(item.mediaId), mode, list.idFloppy)
         }
       }
 

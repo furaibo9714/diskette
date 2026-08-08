@@ -6,12 +6,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "shows")
 data class Show(
-  @PrimaryKey @ColumnInfo(name = "id_trakt") val idTrakt: Long,
+  @PrimaryKey @ColumnInfo(name = "media_id") val mediaId: String,
   @ColumnInfo(name = "id_tvdb", defaultValue = "-1") val idTvdb: Long,
   @ColumnInfo(name = "id_tmdb", defaultValue = "-1") val idTmdb: Long,
   @ColumnInfo(name = "id_imdb", defaultValue = "") val idImdb: String,
   @ColumnInfo(name = "id_slug", defaultValue = "") val idSlug: String,
-  @ColumnInfo(name = "id_tvrage", defaultValue = "-1") val idTvrage: Long,
   @ColumnInfo(name = "title", defaultValue = "") val title: String,
   @ColumnInfo(name = "year", defaultValue = "-1") val year: Int,
   @ColumnInfo(name = "overview", defaultValue = "") val overview: String,

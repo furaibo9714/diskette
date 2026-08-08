@@ -9,21 +9,21 @@ interface ShowsLocalDataSource {
 
   suspend fun getAllForSearch(): List<ShowSearch>
 
-  suspend fun getAll(ids: List<Long>): List<Show>
+  suspend fun getAll(ids: List<String>): List<Show>
 
-  suspend fun getAllTmdbIds(traktIds: List<Long>): Map<Long, Long>
+  suspend fun getAllTmdbIds(mediaIds: List<String>): Map<String, Long>
 
-  suspend fun getAllChunked(ids: List<Long>): List<Show>
+  suspend fun getAllChunked(ids: List<String>): List<Show>
 
-  suspend fun getById(traktId: Long): Show?
+  suspend fun getById(mediaId: String): Show?
 
   suspend fun getByTmdbId(tmdbId: Long): Show?
 
   suspend fun getBySlug(slug: String): Show?
 
-  suspend fun getById(imdbId: String): Show?
+  suspend fun getByImdbId(imdbId: String): Show?
 
-  suspend fun deleteById(traktId: Long)
+  suspend fun deleteById(mediaId: String)
 
   suspend fun upsert(shows: List<Show>)
 }

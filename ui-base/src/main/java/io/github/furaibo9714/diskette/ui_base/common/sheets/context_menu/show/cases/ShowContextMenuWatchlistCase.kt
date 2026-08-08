@@ -9,7 +9,7 @@ import io.github.furaibo9714.diskette.repository.PinnedItemsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
 import io.github.furaibo9714.diskette.ui_base.notifications.AnnouncementManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Show
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -28,23 +28,23 @@ class ShowContextMenuWatchlistCase @Inject constructor(
 ) {
 
   suspend fun moveToWatchlist(
-    traktId: IdTrakt,
+    mediaId: MediaId,
     removeLocalData: Boolean,
   ) = withContext(dispatchers.IO) {
-    val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(traktId))
+    val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(mediaId))
 
-    val isMyShow = showsRepository.myShows.exists(traktId)
+    val isMyShow = showsRepository.myShows.exists(mediaId)
 
     transactions.withTransaction {
-      showsRepository.watchlistShows.insert(show.ids.trakt)
+      showsRepository.watchlistShows.insert(show.ids.media)
 
       if (removeLocalData && isMyShow) {
-        localSource.episodes.deleteAllUnwatchedForShow(traktId.id)
-        val seasons = localSource.seasons.getAllByShowId(traktId.id)
-        val episodes = localSource.episodes.getAllByShowId(traktId.id)
+        localSource.episodes.deleteAllUnwatchedForShow(mediaId.key)
+        val seasons = localSource.seasons.getAllByShowId(mediaId.key)
+        val episodes = localSource.episodes.getAllByShowId(mediaId.key)
         val toDelete = mutableListOf<Season>()
         seasons.forEach { season ->
-          if (episodes.none { it.idSeason == season.idTrakt }) {
+          if (episodes.none { it.idSeason == season.mediaId }) {
             toDelete.add(season)
           }
         }
@@ -54,13 +54,13 @@ class ShowContextMenuWatchlistCase @Inject constructor(
 
     pinnedItemsRepository.removePinnedItem(show)
     announcementManager.refreshShowsAnnouncements()
-    floppySyncManager.scheduleShowWatchlist(traktId, Operation.ADD)
+    floppySyncManager.scheduleShowWatchlist(mediaId, Operation.ADD)
   }
 
-  suspend fun removeFromWatchlist(traktId: IdTrakt) =
+  suspend fun removeFromWatchlist(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      showsRepository.watchlistShows.delete(traktId)
+      showsRepository.watchlistShows.delete(mediaId)
       announcementManager.refreshShowsAnnouncements()
-      floppySyncManager.scheduleShowWatchlist(traktId, Operation.REMOVE)
+      floppySyncManager.scheduleShowWatchlist(mediaId, Operation.REMOVE)
     }
 }

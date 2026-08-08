@@ -17,21 +17,21 @@ interface RatingsDao :
   @Query("SELECT * FROM ratings WHERE type == :type ORDER BY rated_at DESC")
   override suspend fun getAllByType(type: String): List<Rating>
 
-  @Query("SELECT * FROM ratings WHERE id_trakt IN (:idsTrakt) AND type == :type ORDER BY rated_at DESC")
+  @Query("SELECT * FROM ratings WHERE media_id IN (:mediaIds) AND type == :type ORDER BY rated_at DESC")
   override suspend fun getAllByType(
-    idsTrakt: List<Long>,
+    mediaIds: List<String>,
     type: String,
   ): List<Rating>
 
-  @Query("DELETE FROM ratings WHERE type == :type AND id_trakt IN (:ids)")
+  @Query("DELETE FROM ratings WHERE type == :type AND media_id IN (:ids)")
   suspend fun deleteAllByType(
     type: String,
-    ids: Set<Long>,
+    ids: Set<String>,
   )
 
-  @Query("DELETE FROM ratings WHERE id_trakt == :traktId AND type == :type")
+  @Query("DELETE FROM ratings WHERE media_id == :mediaId AND type == :type")
   override suspend fun deleteByType(
-    traktId: Long,
+    mediaId: String,
     type: String,
   )
 
@@ -40,13 +40,13 @@ interface RatingsDao :
     ratings: List<Rating>,
     type: String,
   ) {
-    deleteAllByType(type, ratings.map { it.idTrakt }.toSet())
+    deleteAllByType(type, ratings.map { it.mediaId }.toSet())
     insert(ratings)
   }
 
   @Transaction
   override suspend fun replace(rating: Rating) {
-    deleteByType(rating.idTrakt, rating.type)
+    deleteByType(rating.mediaId, rating.type)
     insert(listOf(rating))
   }
 }

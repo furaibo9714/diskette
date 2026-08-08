@@ -22,36 +22,36 @@ interface SeasonsDao : SeasonsLocalDataSource {
   @Delete
   override suspend fun delete(items: List<Season>)
 
-  @Query("SELECT * FROM seasons WHERE id_trakt IN (:traktIds)")
-  override suspend fun getAll(traktIds: List<Long>): List<Season>
+  @Query("SELECT * FROM seasons WHERE media_id IN (:mediaIds)")
+  override suspend fun getAll(mediaIds: List<String>): List<Season>
 
   @Transaction
-  override suspend fun getAllByShowsIds(traktIds: List<Long>): List<Season> {
+  override suspend fun getAllByShowsIds(mediaIds: List<String>): List<Season> {
     val result = mutableListOf<Season>()
-    val chunks = traktIds.chunked(50)
+    val chunks = mediaIds.chunked(50)
     chunks.forEach { chunk ->
       result += getAllByShowsIdsChunk(chunk)
     }
     return result
   }
 
-  @Query("SELECT * FROM seasons WHERE id_show_trakt IN (:traktIds)")
-  override suspend fun getAllByShowsIdsChunk(traktIds: List<Long>): List<Season>
+  @Query("SELECT * FROM seasons WHERE show_media_id IN (:mediaIds)")
+  override suspend fun getAllByShowsIdsChunk(mediaIds: List<String>): List<Season>
 
   @Query("SELECT * FROM seasons WHERE is_watched = 1")
   override suspend fun getAllWatched(): List<Season>
 
-  @Query("SELECT * FROM seasons WHERE id_show_trakt IN (:traktIds) AND is_watched = 1")
-  override suspend fun getAllWatchedForShows(traktIds: List<Long>): List<Season>
+  @Query("SELECT * FROM seasons WHERE show_media_id IN (:mediaIds) AND is_watched = 1")
+  override suspend fun getAllWatchedForShows(mediaIds: List<String>): List<Season>
 
-  @Query("SELECT id_trakt FROM seasons WHERE id_show_trakt IN (:traktIds) AND is_watched = 1")
-  override suspend fun getAllWatchedIdsForShows(traktIds: List<Long>): List<Long>
+  @Query("SELECT media_id FROM seasons WHERE show_media_id IN (:mediaIds) AND is_watched = 1")
+  override suspend fun getAllWatchedIdsForShows(mediaIds: List<String>): List<String>
 
-  @Query("SELECT * FROM seasons WHERE id_show_trakt = :traktId")
-  override suspend fun getAllByShowId(traktId: Long): List<Season>
+  @Query("SELECT * FROM seasons WHERE show_media_id = :mediaId")
+  override suspend fun getAllByShowId(mediaId: String): List<Season>
 
-  @Query("SELECT * FROM seasons WHERE id_trakt = :traktId")
-  override suspend fun getById(traktId: Long): Season?
+  @Query("SELECT * FROM seasons WHERE media_id = :mediaId")
+  override suspend fun getById(mediaId: String): Season?
 
   @Transaction
   override suspend fun upsert(items: List<Season>) {
@@ -65,6 +65,6 @@ interface SeasonsDao : SeasonsLocalDataSource {
     if (updateList.isNotEmpty()) update(updateList)
   }
 
-  @Query("DELETE FROM seasons WHERE id_show_trakt = :showTraktId")
-  override suspend fun deleteAllForShow(showTraktId: Long)
+  @Query("DELETE FROM seasons WHERE show_media_id = :showMediaId")
+  override suspend fun deleteAllForShow(showMediaId: String)
 }

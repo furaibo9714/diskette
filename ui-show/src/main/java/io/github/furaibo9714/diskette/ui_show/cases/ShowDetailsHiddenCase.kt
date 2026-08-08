@@ -27,7 +27,7 @@ class ShowDetailsHiddenCase @Inject constructor(
 
   suspend fun isHidden(show: Show) =
     withContext(dispatchers.IO) {
-      showsRepository.hiddenShows.exists(show.ids.trakt)
+      showsRepository.hiddenShows.exists(show.ids.media)
     }
 
   suspend fun addToHidden(
@@ -35,15 +35,15 @@ class ShowDetailsHiddenCase @Inject constructor(
     removeLocalData: Boolean,
   ) = withContext(dispatchers.IO) {
     transactions.withTransaction {
-      showsRepository.hiddenShows.insert(show.ids.trakt)
+      showsRepository.hiddenShows.insert(show.ids.media)
 
       if (removeLocalData) {
-        localSource.episodes.deleteAllUnwatchedForShow(show.traktId)
-        val seasons = localSource.seasons.getAllByShowId(show.traktId)
-        val episodes = localSource.episodes.getAllByShowId(show.traktId)
+        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId.key)
+        val seasons = localSource.seasons.getAllByShowId(show.mediaId.key)
+        val episodes = localSource.episodes.getAllByShowId(show.mediaId.key)
         val toDelete = mutableListOf<Season>()
         seasons.forEach { season ->
-          if (episodes.none { it.idSeason == season.idTrakt }) {
+          if (episodes.none { it.idSeason == season.mediaId }) {
             toDelete.add(season)
           }
         }
@@ -57,7 +57,7 @@ class ShowDetailsHiddenCase @Inject constructor(
 
   suspend fun removeFromHidden(show: Show) =
     withContext(dispatchers.IO) {
-      showsRepository.hiddenShows.delete(show.ids.trakt)
+      showsRepository.hiddenShows.delete(show.ids.media)
       pinnedItemsRepository.removePinnedItem(show)
       announcementManager.refreshShowsAnnouncements()
       floppySyncManager.scheduleShowHidden(show.ids, Operation.REMOVE)

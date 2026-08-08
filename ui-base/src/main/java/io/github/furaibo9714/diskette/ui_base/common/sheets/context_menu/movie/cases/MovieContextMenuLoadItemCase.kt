@@ -9,7 +9,7 @@ import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.repository.settings.SettingsSpoilersRepository
 import io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.movie.helpers.MovieContextItem
 import io.github.furaibo9714.diskette.ui_base.dates.DateFormatProvider
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ImageType
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.async
@@ -28,9 +28,9 @@ class MovieContextMenuLoadItemCase @Inject constructor(
   private val dateFormatProvider: DateFormatProvider,
 ) {
 
-  suspend fun loadItem(traktId: IdTrakt) =
+  suspend fun loadItem(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val movie = moviesRepository.movieDetails.load(traktId)
+      val movie = moviesRepository.movieDetails.load(mediaId)
       val dateFormat = dateFormatProvider.loadShortDayFormat()
       val language = translationsRepository.getLanguage()
       val spoilers = settingsSpoilersRepository.getAll()
@@ -40,9 +40,9 @@ class MovieContextMenuLoadItemCase @Inject constructor(
         async { translationsRepository.loadTranslation(movie, language = language, onlyLocal = true) }
       val ratingAsync = async { ratingsRepository.movies.loadRatings(listOf(movie)) }
 
-      val isMyMovieAsync = async { moviesRepository.myMovies.exists(traktId) }
-      val isWatchlistAsync = async { moviesRepository.watchlistMovies.exists(traktId) }
-      val isHiddenAsync = async { moviesRepository.hiddenMovies.exists(traktId) }
+      val isMyMovieAsync = async { moviesRepository.myMovies.exists(mediaId) }
+      val isWatchlistAsync = async { moviesRepository.watchlistMovies.exists(mediaId) }
+      val isHiddenAsync = async { moviesRepository.hiddenMovies.exists(mediaId) }
 
       val isPinnedAsync = async { pinnedItemsRepository.isItemPinned(movie) }
 

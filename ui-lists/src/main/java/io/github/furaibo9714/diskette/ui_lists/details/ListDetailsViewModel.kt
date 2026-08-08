@@ -219,7 +219,7 @@ class ListDetailsViewModel @Inject constructor(
           item.isMovie() -> MOVIES
           else -> throw IllegalStateException()
         }
-      itemsCase.deleteListItem(listId, item.getTraktId(), type)
+      itemsCase.deleteListItem(listId, item.getMediaId(), type)
       loadDetails(listId)
     }
   }

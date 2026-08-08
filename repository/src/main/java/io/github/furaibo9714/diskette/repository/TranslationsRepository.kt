@@ -15,7 +15,7 @@ import io.github.furaibo9714.diskette.data_remote.media.model.Translation as Tra
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository.Key.LANGUAGE
 import io.github.furaibo9714.diskette.ui_model.Episode
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.Season
 import io.github.furaibo9714.diskette.ui_model.SeasonTranslation
@@ -35,17 +35,17 @@ class TranslationsRepository @Inject constructor(
 
   fun getLanguage() = miscPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
 
-  suspend fun loadAllShowsLocal(language: String = DEFAULT_LANGUAGE): Map<Long, Translation> {
+  suspend fun loadAllShowsLocal(language: String = DEFAULT_LANGUAGE): Map<MediaId, Translation> {
     val local = localSource.showTranslations.getAll(language)
     return local.associate {
-      Pair(it.idTrakt, mappers.translation.fromDatabase(it))
+      Pair(MediaId.parse(it.mediaId), mappers.translation.fromDatabase(it))
     }
   }
 
-  suspend fun loadAllMoviesLocal(language: String = DEFAULT_LANGUAGE): Map<Long, Translation> {
+  suspend fun loadAllMoviesLocal(language: String = DEFAULT_LANGUAGE): Map<MediaId, Translation> {
     val local = localSource.movieTranslations.getAll(language)
     return local.associate {
-      Pair(it.idTrakt, mappers.translation.fromDatabase(it))
+      Pair(MediaId.parse(it.mediaId), mappers.translation.fromDatabase(it))
     }
   }
 
@@ -54,28 +54,28 @@ class TranslationsRepository @Inject constructor(
     language: String = DEFAULT_LANGUAGE,
     onlyLocal: Boolean = false,
   ): Translation? {
-    val local = localSource.showTranslations.getById(show.traktId, language)
+    val local = localSource.showTranslations.getById(show.mediaId.key, language)
     local?.let {
       return mappers.translation.fromDatabase(it)
     }
     if (onlyLocal) return null
 
-    val timestamp = localSource.translationsShowsSyncLog.getById(show.traktId)?.syncedAt ?: 0
+    val timestamp = localSource.translationsShowsSyncLog.getById(show.mediaId.key)?.syncedAt ?: 0
     if (nowUtcMillis() - timestamp < ConfigVariant.TRANSLATION_SYNC_SHOW_MOVIE_COOLDOWN) {
       return Translation.EMPTY
     }
 
     val remoteTranslation = try {
       remoteSource.media
-        .fetchShowTranslations(show.traktId, language, show.ids.tmdb.id)
+        .fetchShowTranslations(show.ids.tmdb.id, language)
         .firstOrNull { chineseLanguagePredicate(it) && frenchLanguagePredicate(it) }
     } catch (error: Throwable) {
       null
     }
 
     val translation = mappers.translation.fromNetwork(remoteTranslation)
-    val translationDb = ShowTranslation.fromTraktId(
-      show.traktId,
+    val translationDb = ShowTranslation.fromMediaId(
+      show.mediaId.key,
       translation.title,
       language,
       translation.overview,
@@ -85,7 +85,7 @@ class TranslationsRepository @Inject constructor(
     if (translationDb.overview.isNotBlank() || translationDb.title.isNotBlank()) {
       localSource.showTranslations.insertSingle(translationDb)
     }
-    localSource.translationsShowsSyncLog.upsert(TranslationsSyncLog(show.traktId, nowUtcMillis()))
+    localSource.translationsShowsSyncLog.upsert(TranslationsSyncLog(show.mediaId.key, nowUtcMillis()))
 
     return translation
   }
@@ -95,28 +95,28 @@ class TranslationsRepository @Inject constructor(
     language: String = DEFAULT_LANGUAGE,
     onlyLocal: Boolean = false,
   ): Translation? {
-    val local = localSource.movieTranslations.getById(movie.traktId, language)
+    val local = localSource.movieTranslations.getById(movie.mediaId.key, language)
     local?.let {
       return mappers.translation.fromDatabase(it)
     }
     if (onlyLocal) return null
 
-    val timestamp = localSource.translationsMoviesSyncLog.getById(movie.traktId)?.syncedAt ?: 0
+    val timestamp = localSource.translationsMoviesSyncLog.getById(movie.mediaId.key)?.syncedAt ?: 0
     if (nowUtcMillis() - timestamp < ConfigVariant.TRANSLATION_SYNC_SHOW_MOVIE_COOLDOWN) {
       return Translation.EMPTY
     }
 
     val remoteTranslation = try {
       remoteSource.media
-        .fetchMovieTranslations(movie.traktId, language, movie.ids.tmdb.id)
+        .fetchMovieTranslations(movie.ids.tmdb.id, language)
         .firstOrNull { chineseLanguagePredicate(it) && frenchLanguagePredicate(it) }
     } catch (error: Throwable) {
       null
     }
 
     val translation = mappers.translation.fromNetwork(remoteTranslation)
-    val translationDb = MovieTranslation.fromTraktId(
-      movie.traktId,
+    val translationDb = MovieTranslation.fromMediaId(
+      movie.mediaId.key,
       translation.title,
       language,
       translation.overview,
@@ -126,19 +126,19 @@ class TranslationsRepository @Inject constructor(
     if (translationDb.overview.isNotBlank() || translationDb.title.isNotBlank()) {
       localSource.movieTranslations.insertSingle(translationDb)
     }
-    localSource.translationsMoviesSyncLog.upsert(TranslationsMoviesSyncLog(movie.traktId, nowUtcMillis()))
+    localSource.translationsMoviesSyncLog.upsert(TranslationsMoviesSyncLog(movie.mediaId.key, nowUtcMillis()))
 
     return translation
   }
 
   suspend fun loadTranslation(
     episode: Episode,
-    showId: IdTrakt,
+    showId: MediaId,
     language: String = DEFAULT_LANGUAGE,
     onlyLocal: Boolean = false,
   ): Translation? {
     val nowMillis = nowUtcMillis()
-    val local = localSource.episodesTranslations.getById(episode.ids.trakt.id, showId.id, language)
+    val local = localSource.episodesTranslations.getById(episode.ids.media.key, showId.key, language)
     local?.let {
       val isCacheValid = nowMillis - it.updatedAt < ConfigVariant.TRANSLATION_SYNC_EPISODE_COOLDOWN
       if (it.title.isNotBlank() && it.overview.isNotBlank()) {
@@ -151,15 +151,17 @@ class TranslationsRepository @Inject constructor(
 
     if (onlyLocal) return null
 
+    // Only TMDB-backed shows have provider translations; a Floppy manual entry has none.
+    val showTmdbId = showId.tmdbIdOrNull ?: return null
     val remoteTranslations = remoteSource.media
-      .fetchSeasonTranslations(showId.id, episode.season, language)
+      .fetchSeasonTranslations(showTmdbId, episode.season, language)
       .map { mappers.translation.fromNetwork(it) }
 
     remoteTranslations
       .forEach { item ->
-        val dbItem = EpisodeTranslation.fromTraktId(
-          traktEpisodeId = item.ids.trakt.id,
-          traktShowId = showId.id,
+        val dbItem = EpisodeTranslation.fromMediaId(
+          episodeMediaId = item.ids.media.key,
+          showMediaId = showId.key,
           title = item.title,
           overview = item.overview,
           language = language,
@@ -169,7 +171,7 @@ class TranslationsRepository @Inject constructor(
       }
 
     remoteTranslations
-      .find { it.ids.trakt == episode.ids.trakt }
+      .find { it.ids.media == episode.ids.media }
       ?.let {
         return Translation(it.title, it.overview, it.language)
       }
@@ -179,20 +181,20 @@ class TranslationsRepository @Inject constructor(
 
   suspend fun loadTranslations(
     season: Season,
-    showId: IdTrakt,
+    showId: MediaId,
     language: String = DEFAULT_LANGUAGE,
   ): List<SeasonTranslation> {
     val episodes = season.episodes.toList()
-    val episodesIds = season.episodes.map { it.ids.trakt.id }
+    val episodesIds = season.episodes.map { it.ids.media.key }
 
-    val local = localSource.episodesTranslations.getByIds(episodesIds, showId.id, language)
+    val local = localSource.episodesTranslations.getByIds(episodesIds, showId.key, language)
     val hasAllTranslated = local.isNotEmpty() && local.all { it.title.isNotBlank() && it.overview.isNotBlank() }
     val isCacheValid =
       local.isNotEmpty() && nowUtcMillis() - local.first().updatedAt < ConfigVariant.TRANSLATION_SYNC_EPISODE_COOLDOWN
 
     if (hasAllTranslated || (!hasAllTranslated && isCacheValid)) {
       return episodes.map { episode ->
-        val translation = local.find { it.idTrakt == episode.ids.trakt.id }
+        val translation = local.find { it.mediaId == episode.ids.media.key }
         SeasonTranslation(
           ids = episode.ids.copy(),
           title = translation?.title ?: "",
@@ -205,15 +207,16 @@ class TranslationsRepository @Inject constructor(
       }
     }
 
+    val showTmdbId = showId.tmdbIdOrNull ?: return emptyList()
     val remoteTranslation = remoteSource.media
-      .fetchSeasonTranslations(showId.id, season.number, language)
+      .fetchSeasonTranslations(showTmdbId, season.number, language)
       .map { mappers.translation.fromNetwork(it) }
 
     remoteTranslation
       .forEach { item ->
-        val dbItem = EpisodeTranslation.fromTraktId(
-          item.ids.trakt.id,
-          showId.id,
+        val dbItem = EpisodeTranslation.fromMediaId(
+          item.ids.media.key,
+          showId.key,
           item.title,
           language,
           item.overview,
@@ -223,7 +226,7 @@ class TranslationsRepository @Inject constructor(
       }
 
     return episodes.map { episode ->
-      val translation = remoteTranslation.find { it.ids.trakt.id == episode.ids.trakt.id }
+      val translation = remoteTranslation.find { it.ids.media.key == episode.ids.media.key }
       SeasonTranslation(
         ids = episode.ids.copy(),
         title = translation?.title ?: "",

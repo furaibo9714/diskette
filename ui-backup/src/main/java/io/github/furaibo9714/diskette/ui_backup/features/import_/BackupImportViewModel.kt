@@ -6,9 +6,7 @@ import io.github.furaibo9714.diskette.ui_backup.BackupConfig.SCHEME_VERSION
 import io.github.furaibo9714.diskette.ui_backup.features.import_.model.BackupImportStatus.Idle
 import io.github.furaibo9714.diskette.ui_backup.features.import_.model.BackupImportStatus.Initializing
 import io.github.furaibo9714.diskette.ui_backup.features.import_.workers.BackupImportWorker
-import io.github.furaibo9714.diskette.ui_backup.migrations.BackupMigrationV1
 import io.github.furaibo9714.diskette.ui_backup.model.BackupScheme
-import io.github.furaibo9714.diskette.ui_backup.model.v1.BackupScheme1
 import io.github.furaibo9714.diskette.ui_base.Logger
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.rethrowCancellation
@@ -78,10 +76,14 @@ class BackupImportViewModel @Inject constructor(
         .trim()
         .toInt()
 
+      /**
+       * Backups older than [SCHEME_VERSION] identify media by Trakt id. Diskette has no way to
+       * resolve one - that is the whole point of moving identity onto Floppy - so importing such a
+       * file would produce a library of rows pointing at nothing.
+       */
       if (version < SCHEME_VERSION) {
-        val jsonAdapter = moshi.adapter(BackupScheme1::class.java)
-        val migrationScheme = jsonAdapter.fromJson(jsonInput)!!
-        return BackupMigrationV1.migrate(migrationScheme)
+        errorState.update { Error("This backup is from a Trakt-based version and can't be imported.") }
+        return null
       }
 
       val jsonAdapter = moshi.adapter(BackupScheme::class.java)

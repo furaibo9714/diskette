@@ -3,7 +3,7 @@ package io.github.furaibo9714.diskette.repository.mappers
 import io.github.furaibo9714.diskette.common.extensions.nowUtc
 import io.github.furaibo9714.diskette.data_local.database.model.Rating
 import io.github.furaibo9714.diskette.ui_model.Episode
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.Season
 import io.github.furaibo9714.diskette.ui_model.Show
@@ -15,7 +15,7 @@ class UserRatingsMapper @Inject constructor() {
 
   fun fromDatabase(entity: Rating) =
     UserRating(
-      idTrakt = IdTrakt(entity.idTrakt),
+      mediaId = MediaId.parse(entity.mediaId),
       rating = entity.rating,
       ratedAt = entity.ratedAt,
     )
@@ -25,7 +25,7 @@ class UserRatingsMapper @Inject constructor() {
     rating: Int,
     ratedAt: ZonedDateTime,
   ) = Rating(
-    idTrakt = movie.traktId,
+    mediaId = movie.mediaId.key,
     type = "movie",
     rating = rating,
     seasonNumber = null,
@@ -40,7 +40,7 @@ class UserRatingsMapper @Inject constructor() {
     rating: Int,
     ratedAt: ZonedDateTime,
   ) = Rating(
-    idTrakt = show.traktId,
+    mediaId = show.mediaId.key,
     type = "show",
     rating = rating,
     seasonNumber = null,
@@ -55,7 +55,7 @@ class UserRatingsMapper @Inject constructor() {
     rating: Int,
     ratedAt: ZonedDateTime,
   ) = Rating(
-    idTrakt = episode.ids.trakt.id,
+    mediaId = episode.ids.media.key,
     type = "episode",
     rating = rating,
     seasonNumber = episode.season,
@@ -70,7 +70,7 @@ class UserRatingsMapper @Inject constructor() {
     rating: Int,
     ratedAt: ZonedDateTime,
   ) = Rating(
-    idTrakt = season.ids.trakt.id,
+    mediaId = season.ids.media.key,
     type = "season",
     rating = rating,
     seasonNumber = season.number,

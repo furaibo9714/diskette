@@ -10,7 +10,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.findReplace
 import io.github.furaibo9714.diskette.ui_model.HistoryPeriod
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_progress.history.entities.HistoryListItem
 import io.github.furaibo9714.diskette.ui_progress.history.usecases.GetHistoryItemsCase
@@ -46,7 +46,7 @@ internal class HistoryViewModel @Inject constructor(
 
   private var itemsJob: Job? = null
   private var loadMoreJob: Job? = null
-  private var translationJobs: MutableSet<IdTrakt> = mutableSetOf()
+  private var translationJobs: MutableSet<MediaId> = mutableSetOf()
 
   private var searchQuery: String? = null
   private var timestamp = 0L
@@ -141,7 +141,7 @@ internal class HistoryViewModel @Inject constructor(
 
   fun findMissingTranslation(item: HistoryListItem) {
     check(item is HistoryListItem.Episode)
-    val showId = item.show.ids.trakt
+    val showId = item.show.ids.media
     val language = translationsRepository.getLanguage()
     if (item.translations?.show != null ||
       language == Config.DEFAULT_LANGUAGE ||

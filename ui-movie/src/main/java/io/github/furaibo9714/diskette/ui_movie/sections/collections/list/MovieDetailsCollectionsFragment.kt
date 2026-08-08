@@ -14,7 +14,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.launchAndRepe
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.navigateToSafe
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visibleIf
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.MovieCollection
 import io.github.furaibo9714.diskette.ui_movie.MovieDetailsEvent.OpenCollectionSheet
@@ -96,13 +96,13 @@ class MovieDetailsCollectionsFragment :
   ) {
     requireParentFragment()
       .setFragmentResultListener(NavigationArgs.REQUEST_DETAILS) { _, bundle ->
-        bundle.getParcelable<IdTrakt>(ARG_COLLECTION_ID)?.let {
+        bundle.getParcelable<MediaId>(ARG_COLLECTION_ID)?.let {
           viewModel.saveLastOpenedCollection(it)
         }
       }
     val bundle = MovieDetailsCollectionBottomSheet.createBundle(
       collectionId = collection.id,
-      sourceMovieId = movie.ids.trakt,
+      sourceMovieId = movie.ids.media,
     )
     navigateToSafe(R.id.actionMovieDetailsFragmentToCollection, bundle)
   }

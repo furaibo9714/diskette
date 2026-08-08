@@ -16,19 +16,19 @@ interface MoviesDao :
   @Query("SELECT * FROM movies")
   override suspend fun getAll(): List<Movie>
 
-  @Query("SELECT * FROM movies WHERE id_trakt IN (:ids)")
-  override suspend fun getAll(ids: List<Long>): List<Movie>
+  @Query("SELECT * FROM movies WHERE media_id IN (:ids)")
+  override suspend fun getAll(ids: List<String>): List<Movie>
 
-  @Query("SELECT id_trakt, id_tmdb FROM movies WHERE id_trakt IN (:traktIds)")
+  @Query("SELECT media_id, id_tmdb FROM movies WHERE media_id IN (:mediaIds)")
   override suspend fun getAllTmdbIds(
-    traktIds: List<Long>,
-  ): Map<@MapColumn(columnName = "id_trakt") Long, @MapColumn(columnName = "id_tmdb") Long>
+    mediaIds: List<String>,
+  ): Map<@MapColumn(columnName = "media_id") String, @MapColumn(columnName = "id_tmdb") Long>
 
-  @Query("SELECT movies.id_trakt, movies.title FROM movies")
+  @Query("SELECT movies.media_id, movies.title FROM movies")
   override suspend fun getAllForSearch(): List<MovieSearch>
 
   @Transaction
-  override suspend fun getAllChunked(ids: List<Long>): List<Movie> =
+  override suspend fun getAllChunked(ids: List<String>): List<Movie> =
     ids
       .chunked(500)
       .fold(
@@ -38,8 +38,8 @@ interface MoviesDao :
         acc
       }
 
-  @Query("SELECT * FROM movies WHERE id_trakt == :traktId")
-  override suspend fun getById(traktId: Long): Movie?
+  @Query("SELECT * FROM movies WHERE media_id == :mediaId")
+  override suspend fun getById(mediaId: String): Movie?
 
   @Query("SELECT * FROM movies WHERE id_tmdb == :tmdbId")
   override suspend fun getByTmdbId(tmdbId: Long): Movie?
@@ -48,10 +48,10 @@ interface MoviesDao :
   override suspend fun getBySlug(slug: String): Movie?
 
   @Query("SELECT * FROM movies WHERE id_imdb == :imdbId")
-  override suspend fun getById(imdbId: String): Movie?
+  override suspend fun getByImdbId(imdbId: String): Movie?
 
-  @Query("DELETE FROM movies where id_trakt == :traktId")
-  override suspend fun deleteById(traktId: Long)
+  @Query("DELETE FROM movies where media_id == :mediaId")
+  override suspend fun deleteById(mediaId: String)
 
   @Transaction
   override suspend fun upsert(movies: List<Movie>) {

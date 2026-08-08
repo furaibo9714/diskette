@@ -22,8 +22,7 @@ import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbVideosResponse
 
 /**
  * Converts TMDB's response shapes into the internal DTOs in `data_remote.media.model`, which the
- * repository mappers and ui_model types consume. `ids.trakt` always holds a [TmdbSyntheticIds]
- * synthetic value; `ids.tmdb` always holds the real TMDB id.
+ * repository mappers and ui_model types consume. `ids.tmdb` always holds the real TMDB id.
  */
 object TmdbModelConverter {
 
@@ -274,12 +273,10 @@ object TmdbModelConverter {
 
   private fun toIds(tmdbId: Long) =
     Ids(
-      trakt = TmdbSyntheticIds.toSyntheticTraktId(tmdbId),
       slug = null,
       tvdb = null,
       imdb = null,
       tmdb = tmdbId,
-      tvrage = null,
     )
 
   private fun parseYear(date: String?): Int? =

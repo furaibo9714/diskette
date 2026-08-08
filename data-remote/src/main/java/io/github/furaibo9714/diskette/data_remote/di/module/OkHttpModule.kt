@@ -37,12 +37,28 @@ object OkHttpModule {
     .addInterceptor(httpLoggingInterceptor)
     .build()
 
+  /**
+   * Flip to [HttpLoggingInterceptor.Level.BODY] for a session spent debugging a payload, then flip
+   * back. It is not the default because response bodies bury everything else: during a full Floppy
+   * import TMDB payloads filled logcat fast enough to roll the buffer and lose the sync's own
+   * lines. [HttpLoggingInterceptor.Level.BASIC] keeps method, URL, status, size and duration.
+   */
+  private val DEBUG_LOG_LEVEL = HttpLoggingInterceptor.Level.BASIC
+
   @Provides
   @Singleton
   fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor =
     HttpLoggingInterceptor().apply {
+      /**
+       * Header logging would otherwise print the credential on every request. Floppy's client
+       * builds its own OkHttpClient without this interceptor today, but its header is redacted too
+       * so that wiring it up later cannot quietly start leaking the key.
+       */
+      redactHeader("Authorization")
+      redactHeader("X-API-Key")
+
       level = when {
-        BuildConfig.DEBUG -> HttpLoggingInterceptor.Level.BODY
+        BuildConfig.DEBUG -> DEBUG_LOG_LEVEL
         else -> HttpLoggingInterceptor.Level.NONE
       }
     }

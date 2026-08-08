@@ -12,7 +12,7 @@ import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
 import io.github.furaibo9714.diskette.ui_model.CalendarMode
 import io.github.furaibo9714.diskette.ui_model.EpisodeBundle
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_progress.calendar.cases.items.CalendarFutureCase
 import io.github.furaibo9714.diskette.ui_progress.calendar.cases.items.CalendarRecentsCase
@@ -41,7 +41,7 @@ class CalendarViewModel @Inject constructor(
   ChannelsDelegate by DefaultChannelsDelegate() {
 
   private var loadItemsJob: Job? = null
-  private var loadTranslationJobs: MutableSet<IdTrakt> = mutableSetOf()
+  private var loadTranslationJobs: MutableSet<MediaId> = mutableSetOf()
 
   private val itemsState = MutableStateFlow<List<CalendarListItem>?>(null)
   private val modeState = MutableStateFlow(CalendarMode.PRESENT_FUTURE)
@@ -116,7 +116,7 @@ class CalendarViewModel @Inject constructor(
 
   fun findMissingTranslation(item: CalendarListItem) {
     check(item is CalendarListItem.Episode)
-    val showId = item.show.ids.trakt
+    val showId = item.show.ids.media
     val language = translationsRepository.getLanguage()
     if (item.translations?.show != null ||
       language == Config.DEFAULT_LANGUAGE ||

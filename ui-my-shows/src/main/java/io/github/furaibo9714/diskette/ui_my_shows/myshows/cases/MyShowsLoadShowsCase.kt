@@ -7,6 +7,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.Season
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.removeDiacritics
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.MyShowsSection.FINISHED
 import io.github.furaibo9714.diskette.ui_model.MyShowsSection.UPCOMING
 import io.github.furaibo9714.diskette.ui_model.MyShowsSection.WATCHING
@@ -39,21 +40,21 @@ class MyShowsLoadShowsCase @Inject constructor(
     }
 
   suspend fun loadSeasonsForShows(
-    traktIds: List<Long>,
+    showIds: List<MediaId>,
     buffer: MutableList<Season> = mutableListOf(),
   ): List<Season> =
     withContext(dispatchers.IO) {
-      val batch = traktIds.take(500)
+      val batch = showIds.take(500)
       if (batch.isEmpty()) {
         return@withContext buffer
       }
 
       val seasons = localSource.seasons
-        .getAllByShowsIds(batch)
+        .getAllByShowsIds(batch.map { it.key })
         .filter { it.seasonNumber != 0 }
       buffer.addAll(seasons)
 
-      loadSeasonsForShows(traktIds.filter { it !in batch }, buffer)
+      loadSeasonsForShows(showIds.filter { it !in batch }, buffer)
     }
 
   fun filterSectionShows(
@@ -65,7 +66,7 @@ class MyShowsLoadShowsCase @Inject constructor(
   ): List<MyShowsItem> {
     val shows = allShows
       .filter { showItem ->
-        val seasons = allSeasons.filter { it.idShowTrakt == showItem.show.traktId }
+        val seasons = allSeasons.filter { it.showMediaId == showItem.show.mediaId.key }
         val airedSeasons = seasons.filter { it.seasonFirstAired?.isBefore(nowUtc()) == true }
 
         when (val type = settingsRepository.filters.myShowsType) {

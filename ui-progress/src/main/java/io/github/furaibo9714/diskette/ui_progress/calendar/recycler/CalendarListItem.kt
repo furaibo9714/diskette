@@ -32,7 +32,7 @@ sealed class CalendarListItem(
     val spoilers: SpoilersSettings? = null,
   ) : CalendarListItem(show, image, isLoading) {
 
-    override fun isSameAs(other: ListItem) = episode.ids.trakt == (other as? Episode)?.episode?.ids?.trakt
+    override fun isSameAs(other: ListItem) = episode.ids.media == (other as? Episode)?.episode?.ids?.media
   }
 
   data class Header(

@@ -7,7 +7,7 @@ import io.github.furaibo9714.diskette.data_local.LocalDataSource
 import io.github.furaibo9714.diskette.data_local.database.model.MyMovie
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -19,8 +19,8 @@ class MyMoviesRepository @Inject constructor(
   private val cache: MoviesCollectionCache,
 ) {
 
-  suspend fun load(id: IdTrakt) =
-    localSource.myMovies.getById(id.id)?.let {
+  suspend fun load(id: MediaId) =
+    localSource.myMovies.getById(id.key)?.let {
       mappers.movie.fromDatabase(it)
     }
 
@@ -33,9 +33,9 @@ class MyMoviesRepository @Inject constructor(
     return movies
   }
 
-  suspend fun loadAll(ids: List<IdTrakt>) =
+  suspend fun loadAll(ids: List<MediaId>) =
     localSource.myMovies
-      .getAll(ids.map { it.id })
+      .getAll(ids.map { it.key })
       .map { mappers.movie.fromDatabase(it) }
 
   suspend fun loadAllRecent(amount: Int) =
@@ -43,30 +43,30 @@ class MyMoviesRepository @Inject constructor(
       .getAllRecent(amount)
       .map { mappers.movie.fromDatabase(it) }
 
-  suspend fun loadAllIds() = localSource.myMovies.getAllTraktIds()
+  suspend fun loadAllIds() = localSource.myMovies.getAllMediaIds().map { MediaId.parse(it) }
 
   suspend fun insert(
-    id: IdTrakt,
+    id: MediaId,
     customDate: ZonedDateTime?,
   ) {
-    val movie = MyMovie.fromTraktId(
-      traktId = id.id,
+    val movie = MyMovie.fromMediaId(
+      mediaId = id.key,
       timestamp = customDate?.toUtcZone()?.toMillis() ?: nowUtcMillis(),
     )
     transactions.withTransaction {
       with(localSource) {
         myMovies.insert(listOf(movie))
-        watchlistMovies.deleteById(id.id)
-        archiveMovies.deleteById(id.id)
+        watchlistMovies.deleteById(id.key)
+        archiveMovies.deleteById(id.key)
       }
     }
     cache.invalidate()
   }
 
-  suspend fun delete(id: IdTrakt) {
-    localSource.myMovies.deleteById(id.id)
+  suspend fun delete(id: MediaId) {
+    localSource.myMovies.deleteById(id.key)
     cache.invalidate()
   }
 
-  suspend fun exists(id: IdTrakt) = localSource.myMovies.checkExists(id.id)
+  suspend fun exists(id: MediaId) = localSource.myMovies.checkExists(id.key)
 }

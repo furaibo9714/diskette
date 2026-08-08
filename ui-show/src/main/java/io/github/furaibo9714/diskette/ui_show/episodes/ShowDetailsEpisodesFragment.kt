@@ -31,7 +31,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
 import io.github.furaibo9714.diskette.ui_episodes.details.EpisodeDetailsBottomSheet
 import io.github.furaibo9714.diskette.ui_model.Episode
 import io.github.furaibo9714.diskette.ui_model.EpisodeBundle
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Season
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs
 import io.github.furaibo9714.diskette.ui_show.R
@@ -57,8 +57,8 @@ class ShowDetailsEpisodesFragment :
 
   companion object {
     fun createBundle(
-      showId: IdTrakt,
-      seasonId: IdTrakt,
+      showId: MediaId,
+      seasonId: MediaId,
     ): Bundle =
       bundleOf(
         NavigationArgs.ARG_OPTIONS to Options(showId, seasonId),
@@ -265,7 +265,7 @@ class ShowDetailsEpisodesFragment :
     }
 
     val bundle = RatingsBottomSheet.createBundle(
-      id = season.ids.trakt,
+      id = season.ids.media,
       type = Type.SEASON,
       seasonNumber = season.number,
     )
@@ -303,7 +303,7 @@ class ShowDetailsEpisodesFragment :
 
   @Parcelize
   data class Options(
-    val showId: IdTrakt,
-    val seasonId: IdTrakt,
+    val showId: MediaId,
+    val seasonId: MediaId,
   ) : Parcelable
 }

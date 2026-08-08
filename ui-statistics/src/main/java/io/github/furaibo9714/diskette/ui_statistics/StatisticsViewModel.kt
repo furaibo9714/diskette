@@ -15,6 +15,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.combine
 import io.github.furaibo9714.diskette.ui_model.Genre
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageType.POSTER
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import io.github.furaibo9714.diskette.ui_statistics.cases.StatisticsLoadRatingsCase
 import io.github.furaibo9714.diskette.ui_statistics.views.mostWatched.StatisticsMostWatchedItem
@@ -60,8 +61,8 @@ class StatisticsViewModel @Inject constructor(
       val watchlistShows = showsRepository.watchlistShows.loadAll() // Add shows from watchlist
       val hiddenShows = showsRepository.hiddenShows.loadAll()
 
-      val shows = (myShows + watchlistShows + hiddenShows).distinctBy { it.traktId }
-      val showsIds = shows.map { it.traktId }
+      val shows = (myShows + watchlistShows + hiddenShows).distinctBy { it.mediaId }
+      val showsIds = shows.map { it.mediaId }
 
       val episodes = batchEpisodes(showsIds)
       val seasons = batchSeasons(showsIds)
@@ -71,10 +72,10 @@ class StatisticsViewModel @Inject constructor(
         .map { show ->
           val translation = loadTranslation(language, show)
           StatisticsMostWatchedItem(
-            show = shows.first { it.traktId == show.traktId },
-            seasonsCount = seasons.filter { it.idShowTrakt == show.traktId }.count().toLong(),
+            show = shows.first { it.mediaId == show.mediaId },
+            seasonsCount = seasons.filter { it.showMediaId == show.mediaId.key }.count().toLong(),
             episodes = episodes
-              .filter { it.idShowTrakt == show.traktId }
+              .filter { it.showMediaId == show.mediaId.key }
               .map { mappers.episode.fromDatabase(it) },
             image = Image.createUnknown(POSTER),
             translation = translation,
@@ -91,7 +92,7 @@ class StatisticsViewModel @Inject constructor(
       mostWatchedTotalCountState.value = showsIds.size
       totalTimeSpentMinutesState.value = episodes.sumOf { it.runtime }
       totalWatchedEpisodesState.value = episodes.count()
-      totalWatchedEpisodesShowsState.value = episodes.distinctBy { it.idShowTrakt }.count()
+      totalWatchedEpisodesShowsState.value = episodes.distinctBy { it.showMediaId }.count()
       topGenresState.value = genres
     }
   }
@@ -107,7 +108,7 @@ class StatisticsViewModel @Inject constructor(
   }
 
   private suspend fun batchEpisodes(
-    showsIds: List<Long>,
+    showsIds: List<MediaId>,
     allEpisodes: MutableList<Episode> = mutableListOf(),
   ): List<Episode> {
     viewModelScope.ensureActive()
@@ -115,14 +116,14 @@ class StatisticsViewModel @Inject constructor(
     val batch = showsIds.take(500)
     if (batch.isEmpty()) return allEpisodes
 
-    val episodes = localSource.episodes.getAllWatchedForShows(batch)
+    val episodes = localSource.episodes.getAllWatchedForShows(batch.map { it.key })
     allEpisodes.addAll(episodes)
 
     return batchEpisodes(showsIds.filter { it !in batch }, allEpisodes)
   }
 
   private suspend fun batchSeasons(
-    showsIds: List<Long>,
+    showsIds: List<MediaId>,
     allSeasons: MutableList<Season> = mutableListOf(),
   ): List<Season> {
     viewModelScope.ensureActive()
@@ -130,7 +131,7 @@ class StatisticsViewModel @Inject constructor(
     val batch = showsIds.take(500)
     if (batch.isEmpty()) return allSeasons
 
-    val seasons = localSource.seasons.getAllWatchedForShows(batch)
+    val seasons = localSource.seasons.getAllWatchedForShows(batch.map { it.key })
     allSeasons.addAll(seasons)
 
     return batchSeasons(showsIds.filter { it !in batch }, allSeasons)

@@ -138,8 +138,8 @@ class ShowDetailsSeasonsViewModel @Inject constructor(
 
   fun openSeasonEpisodes(season: SeasonListItem) {
     viewModelScope.launch {
-      seasonsCache.setSeasons(show.ids.trakt, seasonsState.value ?: emptyList(), areSeasonsLocal)
-      val event = ShowDetailsSeasonsEvent.OpenSeasonEpisodes(show.ids.trakt, season.season.ids.trakt)
+      seasonsCache.setSeasons(show.ids.media, seasonsState.value ?: emptyList(), areSeasonsLocal)
+      val event = ShowDetailsSeasonsEvent.OpenSeasonEpisodes(show.ids.media, season.season.ids.media)
       eventChannel.send(event)
     }
   }
@@ -165,7 +165,7 @@ class ShowDetailsSeasonsViewModel @Inject constructor(
 
   private suspend fun updateSeasons(seasons: List<SeasonListItem>) {
     seasonsState.value = seasons
-    seasonsCache.setSeasons(show.ids.trakt, seasons, areSeasonsLocal)
+    seasonsCache.setSeasons(show.ids.media, seasons, areSeasonsLocal)
     eventChannel.send(RequestWidgetsUpdate)
   }
 

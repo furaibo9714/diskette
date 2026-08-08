@@ -8,7 +8,7 @@ import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
 import io.github.furaibo9714.diskette.data_remote.media.model.Show as ShowRemote
 import io.github.furaibo9714.diskette.repository.common.BaseMockTest
 import io.github.furaibo9714.diskette.repository.shows.ShowDetailsRepository
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -24,7 +24,7 @@ import org.junit.Test
 
 class ShowDetailsRepositoryTest : BaseMockTest() {
 
-  @MockK lateinit var traktApi: MediaRemoteDataSource
+  @MockK lateinit var mediaRemoteSource: MediaRemoteDataSource
   @MockK lateinit var showsDao: ShowsDao
 
   private lateinit var SUT: ShowDetailsRepository
@@ -33,7 +33,7 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
   override fun setUp() {
     super.setUp()
     every { database.shows } returns showsDao
-    every { cloud.media } returns traktApi
+    every { cloud.media } returns mediaRemoteSource
 
     SUT = ShowDetailsRepository(cloud, database, transactions, mappers)
   }
@@ -42,17 +42,17 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
   fun `Should load cached show details on given conditions`() {
     runBlocking {
       val showDb = mockk<Show>(relaxed = true) {
-        every { idTrakt } returns 1
+        every { mediaId } returns "tmdb:1"
         every { runtime } returns 42
         every { updatedAt } returns nowUtcMillis() - 100
       }
-      coEvery { showsDao.getById(any<Long>()) } returns showDb
+      coEvery { showsDao.getById(any<String>()) } returns showDb
 
-      val show = SUT.load(IdTrakt(1), false)
+      val show = SUT.load(MediaId.tmdb(1), false)
 
-      assertThat(show.ids.trakt).isEqualTo(IdTrakt(1))
-      coVerify(exactly = 1) { showsDao.getById(any<Long>()) }
-      coVerify(exactly = 0) { traktApi.fetchShow(any<Long>(), any()) }
+      assertThat(show.ids.media).isEqualTo(MediaId.tmdb(1))
+      coVerify(exactly = 1) { showsDao.getById(any<String>()) }
+      coVerify(exactly = 0) { mediaRemoteSource.fetchShow(any<Long>()) }
     }
   }
 
@@ -60,19 +60,19 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
   fun `Should load remote show details if force flag is set`() {
     runBlocking {
       val showRemote = mockk<ShowRemote>(relaxed = true) {
-        every { ids?.trakt } returns 1
+        every { ids?.tmdb } returns 1
       }
-      coEvery { showsDao.getById(any<Long>()) } returns null
+      coEvery { showsDao.getById(any<String>()) } returns null
       coEvery { showsDao.upsert(any()) } just Runs
-      coEvery { traktApi.fetchShow(any<Long>(), any()) } returns showRemote
+      coEvery { mediaRemoteSource.fetchShow(any<Long>()) } returns showRemote
 
-      val show = SUT.load(IdTrakt(1), true)
+      val show = SUT.load(MediaId.tmdb(1), true)
 
-      assertThat(show.ids.trakt).isEqualTo(IdTrakt(1))
+      assertThat(show.ids.media).isEqualTo(MediaId.tmdb(1))
 
       coVerifySequence {
-        showsDao.getById(any<Long>())
-        traktApi.fetchShow(any<Long>(), any())
+        showsDao.getById(any<String>())
+        mediaRemoteSource.fetchShow(any<Long>())
         showsDao.upsert(any())
       }
     }
@@ -82,19 +82,19 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
   fun `Should load remote show details if nothing is cached`() {
     runBlocking {
       val showRemote = mockk<ShowRemote>(relaxed = true) {
-        every { ids?.trakt } returns 1
+        every { ids?.tmdb } returns 1
       }
-      coEvery { showsDao.getById(any<Long>()) } returns null
+      coEvery { showsDao.getById(any<String>()) } returns null
       coEvery { showsDao.upsert(any()) } just Runs
-      coEvery { traktApi.fetchShow(any<Long>(), any()) } returns showRemote
+      coEvery { mediaRemoteSource.fetchShow(any<Long>()) } returns showRemote
 
-      val show = SUT.load(IdTrakt(1), false)
+      val show = SUT.load(MediaId.tmdb(1), false)
 
-      assertThat(show.ids.trakt).isEqualTo(IdTrakt(1))
+      assertThat(show.ids.media).isEqualTo(MediaId.tmdb(1))
 
       coVerifySequence {
-        showsDao.getById(any<Long>())
-        traktApi.fetchShow(any<Long>(), any())
+        showsDao.getById(any<String>())
+        mediaRemoteSource.fetchShow(any<Long>())
         showsDao.upsert(any())
       }
     }
@@ -104,23 +104,23 @@ class ShowDetailsRepositoryTest : BaseMockTest() {
   fun `Should load remote show details if cached show expired`() {
     runBlocking {
       val showDb = mockk<Show>(relaxed = true) {
-        every { idTrakt } returns 1
+        every { mediaId } returns "tmdb:1"
         every { updatedAt } returns nowUtcMillis() - TimeUnit.DAYS.toMillis(10)
       }
       val showRemote = mockk<ShowRemote>(relaxed = true) {
-        every { ids?.trakt } returns 1
+        every { ids?.tmdb } returns 1
       }
-      coEvery { showsDao.getById(any<Long>()) } returns showDb
+      coEvery { showsDao.getById(any<String>()) } returns showDb
       coEvery { showsDao.upsert(any()) } just Runs
-      coEvery { traktApi.fetchShow(any<Long>(), any()) } returns showRemote
+      coEvery { mediaRemoteSource.fetchShow(any<Long>()) } returns showRemote
 
-      val show = SUT.load(IdTrakt(1), false)
+      val show = SUT.load(MediaId.tmdb(1), false)
 
-      assertThat(show.ids.trakt).isEqualTo(IdTrakt(1))
+      assertThat(show.ids.media).isEqualTo(MediaId.tmdb(1))
 
       coVerifySequence {
-        showsDao.getById(any<Long>())
-        traktApi.fetchShow(any<Long>(), any())
+        showsDao.getById(any<String>())
+        mediaRemoteSource.fetchShow(any<Long>())
         showsDao.upsert(any())
       }
     }

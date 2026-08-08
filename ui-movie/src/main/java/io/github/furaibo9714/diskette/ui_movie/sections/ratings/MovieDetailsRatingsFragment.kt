@@ -7,6 +7,7 @@ import io.github.furaibo9714.diskette.ui_base.BaseFragment
 import io.github.furaibo9714.diskette.ui_base.utilities.events.MessageEvent
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.launchAndRepeatStarted
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.openWebUrl
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visibleIf
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
 import io.github.furaibo9714.diskette.ui_movie.MovieDetailsViewModel
 import io.github.furaibo9714.diskette.ui_movie.R
@@ -39,6 +40,15 @@ class MovieDetailsRatingsFragment :
   private fun render(uiState: MovieDetailsRatingsUiState) {
     with(uiState) {
       with(binding) {
+        /**
+         * The strip offers a TMDB link when no score is cached yet. An item TMDB doesn't know - a
+         * Floppy manual entry - has neither, so the whole section is hidden rather than showing a
+         * link that leads nowhere.
+         */
+        val isOnTmdb = movie?.ids?.media?.tmdbIdOrNull != null
+        movieDetailsRatings.visibleIf(isOnTmdb)
+        if (!isOnTmdb) return
+
         ratings?.let {
           if (movieDetailsRatings.isBound() && !isRefreshingRatings) {
             return

@@ -16,7 +16,7 @@ import io.github.furaibo9714.diskette.ui_episodes.details.cases.EpisodeDetailsSe
 import io.github.furaibo9714.diskette.ui_episodes.details.cases.EpisodeDetailsWatchedCase
 import io.github.furaibo9714.diskette.ui_model.Episode
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.RatingState
 import io.github.furaibo9714.diskette.ui_model.SpoilersSettings
@@ -60,11 +60,11 @@ class EpisodeDetailsViewModel @Inject constructor(
   }
 
   fun loadLastWatchedAt(
-    showTraktId: IdTrakt,
+    showId: MediaId,
     episode: Episode,
   ) {
     viewModelScope.launch {
-      val lastWatchedAt = watchedCase.getLastWatchedAt(showTraktId, episode)
+      val lastWatchedAt = watchedCase.getLastWatchedAt(showId, episode)
       lastWatchedAtState.update { lastWatchedAt }
     }
   }
@@ -86,12 +86,12 @@ class EpisodeDetailsViewModel @Inject constructor(
   }
 
   fun loadSeason(
-    showTraktId: IdTrakt,
+    showId: MediaId,
     episode: Episode,
     seasonEpisodes: IntArray?,
   ) {
     viewModelScope.launch {
-      val episodes = seasonsCase.loadSeason(showTraktId, episode, seasonEpisodes)
+      val episodes = seasonsCase.loadSeason(showId, episode, seasonEpisodes)
       if (episodes.isNotEmpty()) {
         delay(100)
       }
@@ -100,7 +100,7 @@ class EpisodeDetailsViewModel @Inject constructor(
   }
 
   fun loadTranslation(
-    showTraktId: IdTrakt,
+    showId: MediaId,
     episode: Episode,
   ) {
     viewModelScope.launch {
@@ -109,7 +109,7 @@ class EpisodeDetailsViewModel @Inject constructor(
         if (language == Config.DEFAULT_LANGUAGE) {
           return@launch
         }
-        val translation = translationsRepository.loadTranslation(episode, showTraktId, language)
+        val translation = translationsRepository.loadTranslation(episode, showId, language)
         translation?.let {
           translationState.value = it
         }

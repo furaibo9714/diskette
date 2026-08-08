@@ -7,17 +7,17 @@ interface MyMoviesLocalDataSource {
 
   suspend fun getAll(): List<Movie>
 
-  suspend fun getAll(ids: List<Long>): List<Movie>
+  suspend fun getAll(ids: List<String>): List<Movie>
 
   suspend fun getAllRecent(limit: Int): List<Movie>
 
-  suspend fun getAllTraktIds(): List<Long>
+  suspend fun getAllMediaIds(): List<String>
 
-  suspend fun getById(traktId: Long): Movie?
+  suspend fun getById(mediaId: String): Movie?
 
   suspend fun insert(movies: List<MyMovie>)
 
-  suspend fun deleteById(traktId: Long)
+  suspend fun deleteById(mediaId: String)
 
-  suspend fun checkExists(traktId: Long): Boolean
+  suspend fun checkExists(mediaId: String): Boolean
 }

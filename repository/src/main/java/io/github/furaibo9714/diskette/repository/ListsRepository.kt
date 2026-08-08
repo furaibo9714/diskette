@@ -6,7 +6,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.CustomListItem
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.CustomList
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,12 +20,10 @@ class ListsRepository @Inject constructor(
   suspend fun createList(
     name: String,
     description: String?,
-    idTrakt: Long?,
     idFloppy: Long?,
     idSlug: String?,
   ): CustomList {
     val list = CustomList.create().copy(
-      idTrakt = idTrakt,
       idFloppy = idFloppy,
       idSlug = idSlug ?: "",
       name = name.trim(),
@@ -38,7 +36,6 @@ class ListsRepository @Inject constructor(
 
   suspend fun updateList(
     id: Long,
-    idTrakt: Long?,
     idFloppy: Long?,
     idSlug: String?,
     name: String,
@@ -47,7 +44,6 @@ class ListsRepository @Inject constructor(
     val listDb = localSource.customLists.getById(id)!!
     val updated = listDb.copy(
       name = name,
-      idTrakt = idTrakt ?: listDb.idTrakt,
       idFloppy = idFloppy ?: listDb.idFloppy,
       idSlug = idSlug ?: listDb.idSlug,
       description = description,
@@ -61,7 +57,7 @@ class ListsRepository @Inject constructor(
 
   suspend fun addToList(
     listId: Long,
-    itemTraktId: IdTrakt,
+    itemId: MediaId,
     itemType: String,
     listedAt: Long = nowUtcMillis(),
     createdAt: Long = nowUtcMillis(),
@@ -70,7 +66,7 @@ class ListsRepository @Inject constructor(
     val itemDb = CustomListItem(
       rank = 0,
       idList = listId,
-      idTrakt = itemTraktId.id,
+      mediaId = itemId.key,
       type = itemType,
       listedAt = listedAt,
       createdAt = createdAt,
@@ -84,19 +80,19 @@ class ListsRepository @Inject constructor(
 
   suspend fun removeFromList(
     listId: Long,
-    itemTraktId: IdTrakt,
+    itemId: MediaId,
     itemType: String,
   ) {
     transactions.withTransaction {
-      localSource.customListsItems.deleteItem(listId, itemTraktId.id, itemType)
+      localSource.customListsItems.deleteItem(listId, itemId.key, itemType)
       localSource.customLists.updateTimestamp(listId, nowUtcMillis())
     }
   }
 
   suspend fun loadListIdsForItem(
-    itemTraktId: IdTrakt,
+    itemId: MediaId,
     itemType: String,
-  ) = localSource.customListsItems.getListsForItem(itemTraktId.id, itemType)
+  ) = localSource.customListsItems.getListsForItem(itemId.key, itemType)
 
   suspend fun loadListItemsForId(listId: Long) = localSource.customListsItems.getItemsById(listId)
 

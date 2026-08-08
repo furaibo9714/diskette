@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import java.io.Serializable
 
 fun Fragment.requireString(
@@ -11,11 +12,10 @@ fun Fragment.requireString(
   default: String? = null,
 ) = requireArguments().getString(key, default)!!
 
+/** Ids travel through a Bundle as their [MediaId.key], so every read parses that one shape. */
+fun Fragment.requireMediaId(key: String?) = MediaId.parse(requireString(key))
+
 fun Fragment.requireStringArray(key: String?) = requireArguments().getStringArrayList(key)!!
-
-fun Fragment.requireLong(key: String?) = requireArguments().getLong(key)
-
-fun Fragment.requireLongArray(key: String?) = requireArguments().getLongArray(key)!!
 
 fun Fragment.requireBoolean(key: String?) = requireArguments().getBoolean(key)
 

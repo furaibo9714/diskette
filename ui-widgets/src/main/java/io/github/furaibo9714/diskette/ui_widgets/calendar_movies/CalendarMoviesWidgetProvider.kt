@@ -151,11 +151,11 @@ class CalendarMoviesWidgetProvider : BaseWidgetProvider() {
     intent: Intent,
   ) {
     fun onListItemClick() {
-      val movieId = intent.getLongExtra(EXTRA_MOVIE_ID, -1L)
+      val movieId = intent.getStringExtra(EXTRA_MOVIE_ID).orEmpty()
       context.startActivity(
         Intent().apply {
           setClassName(context, Config.HOST_ACTIVITY_NAME)
-          putExtra(EXTRA_MOVIE_ID, movieId.toString())
+          putExtra(EXTRA_MOVIE_ID, movieId)
           flags = Intent.FLAG_ACTIVITY_NEW_TASK
         },
       )

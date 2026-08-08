@@ -8,7 +8,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.WatchlistShow
 import io.github.furaibo9714.diskette.repository.common.BaseMockTest
 import io.github.furaibo9714.diskette.repository.shows.ShowsCollectionCache
 import io.github.furaibo9714.diskette.repository.shows.WatchlistShowsRepository
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import io.mockk.coEvery
 import io.mockk.coJustRun
@@ -69,7 +69,7 @@ class WatchlistShowsRepositoryTest : BaseMockTest() {
       coEvery { seeLaterShowsDao.getById(any()) } returns showDb
       coEvery { mappers.show.fromDatabase(any()) } returns show
 
-      val testShow = SUT.load(IdTrakt(1L))
+      val testShow = SUT.load(MediaId.tmdb(1))
 
       assertThat(testShow?.title).isEqualTo(show.title)
       coVerify(exactly = 1) { seeLaterShowsDao.getById(any()) }
@@ -78,7 +78,7 @@ class WatchlistShowsRepositoryTest : BaseMockTest() {
   }
 
   @Test
-  fun `Should insert show into database using Trakt ID`() {
+  fun `Should insert show into database using media id`() {
     runBlocking {
       coJustRun { myShowsDao.deleteById(any()) }
       coJustRun { archivedShowsDao.deleteById(any()) }
@@ -86,10 +86,10 @@ class WatchlistShowsRepositoryTest : BaseMockTest() {
       val slot = slot<WatchlistShow>()
       coJustRun { seeLaterShowsDao.insert(capture(slot)) }
 
-      SUT.insert(IdTrakt(1L))
+      SUT.insert(MediaId.tmdb(1))
 
       assertThat(slot.captured.id).isEqualTo(0)
-      assertThat(slot.captured.idTrakt).isEqualTo(1)
+      assertThat(slot.captured.mediaId).isEqualTo("tmdb:1")
 
       coVerify(exactly = 1) { seeLaterShowsDao.insert(any()) }
     }
@@ -104,39 +104,39 @@ class WatchlistShowsRepositoryTest : BaseMockTest() {
       val slot = slot<WatchlistShow>()
       coJustRun { seeLaterShowsDao.insert(capture(slot)) }
 
-      SUT.insert(IdTrakt(1L))
+      SUT.insert(MediaId.tmdb(1))
 
       assertThat(slot.captured.id).isEqualTo(0)
-      assertThat(slot.captured.idTrakt).isEqualTo(1)
+      assertThat(slot.captured.mediaId).isEqualTo("tmdb:1")
 
       coVerify(exactly = 1) { seeLaterShowsDao.insert(any()) }
-      coVerify(exactly = 1) { myShowsDao.deleteById(1L) }
-      coVerify(exactly = 1) { archivedShowsDao.deleteById(1L) }
+      coVerify(exactly = 1) { myShowsDao.deleteById("tmdb:1") }
+      coVerify(exactly = 1) { archivedShowsDao.deleteById("tmdb:1") }
     }
   }
 
   @Test
-  fun `Should delete show from database using Trakt ID`() {
+  fun `Should delete show from database using media id`() {
     runBlocking {
-      val slot = slot<Long>()
+      val slot = slot<String>()
       coJustRun { seeLaterShowsDao.deleteById(capture(slot)) }
 
-      SUT.delete(IdTrakt(10L))
+      SUT.delete(MediaId.tmdb(10))
 
-      assertThat(slot.captured).isEqualTo(10L)
-      coVerify(exactly = 1) { seeLaterShowsDao.deleteById(10L) }
+      assertThat(slot.captured).isEqualTo("tmdb:10")
+      coVerify(exactly = 1) { seeLaterShowsDao.deleteById("tmdb:10") }
     }
   }
 
   @Test
   fun `Should load all SeeLater shows ids`() {
     runBlocking {
-      coEvery { seeLaterShowsDao.getAllTraktIds() } returns listOf(1L, 2L)
+      coEvery { seeLaterShowsDao.getAllMediaIds() } returns listOf("tmdb:1", "tmdb:2")
 
       val ids = SUT.loadAllIds()
 
-      assertThat(ids).containsExactly(1L, 2L)
-      coVerify(exactly = 1) { seeLaterShowsDao.getAllTraktIds() }
+      assertThat(ids).containsExactly(MediaId.tmdb(1), MediaId.tmdb(2))
+      coVerify(exactly = 1) { seeLaterShowsDao.getAllMediaIds() }
     }
   }
 }

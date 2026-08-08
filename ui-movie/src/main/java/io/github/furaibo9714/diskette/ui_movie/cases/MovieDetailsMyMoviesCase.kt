@@ -34,7 +34,7 @@ class MovieDetailsMyMoviesCase @Inject constructor(
 
   suspend fun getMyMovie(movie: Movie): Movie? =
     withContext(dispatchers.IO) {
-      moviesRepository.myMovies.load(movie.ids.trakt)
+      moviesRepository.myMovies.load(movie.ids.media)
     }
 
   suspend fun addToMyMovies(
@@ -42,7 +42,7 @@ class MovieDetailsMyMoviesCase @Inject constructor(
     customDate: ZonedDateTime?,
   ) {
     withContext(dispatchers.IO) {
-      moviesRepository.myMovies.insert(movie.ids.trakt, customDate)
+      moviesRepository.myMovies.insert(movie.ids.media, customDate)
       floppySyncManager.scheduleMovieWatched(movie.ids, Operation.ADD)
       pinnedItemsRepository.removePinnedItem(movie)
       announcementManager.refreshMoviesAnnouncements()
@@ -51,7 +51,7 @@ class MovieDetailsMyMoviesCase @Inject constructor(
 
   suspend fun removeFromMyMovies(movie: Movie) {
     withContext(dispatchers.IO) {
-      moviesRepository.myMovies.delete(movie.ids.trakt)
+      moviesRepository.myMovies.delete(movie.ids.media)
       pinnedItemsRepository.removePinnedItem(movie)
       floppySyncManager.scheduleMovieWatched(movie.ids, Operation.REMOVE)
     }

@@ -9,12 +9,12 @@ interface RatingsLocalDataSource {
   suspend fun getAllByType(type: String): List<Rating>
 
   suspend fun getAllByType(
-    idsTrakt: List<Long>,
+    mediaIds: List<String>,
     type: String,
   ): List<Rating>
 
   suspend fun deleteByType(
-    traktId: Long,
+    mediaId: String,
     type: String,
   )
 

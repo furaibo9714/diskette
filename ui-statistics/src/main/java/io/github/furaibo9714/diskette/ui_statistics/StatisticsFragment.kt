@@ -14,6 +14,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.doOnApplyWind
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.fadeIf
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visibleIf
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs.ARG_SHOW_ID
 import io.github.furaibo9714.diskette.ui_statistics.databinding.FragmentStatisticsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,11 +55,11 @@ class StatisticsFragment : BaseFragment<StatisticsViewModel>(R.layout.fragment_s
       statisticsMostWatchedShows.run {
         onLoadMoreClickListener = { addLimit -> viewModel.loadData(addLimit) }
         onShowClickListener = {
-          openShowDetails(it.traktId)
+          openShowDetails(it.mediaId)
         }
       }
       statisticsRatings.onShowClickListener = {
-        openShowDetails(it.show.traktId)
+        openShowDetails(it.show.mediaId)
       }
     }
   }
@@ -91,8 +92,8 @@ class StatisticsFragment : BaseFragment<StatisticsViewModel>(R.layout.fragment_s
     }
   }
 
-  private fun openShowDetails(traktId: Long) {
-    val bundle = bundleOf(ARG_SHOW_ID to traktId)
+  private fun openShowDetails(mediaId: MediaId) {
+    val bundle = bundleOf(ARG_SHOW_ID to mediaId.key)
     navigateTo(R.id.actionStatisticsFragmentToShowDetailsFragment, bundle)
   }
 }

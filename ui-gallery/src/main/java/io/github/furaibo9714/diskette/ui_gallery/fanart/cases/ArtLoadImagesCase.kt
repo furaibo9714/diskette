@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.repository.images.MovieImagesProvider
 import io.github.furaibo9714.diskette.repository.images.ShowImagesProvider
 import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageFamily
 import io.github.furaibo9714.diskette.ui_model.ImageFamily.MOVIE
@@ -24,7 +24,7 @@ class ArtLoadImagesCase @Inject constructor(
 ) {
 
   suspend fun loadImages(
-    id: IdTrakt,
+    id: MediaId,
     family: ImageFamily,
     type: ImageType,
   ): List<Image> {
@@ -47,7 +47,7 @@ class ArtLoadImagesCase @Inject constructor(
   }
 
   private suspend fun loadInitialImage(
-    id: IdTrakt,
+    id: MediaId,
     family: ImageFamily,
     type: ImageType,
   ) = when (family) {

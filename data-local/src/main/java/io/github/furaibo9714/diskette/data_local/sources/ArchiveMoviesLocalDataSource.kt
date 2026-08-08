@@ -7,13 +7,13 @@ interface ArchiveMoviesLocalDataSource {
 
   suspend fun getAll(): List<Movie>
 
-  suspend fun getAll(ids: List<Long>): List<Movie>
+  suspend fun getAll(ids: List<String>): List<Movie>
 
-  suspend fun getAllTraktIds(): List<Long>
+  suspend fun getAllMediaIds(): List<String>
 
-  suspend fun getById(traktId: Long): Movie?
+  suspend fun getById(mediaId: String): Movie?
 
   suspend fun insert(movie: ArchiveMovie)
 
-  suspend fun deleteById(traktId: Long)
+  suspend fun deleteById(mediaId: String)
 }

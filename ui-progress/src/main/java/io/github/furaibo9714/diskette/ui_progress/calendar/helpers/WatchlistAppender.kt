@@ -3,6 +3,7 @@ package io.github.furaibo9714.diskette.ui_progress.calendar.helpers
 import io.github.furaibo9714.diskette.common.extensions.toZonedDateTime
 import io.github.furaibo9714.diskette.data_local.database.model.Episode
 import io.github.furaibo9714.diskette.data_local.database.model.Season
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import javax.inject.Inject
 
@@ -17,52 +18,41 @@ class WatchlistAppender @Inject constructor() {
       return
     }
 
-    val seasonId = seasons.maxOf { it.idTrakt }
-    val episodeId = episodes.maxOf { it.idTrakt }
-
     shows
       .filter { it.firstAired.isNotBlank() }
-      .forEachIndexed { index, show ->
-        val season = createWatchlistSeason(
-          show = show,
-          seasonId = seasonId + index + 1,
-        )
-
-        val episode = createWatchlistEpisode(
-          show = show,
-          season = season,
-          episodeId = episodeId + index + 1,
-        )
-
+      .forEach { show ->
+        val season = createWatchlistSeason(show)
         seasons.add(season)
-        episodes.add(episode)
+        episodes.add(createWatchlistEpisode(show, season))
       }
   }
 
-  private fun createWatchlistSeason(
-    show: Show,
-    seasonId: Long,
-  ) = Season(
-    idTrakt = seasonId,
-    idShowTrakt = show.traktId,
-    seasonNumber = 1,
-    seasonTitle = "",
-    seasonOverview = "",
-    seasonFirstAired = show.firstAired.toZonedDateTime(),
-    episodesCount = 1,
-    episodesAiredCount = 0,
-    rating = null,
-    isWatched = false,
-  )
+  /**
+   * These rows stand in for a watchlisted show's premiere so it appears on the calendar. They are
+   * never persisted, so they only need ids distinct from the real rows around them - hence a
+   * [MediaId.local] scoped to the show rather than anything a provider issued.
+   */
+  private fun createWatchlistSeason(show: Show) =
+    Season(
+      mediaId = MediaId.local("${show.mediaId.key}/watchlist-season").key,
+      showMediaId = show.mediaId.key,
+      seasonNumber = 1,
+      seasonTitle = "",
+      seasonOverview = "",
+      seasonFirstAired = show.firstAired.toZonedDateTime(),
+      episodesCount = 1,
+      episodesAiredCount = 0,
+      rating = null,
+      isWatched = false,
+    )
 
   private fun createWatchlistEpisode(
     show: Show,
     season: Season,
-    episodeId: Long,
   ) = Episode(
-    idTrakt = episodeId,
-    idSeason = season.idTrakt,
-    idShowTrakt = show.traktId,
+    mediaId = MediaId.local("${show.mediaId.key}/watchlist-episode").key,
+    idSeason = season.mediaId,
+    showMediaId = show.mediaId.key,
     idShowTvdb = show.ids.tvdb.id,
     idShowImdb = show.ids.imdb.id,
     idShowTmdb = show.ids.tmdb.id,

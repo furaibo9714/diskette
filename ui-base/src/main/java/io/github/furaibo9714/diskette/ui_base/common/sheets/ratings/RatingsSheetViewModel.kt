@@ -17,7 +17,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.events.MessageEvent
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STOP_TIMEOUT
 import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.UserRating
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,16 +39,16 @@ class RatingsSheetViewModel @Inject constructor(
   private val ratingState = MutableStateFlow<UserRating?>(null)
 
   fun loadRating(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     type: Type,
   ) {
     viewModelScope.launch {
       try {
         val rating = when (type) {
-          Type.SHOW -> showRatingsCase.loadRating(idTrakt)
-          Type.MOVIE -> movieRatingsCase.loadRating(idTrakt)
-          Type.EPISODE -> episodeRatingsCase.loadRating(idTrakt)
-          Type.SEASON -> seasonRatingsCase.loadRating(idTrakt)
+          Type.SHOW -> showRatingsCase.loadRating(mediaId)
+          Type.MOVIE -> movieRatingsCase.loadRating(mediaId)
+          Type.EPISODE -> episodeRatingsCase.loadRating(mediaId)
+          Type.SEASON -> seasonRatingsCase.loadRating(mediaId)
         }
         ratingState.value = rating
       } catch (error: Throwable) {
@@ -59,7 +59,7 @@ class RatingsSheetViewModel @Inject constructor(
 
   fun saveRating(
     rating: Int,
-    id: IdTrakt,
+    id: MediaId,
     type: Type,
     seasonNumber: Int?,
     episodeNumber: Int?,
@@ -82,7 +82,7 @@ class RatingsSheetViewModel @Inject constructor(
   }
 
   fun removeRating(
-    id: IdTrakt,
+    id: MediaId,
     type: Type,
     seasonNumber: Int?,
     episodeNumber: Int?,

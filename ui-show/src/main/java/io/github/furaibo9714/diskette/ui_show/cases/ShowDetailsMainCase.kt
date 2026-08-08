@@ -2,7 +2,7 @@ package io.github.furaibo9714.diskette.ui_show.cases
 
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -14,18 +14,18 @@ class ShowDetailsMainCase @Inject constructor(
   private val showsRepository: ShowsRepository,
 ) {
 
-  suspend fun loadDetails(idTrakt: IdTrakt) =
+  suspend fun loadDetails(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      showsRepository.detailsShow.load(idTrakt)
+      showsRepository.detailsShow.load(mediaId)
     }
 
-  suspend fun removeMalformedShow(idTrakt: IdTrakt) =
+  suspend fun removeMalformedShow(mediaId: MediaId) =
     withContext(dispatchers.IO) {
       with(showsRepository) {
-        myShows.delete(idTrakt)
-        watchlistShows.delete(idTrakt)
-        hiddenShows.delete(idTrakt)
-        detailsShow.delete(idTrakt)
+        myShows.delete(mediaId)
+        watchlistShows.delete(mediaId)
+        hiddenShows.delete(mediaId)
+        detailsShow.delete(mediaId)
       }
       Timber.d("Removing malformed show...")
     }

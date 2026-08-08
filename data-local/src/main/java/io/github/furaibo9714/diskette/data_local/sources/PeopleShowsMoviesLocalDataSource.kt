@@ -4,21 +4,21 @@ import io.github.furaibo9714.diskette.data_local.database.model.PersonShowMovie
 
 interface PeopleShowsMoviesLocalDataSource {
 
-  suspend fun getTimestampForShow(showTraktId: Long): Long?
+  suspend fun getTimestampForShow(showMediaId: String): Long?
 
-  suspend fun getTimestampForMovie(movieTraktId: Long): Long?
+  suspend fun getTimestampForMovie(movieMediaId: String): Long?
 
-  suspend fun deleteAllForShow(showTraktId: Long)
+  suspend fun deleteAllForShow(showMediaId: String)
 
-  suspend fun deleteAllForMovie(movieTraktId: Long)
+  suspend fun deleteAllForMovie(movieMediaId: String)
 
   suspend fun insertForShow(
     people: List<PersonShowMovie>,
-    showTraktId: Long,
+    showMediaId: String,
   )
 
   suspend fun insertForMovie(
     people: List<PersonShowMovie>,
-    movieTraktId: Long,
+    movieMediaId: String,
   )
 }

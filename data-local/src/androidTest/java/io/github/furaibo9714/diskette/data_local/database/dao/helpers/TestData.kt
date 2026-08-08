@@ -9,12 +9,11 @@ object TestData {
 
   fun createShow() =
     Show(
-      idTrakt = 1,
+      mediaId = "tmdb:1",
       idTvdb = 1,
       idTmdb = 1,
       idImdb = "idImdb",
       idSlug = "idSlug",
-      idTvrage = 1,
       title = "Title",
       year = 2000,
       overview = "Overview",
@@ -63,9 +62,9 @@ object TestData {
       discoverFilterGenres = "",
       discoverFilterNetworks = "",
       discoverFilterFeed = "",
-      traktSyncSchedule = "",
-      traktQuickSyncEnabled = false,
-      traktQuickRemoveEnabled = false,
+      syncSchedule = "",
+      quickSyncEnabled = false,
+      quickRemoveEnabled = false,
       watchlistSortBy = "",
       archiveShowsSortBy = "",
       archiveShowsIncludeStatistics = false,
@@ -87,9 +86,9 @@ object TestData {
 
   fun createEpisode() =
     Episode(
-      idTrakt = 1,
-      idSeason = 1,
-      idShowTrakt = 1,
+      mediaId = "tmdb:1",
+      idSeason = "tmdb:1",
+      showMediaId = "tmdb:1",
       idShowTvdb = 1,
       idShowImdb = "",
       idShowTmdb = 1,
@@ -110,8 +109,8 @@ object TestData {
 
   fun createSeason() =
     Season(
-      idTrakt = 1,
-      idShowTrakt = 1,
+      mediaId = "tmdb:1",
+      showMediaId = "tmdb:1",
       seasonNumber = 1,
       seasonTitle = "",
       seasonOverview = "",

@@ -30,7 +30,7 @@ class MoviesRatingsRepository @Inject constructor(
   suspend fun loadRatings(movies: List<Movie>): List<UserRating> {
     val ratings = mutableListOf<Rating>()
     movies.chunked(250).forEach { chunk ->
-      val items = localSource.ratings.getAllByType(chunk.map { it.traktId }, TYPE_MOVIE)
+      val items = localSource.ratings.getAllByType(chunk.map { it.mediaId.key }, TYPE_MOVIE)
       ratings.addAll(items)
     }
     return ratings.map {
@@ -48,6 +48,6 @@ class MoviesRatingsRepository @Inject constructor(
   }
 
   suspend fun deleteRating(movie: Movie) {
-    localSource.ratings.deleteByType(movie.traktId, TYPE_MOVIE)
+    localSource.ratings.deleteByType(movie.mediaId.key, TYPE_MOVIE)
   }
 }

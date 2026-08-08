@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.data_local.LocalDataSource
 import io.github.furaibo9714.diskette.data_local.database.model.ArchiveMovie
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import javax.inject.Inject
 
@@ -25,34 +25,34 @@ class HiddenMoviesRepository @Inject constructor(
     return movies
   }
 
-  suspend fun loadAll(ids: List<IdTrakt>) =
+  suspend fun loadAll(ids: List<MediaId>) =
     localSource.archiveMovies
-      .getAll(ids.map { it.id })
+      .getAll(ids.map { it.key })
       .map { mappers.movie.fromDatabase(it) }
 
-  suspend fun load(id: IdTrakt) =
-    localSource.archiveMovies.getById(id.id)?.let {
+  suspend fun load(id: MediaId) =
+    localSource.archiveMovies.getById(id.key)?.let {
       mappers.movie.fromDatabase(it)
     }
 
-  suspend fun loadAllIds() = localSource.archiveMovies.getAllTraktIds()
+  suspend fun loadAllIds() = localSource.archiveMovies.getAllMediaIds().map { MediaId.parse(it) }
 
-  suspend fun insert(id: IdTrakt) {
-    val dbMovie = ArchiveMovie.fromTraktId(id.id, nowUtcMillis())
+  suspend fun insert(id: MediaId) {
+    val dbMovie = ArchiveMovie.fromMediaId(id.key, nowUtcMillis())
     transactions.withTransaction {
       with(localSource) {
         archiveMovies.insert(dbMovie)
-        myMovies.deleteById(id.id)
-        watchlistMovies.deleteById(id.id)
+        myMovies.deleteById(id.key)
+        watchlistMovies.deleteById(id.key)
       }
     }
     cache.invalidate()
   }
 
-  suspend fun delete(id: IdTrakt) {
-    localSource.archiveMovies.deleteById(id.id)
+  suspend fun delete(id: MediaId) {
+    localSource.archiveMovies.deleteById(id.key)
     cache.invalidate()
   }
 
-  suspend fun exists(id: IdTrakt) = localSource.archiveMovies.getById(id.id) != null
+  suspend fun exists(id: MediaId) = localSource.archiveMovies.getById(id.key) != null
 }

@@ -75,7 +75,7 @@ class MovieMapper @Inject constructor(
 
   fun toDatabase(movie: Movie) =
     MovieDb(
-      movie.ids.trakt.id,
+      movie.ids.media.key,
       movie.ids.tmdb.id,
       movie.ids.imdb.id,
       movie.ids.slug.id,

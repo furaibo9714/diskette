@@ -21,7 +21,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.showInfoSnack
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visible
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.visibleIf
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.UserRating
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs
 import kotlinx.parcelize.Parcelize
@@ -31,7 +31,7 @@ class RatingsBottomSheet : BaseBottomSheetFragment(R.layout.view_rate_sheet) {
 
   companion object {
     fun createBundle(
-      id: IdTrakt,
+      id: MediaId,
       type: Options.Type,
       seasonNumber: Int? = null,
       episodeNumber: Int? = null,
@@ -156,7 +156,7 @@ class RatingsBottomSheet : BaseBottomSheetFragment(R.layout.view_rate_sheet) {
 
   @Parcelize
   data class Options(
-    val id: IdTrakt,
+    val id: MediaId,
     val type: Type,
     val seasonNumber: Int?,
     val episodeNumber: Int?,

@@ -5,12 +5,12 @@ import io.github.furaibo9714.diskette.data_local.database.model.MovieCollectionI
 
 interface MovieCollectionsItemsLocalDataSource {
 
-  suspend fun getById(collectionId: Long): List<Movie>
+  suspend fun getById(collectionId: String): List<Movie>
 
-  suspend fun deleteById(collectionId: Long)
+  suspend fun deleteById(collectionId: String)
 
   suspend fun replace(
-    collectionId: Long,
+    collectionId: String,
     items: List<MovieCollectionItem>,
   )
 }

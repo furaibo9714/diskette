@@ -28,7 +28,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.screenHeight
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.showErrorSnackbar
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.showInfoSnackbar
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Person
 import io.github.furaibo9714.diskette.ui_model.Tip
 import io.github.furaibo9714.diskette.ui_navigation.java.NavigationArgs
@@ -53,7 +53,7 @@ class PersonDetailsBottomSheet : BaseBottomSheetFragment(R.layout.view_person_de
 
     fun createBundle(
       person: Person,
-      sourceId: IdTrakt,
+      sourceId: MediaId,
       personArgs: PersonDetailsArgs?,
     ): Bundle =
       bundleOf(
@@ -68,7 +68,7 @@ class PersonDetailsBottomSheet : BaseBottomSheetFragment(R.layout.view_person_de
 
   private val personArgs by lazy { requireParcelable<PersonDetailsArgs>(ARG_PERSON_ARGS) }
   private val person by lazy { requireParcelable<Person>(ARG_PERSON) }
-  private val sourceId by lazy { requireParcelable<IdTrakt>(ARG_ID) }
+  private val sourceId by lazy { requireParcelable<MediaId>(ARG_ID) }
 
   private var adapter: PersonDetailsAdapter? = null
   private var layoutManager: LinearLayoutManager? = null
@@ -149,16 +149,16 @@ class PersonDetailsBottomSheet : BaseBottomSheetFragment(R.layout.view_person_de
         firstVisibleItemPosition = (layoutManager?.findLastVisibleItemPosition() ?: 0),
       ),
     )
-    if (item is PersonDetailsItem.CreditsShowItem && item.show.traktId != sourceId.id) {
+    if (item is PersonDetailsItem.CreditsShowItem && item.show.mediaId != sourceId) {
       setFragmentResult(REQUEST_DETAILS, personBundle)
-      val bundle = bundleOf(NavigationArgs.ARG_SHOW_ID to item.show.traktId)
+      val bundle = bundleOf(NavigationArgs.ARG_SHOW_ID to item.show.mediaId.key)
       requireParentFragment()
         .findNavController()
         .navigate(R.id.actionPersonDetailsDialogToShow, bundle)
     }
-    if (item is PersonDetailsItem.CreditsMovieItem && item.movie.traktId != sourceId.id) {
+    if (item is PersonDetailsItem.CreditsMovieItem && item.movie.mediaId != sourceId) {
       setFragmentResult(REQUEST_DETAILS, personBundle)
-      val bundle = bundleOf(NavigationArgs.ARG_MOVIE_ID to item.movie.traktId)
+      val bundle = bundleOf(NavigationArgs.ARG_MOVIE_ID to item.movie.mediaId.key)
       requireParentFragment()
         .findNavController()
         .navigate(R.id.actionPersonDetailsDialogToMovie, bundle)

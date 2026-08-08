@@ -48,7 +48,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.navigateToSaf
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onClick
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onLongClick
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.openWebUrl
-import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireLong
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireMediaId
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.requireParcelable
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.screenHeight
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.screenWidth
@@ -59,7 +59,6 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.withFailListe
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.withSuccessListener
 import io.github.furaibo9714.diskette.ui_base.utilities.viewBinding
 import io.github.furaibo9714.diskette.ui_model.Genre
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageFamily.MOVIE
 import io.github.furaibo9714.diskette.ui_model.ImageStatus.UNAVAILABLE
@@ -98,7 +97,7 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
 
   override val viewModel by viewModels<MovieDetailsViewModel>()
 
-  private val movieId by lazy { IdTrakt(requireLong(ARG_MOVIE_ID)) }
+  private val movieId by lazy { requireMediaId(ARG_MOVIE_ID) }
 
   private val imageHeight by lazy {
     if (resources.configuration.orientation == ORIENTATION_PORTRAIT) {
@@ -139,7 +138,7 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
       movieDetailsBackArrow.onClick { requireActivity().onBackPressed() }
       movieDetailsImage.onClick {
         val bundle = bundleOf(
-          ARG_MOVIE_ID to movieId.id,
+          ARG_MOVIE_ID to movieId.key,
           ARG_FAMILY to MOVIE,
           ARG_TYPE to FANART,
         )
@@ -193,6 +192,10 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
             }
           }
           movieDetailsActions.linksChip.run {
+            // Every link in the sheet is built from a provider id, so there is nothing to open
+            // for an item no provider knows.
+            isEnabled = movie.ids.tmdb.id > 0 || movie.ids.imdb.id.isNotBlank()
+            alpha = if (isEnabled) 1.0F else 0.35F
             onClick {
               val args = LinksBottomSheet.createBundle(movie)
               navigateToSafe(R.id.actionMovieDetailsFragmentToLinks, args)
@@ -304,20 +307,21 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
       .mapNotNull { Genre.fromSlug(it) }
       .joinToString(", ") { getString(it.displayName) }
 
-    var extraInfoText = getString(
-      R.string.textMovieExtraInfo,
-      releaseDate,
-      country.uppercase(ROOT),
-      "⏲ ${movie.runtime}",
-      getString(R.string.textMinutesShort),
+    /**
+     * Built from the segments that actually have a value rather than from a fixed template, so an
+     * item TMDB doesn't know - a Floppy manual entry, which has only a title - shows nothing here
+     * instead of a row of placeholders.
+     */
+    val runtime = if (movie.hasRuntime) "⏲ ${movie.runtime} ${getString(R.string.textMinutesShort)}" else ""
+    val extraInfoText = listOf(
+      listOf(releaseDate, country.uppercase(ROOT)).filter { it.isNotBlank() }.joinToString(" "),
+      runtime,
       genres,
-    )
-
-    if (genres.isEmpty()) {
-      extraInfoText = extraInfoText.trim().removeSuffix("|")
-    }
+    ).filter { it.isNotBlank() }
+      .joinToString(" | ")
 
     binding.movieDetailsExtraInfo.text = extraInfoText
+    binding.movieDetailsExtraInfo.visibleIf(extraInfoText.isNotBlank())
   }
 
   private fun renderRating(rating: RatingState) {
@@ -429,7 +433,7 @@ class MovieDetailsFragment : BaseFragment<MovieDetailsViewModel>(R.layout.fragme
   private fun openListsDialog() {
     setFragmentResultListener(REQUEST_MANAGE_LISTS) { _, _ -> viewModel.loadListsCount() }
     val bundle = bundleOf(
-      ARG_ID to movieId.id,
+      ARG_ID to movieId.key,
       ARG_TYPE to Mode.MOVIES.type,
     )
     navigateToSafe(R.id.actionMovieDetailsFragmentToManageLists, bundle)

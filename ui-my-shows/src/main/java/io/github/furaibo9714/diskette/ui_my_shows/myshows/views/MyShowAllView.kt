@@ -8,10 +8,10 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import io.github.furaibo9714.diskette.common.Config
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_HIDE_SYMBOL
 import io.github.furaibo9714.diskette.common.Config.SPOILERS_REGEX
 import io.github.furaibo9714.diskette.ui_base.common.views.ShowView
+import io.github.furaibo9714.diskette.ui_base.utilities.extensions.bindRating
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.dimenToPx
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.gone
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.onClick
@@ -117,23 +117,12 @@ class MyShowAllView : ShowView<MyShowsItem> {
   }
 
   private fun bindRating(item: MyShowsItem) {
-    with(binding) {
-      var rating = String.format(ENGLISH, "%.1f", item.show.rating)
-
-      if (item.spoilers.isSpoilerRatingsHidden) {
-        collectionShowRating.tag = rating
-        rating = Config.SPOILERS_RATINGS_HIDE_SYMBOL
-
-        if (item.spoilers.isSpoilerTapToReveal) {
-          collectionShowRating.onClick { view ->
-            view.tag?.let { collectionShowRating.text = it.toString() }
-            view.isClickable = false
-          }
-        }
-      }
-
-      collectionShowRating.text = rating
-    }
+    binding.collectionShowRating.bindRating(
+      rating = item.show.rating,
+      starIcon = binding.collectionShowStarIcon,
+      isSpoilerHidden = item.spoilers.isSpoilerRatingsHidden,
+      isTapToReveal = item.spoilers.isSpoilerTapToReveal,
+    )
   }
 
   private fun loadTranslation() {

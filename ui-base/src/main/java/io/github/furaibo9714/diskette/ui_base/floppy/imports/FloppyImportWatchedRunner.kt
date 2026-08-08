@@ -10,8 +10,7 @@ import io.github.furaibo9714.diskette.repository.movies.MyMoviesRepository
 import io.github.furaibo9714.diskette.repository.shows.MyShowsRepository
 import io.github.furaibo9714.diskette.ui_base.events.EventsManager
 import io.github.furaibo9714.diskette.ui_base.events.FloppySyncProgress
-import io.github.furaibo9714.diskette.ui_base.floppy.FloppyEpisodeSyntheticIds
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,10 +22,8 @@ import io.github.furaibo9714.diskette.data_local.database.model.Show as ShowDb
  * Pulls the user's watched movies/episodes from Floppy and reconciles Diskette's local watched
  * state. Movies are matched/created via [FloppyManualMediaResolver] like the watchlist import.
  * Episodes are matched by show (same resolver) + season/episode number, with a thin
- * season/episode row created on first encounter when not already cached locally (see
- * [FloppyEpisodeSyntheticIds] for why episode identity can't reuse the show/movie synthetic-id
- * approach directly, and why that's still safe). Floppy carries no delta/"since" endpoint, so
- * this is a full reconcile each run.
+ * season/episode row created on first encounter when not already cached locally. Floppy carries no
+ * delta/"since" endpoint, so this is a full reconcile each run.
  *
  * Emits [FloppySyncProgress] once per fetched page (rather than per item) so screens can reload
  * incrementally during a full sync without hammering the event bus on large libraries - throttled
@@ -114,7 +111,7 @@ class FloppyImportWatchedRunner @Inject constructor(
           val seasonNumber = media.item.seasonNumber ?: return@forEach
           val episodeNumber = media.item.episodeNumber ?: return@forEach
           val showId = mediaResolver.resolveShowId(media.item) ?: return@forEach
-          val show = localSource.shows.getById(showId.id) ?: return@forEach
+          val show = localSource.shows.getById(showId.key) ?: return@forEach
           val episode = resolveEpisode(show, seasonNumber, episodeNumber)
           if (!episode.isWatched) {
             markEpisodeWatched(show, episode)
@@ -135,18 +132,37 @@ class FloppyImportWatchedRunner @Inject constructor(
     seasonNumber: Int,
     episodeNumber: Int,
   ): EpisodeDb {
-    val seasonId = FloppyEpisodeSyntheticIds.toSeasonTraktId(show.idTrakt, seasonNumber)
+    val seasonId = localSeasonId(show.mediaId, seasonNumber)
     if (localSource.seasons.getById(seasonId) == null) {
-      localSource.seasons.upsert(listOf(buildThinSeason(seasonId, show.idTrakt, seasonNumber)))
+      localSource.seasons.upsert(listOf(buildThinSeason(seasonId, show.mediaId, seasonNumber)))
     }
 
-    val episodeId = FloppyEpisodeSyntheticIds.toEpisodeTraktId(show.idTrakt, seasonNumber, episodeNumber)
-    localSource.episodes.getById(show.idTrakt, episodeId)?.let { return it }
+    val episodeId = localEpisodeId(show.mediaId, seasonNumber, episodeNumber)
+    localSource.episodes.getById(show.mediaId, episodeId)?.let { return it }
 
     val thinEpisode = buildThinEpisode(episodeId, seasonId, show, seasonNumber, episodeNumber)
     localSource.episodes.upsert(listOf(thinEpisode))
     return thinEpisode
   }
+
+  /**
+   * Floppy names a watched episode by (show, season number, episode number) and carries no
+   * provider-level episode id, so a row imported from Floppy has to name itself. These keys are
+   * deterministic and scoped to the show, which is all the identity a thin row needs:
+   * `EpisodesManager.invalidateSeasons` reconciles local episodes against freshly-fetched ones by
+   * (season number, episode number) before falling back to id, so the real fetch's row replaces
+   * this one on the show's next season refresh and carries the watched flag over.
+   */
+  private fun localSeasonId(
+    showMediaId: String,
+    seasonNumber: Int,
+  ) = MediaId.local("$showMediaId/s$seasonNumber").key
+
+  private fun localEpisodeId(
+    showMediaId: String,
+    seasonNumber: Int,
+    episodeNumber: Int,
+  ) = MediaId.local("$showMediaId/s$seasonNumber/e$episodeNumber").key
 
   private suspend fun markEpisodeWatched(
     show: ShowDb,
@@ -155,21 +171,21 @@ class FloppyImportWatchedRunner @Inject constructor(
     val date = nowUtc()
     localSource.episodes.upsert(listOf(episode.copy(isWatched = true, lastWatchedAt = date)))
 
-    val showId = IdTrakt(show.idTrakt)
+    val showId = MediaId.parse(show.mediaId)
     if (myShowsRepository.exists(showId)) {
-      myShowsRepository.updateWatchedAt(show.idTrakt, date.toMillis())
+      myShowsRepository.updateWatchedAt(showId, date.toMillis())
     } else {
       myShowsRepository.insert(showId, date.toMillis())
     }
   }
 
   private fun buildThinSeason(
-    seasonId: Long,
-    showTraktId: Long,
+    seasonId: String,
+    showMediaId: String,
     seasonNumber: Int,
   ) = SeasonDb(
-    idTrakt = seasonId,
-    idShowTrakt = showTraktId,
+    mediaId = seasonId,
+    showMediaId = showMediaId,
     seasonNumber = seasonNumber,
     seasonTitle = "",
     seasonOverview = "",
@@ -181,15 +197,15 @@ class FloppyImportWatchedRunner @Inject constructor(
   )
 
   private fun buildThinEpisode(
-    episodeId: Long,
-    seasonId: Long,
+    episodeId: String,
+    seasonId: String,
     show: ShowDb,
     seasonNumber: Int,
     episodeNumber: Int,
   ) = EpisodeDb(
-    idTrakt = episodeId,
+    mediaId = episodeId,
     idSeason = seasonId,
-    idShowTrakt = show.idTrakt,
+    showMediaId = show.mediaId,
     idShowTvdb = show.idTvdb,
     idShowImdb = show.idImdb,
     idShowTmdb = show.idTmdb,

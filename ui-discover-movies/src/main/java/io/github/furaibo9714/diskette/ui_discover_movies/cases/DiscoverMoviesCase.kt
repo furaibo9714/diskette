@@ -12,6 +12,7 @@ import io.github.furaibo9714.diskette.ui_model.DiscoverFeed
 import io.github.furaibo9714.diskette.ui_model.DiscoverFilters
 import io.github.furaibo9714.diskette.ui_model.ImageType
 import io.github.furaibo9714.diskette.ui_model.ImageType.POSTER
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.async
@@ -77,20 +78,20 @@ internal class DiscoverMoviesCase @Inject constructor(
 
   private suspend fun prepareItems(
     movies: List<Movie>,
-    myMoviesIds: List<Long>,
-    watchlistMoviesIds: List<Long>,
-    hiddenMoviesIds: List<Long>,
+    myMoviesIds: List<MediaId>,
+    watchlistMoviesIds: List<MediaId>,
+    hiddenMoviesIds: List<MediaId>,
     filters: DiscoverFilters,
     language: String,
   ) = coroutineScope {
     val collectionIds = myMoviesIds + watchlistMoviesIds
     movies
-      .filter { !hiddenMoviesIds.contains(it.traktId) }
+      .filter { !hiddenMoviesIds.contains(it.mediaId) }
       .filter {
         if (!filters.hideCollection) {
           true
         } else {
-          !collectionIds.contains(it.traktId)
+          !collectionIds.contains(it.mediaId)
         }
       }.sortedBy(filters.feedOrder)
       .mapIndexed { index, movie ->
@@ -101,8 +102,8 @@ internal class DiscoverMoviesCase @Inject constructor(
           DiscoverMovieListItem(
             movie,
             image,
-            isCollected = movie.ids.trakt.id in myMoviesIds,
-            isWatchlist = movie.ids.trakt.id in watchlistMoviesIds,
+            isCollected = movie.ids.media in myMoviesIds,
+            isWatchlist = movie.ids.media in watchlistMoviesIds,
             translation = translation,
           )
         }

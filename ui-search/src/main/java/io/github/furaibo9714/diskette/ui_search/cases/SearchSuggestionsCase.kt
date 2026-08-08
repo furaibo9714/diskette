@@ -13,6 +13,7 @@ import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_model.ImageType
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.SearchResult
 import io.github.furaibo9714.diskette.ui_model.Show
@@ -40,8 +41,9 @@ class SearchSuggestionsCase @Inject constructor(
 
   private var showsCache: List<ShowSearch>? = null
   private var moviesCache: List<MovieSearch>? = null
-  private var showTranslationsCache: Map<Long, Translation>? = null
-  private var movieTranslationsCache: Map<Long, Translation>? = null
+  /** Keyed by [MediaId.key] to match the cached rows, which hold the raw storage form. */
+  private var showTranslationsCache: Map<String, Translation>? = null
+  private var movieTranslationsCache: Map<String, Translation>? = null
 
   suspend fun loadSuggestions(query: String) =
     withContext(dispatchers.IO) {
@@ -64,16 +66,16 @@ class SearchSuggestionsCase @Inject constructor(
           async {
             val isFollowed =
               if (it.isShow) {
-                showsRepository.myShows.exists(it.show.ids.trakt)
+                showsRepository.myShows.exists(it.show.ids.media)
               } else {
-                moviesRepository.myMovies.exists(it.movie.ids.trakt)
+                moviesRepository.myMovies.exists(it.movie.ids.media)
               }
 
             val isWatchlist =
               if (it.isShow) {
-                showsRepository.watchlistShows.exists(it.show.ids.trakt)
+                showsRepository.watchlistShows.exists(it.show.ids.media)
               } else {
-                moviesRepository.watchlistMovies.exists(it.movie.ids.trakt)
+                moviesRepository.watchlistMovies.exists(it.movie.ids.media)
               }
 
             val image =
@@ -113,10 +115,10 @@ class SearchSuggestionsCase @Inject constructor(
 
       if (translationsRepository.getLanguage() != Config.DEFAULT_LANGUAGE) {
         if (showTranslationsCache == null) {
-          showTranslationsCache = translationsRepository.loadAllShowsLocal(language)
+          showTranslationsCache = translationsRepository.loadAllShowsLocal(language).mapKeys { (id, _) -> id.key }
         }
         if (moviesEnabled && movieTranslationsCache == null) {
-          movieTranslationsCache = translationsRepository.loadAllMoviesLocal(language)
+          movieTranslationsCache = translationsRepository.loadAllMoviesLocal(language).mapKeys { (id, _) -> id.key }
         }
       }
     }
@@ -132,9 +134,9 @@ class SearchSuggestionsCase @Inject constructor(
     val cachedIds = showsCache
       ?.filter {
         it.title.contains(query, true) ||
-          showTranslationsCache?.get(it.idTrakt)?.title?.contains(query, true) == true
+          showTranslationsCache?.get(it.mediaId)?.title?.contains(query, true) == true
       }?.take(limit)
-      ?.map { it.idTrakt }
+      ?.map { it.mediaId }
 
     return localSource.shows
       .getAll(cachedIds ?: emptyList())
@@ -152,9 +154,9 @@ class SearchSuggestionsCase @Inject constructor(
     val cachedIds = moviesCache
       ?.filter {
         it.title.contains(query, true) ||
-          movieTranslationsCache?.get(it.idTrakt)?.title?.contains(query, true) == true
+          movieTranslationsCache?.get(it.mediaId)?.title?.contains(query, true) == true
       }?.take(limit)
-      ?.map { it.idTrakt }
+      ?.map { it.mediaId }
 
     return localSource.movies
       .getAll(cachedIds ?: emptyList())

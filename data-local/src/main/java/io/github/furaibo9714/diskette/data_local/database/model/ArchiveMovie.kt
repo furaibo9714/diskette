@@ -8,29 +8,29 @@ import androidx.room.PrimaryKey
 
 @Entity(
   tableName = "movies_archive",
-  indices = [Index(value = ["id_trakt"], unique = true)],
+  indices = [Index(value = ["media_id"], unique = true)],
   foreignKeys = [
     ForeignKey(
       entity = Movie::class,
-      parentColumns = arrayOf("id_trakt"),
-      childColumns = arrayOf("id_trakt"),
+      parentColumns = arrayOf("media_id"),
+      childColumns = arrayOf("media_id"),
       onDelete = ForeignKey.CASCADE,
     ),
   ],
 )
 data class ArchiveMovie(
   @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
-  @ColumnInfo(name = "id_trakt") val idTrakt: Long,
+  @ColumnInfo(name = "media_id") val mediaId: String,
   @ColumnInfo(name = "created_at") val createdAt: Long,
   @ColumnInfo(name = "updated_at") val updatedAt: Long,
 ) {
 
   companion object {
-    fun fromTraktId(
-      traktId: Long,
+    fun fromMediaId(
+      mediaId: String,
       createdAt: Long,
     ) = ArchiveMovie(
-      idTrakt = traktId,
+      mediaId = mediaId,
       createdAt = createdAt,
       updatedAt = createdAt,
     )

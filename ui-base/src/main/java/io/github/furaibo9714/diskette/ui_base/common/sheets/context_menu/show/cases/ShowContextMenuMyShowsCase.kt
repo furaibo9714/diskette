@@ -13,7 +13,7 @@ import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_base.notifications.AnnouncementManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Show
 import javax.inject.Inject
@@ -32,12 +32,14 @@ class ShowContextMenuMyShowsCase @Inject constructor(
   private val announcementManager: AnnouncementManager,
 ) {
 
-  suspend fun moveToMyShows(traktId: IdTrakt) =
+  suspend fun moveToMyShows(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(traktId))
+      val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(mediaId))
 
-      val seasons = remoteSource.media
-        .fetchSeasons(traktId.id)
+      // A show with no TMDB id is a Floppy manual entry, which has no seasons to fetch.
+      val seasons = mediaId.tmdbIdOrNull
+        ?.let { remoteSource.media.fetchSeasons(it) }
+        .orEmpty()
         .map { mappers.season.fromNetwork(it) }
         .filter { it.episodes.isNotEmpty() }
         .filter { if (!showSpecials()) !it.isSpecial() else true }
@@ -45,24 +47,24 @@ class ShowContextMenuMyShowsCase @Inject constructor(
       val episodes = seasons.flatMap { it.episodes }
 
       transactions.withTransaction {
-        val localSeasons = localSource.seasons.getAllByShowId(traktId.id)
-        val localEpisodes = localSource.episodes.getAllByShowId(traktId.id)
+        val localSeasons = localSource.seasons.getAllByShowId(mediaId.key)
+        val localEpisodes = localSource.episodes.getAllByShowId(mediaId.key)
         val lastWatchedAt = localEpisodes.maxByOrNull { it.lastWatchedAt != null }?.lastWatchedAt?.toMillis() ?: 0L
 
-        showsRepository.myShows.insert(traktId, lastWatchedAt)
+        showsRepository.myShows.insert(mediaId, lastWatchedAt)
 
         val seasonsToAdd = mutableListOf<SeasonDb>()
         val episodesToAdd = mutableListOf<EpisodeDb>()
 
         seasons.forEach { season ->
-          if (localSeasons.none { it.idTrakt == season.ids.trakt.id }) {
-            seasonsToAdd.add(mappers.season.toDatabase(season, traktId, false))
+          if (localSeasons.none { it.mediaId == season.ids.media.key }) {
+            seasonsToAdd.add(mappers.season.toDatabase(season, mediaId, false))
           }
         }
         episodes.forEach { episode ->
-          if (localEpisodes.none { it.idTrakt == episode.ids.trakt.id }) {
+          if (localEpisodes.none { it.mediaId == episode.ids.media.key }) {
             val season = seasons.find { it.number == episode.season }!!
-            episodesToAdd.add(mappers.episode.toDatabase(episode, season, traktId, false, null, null))
+            episodesToAdd.add(mappers.episode.toDatabase(episode, season, mediaId, false, null, null))
           }
         }
 
@@ -75,20 +77,20 @@ class ShowContextMenuMyShowsCase @Inject constructor(
     }
 
   suspend fun removeFromMyShows(
-    traktId: IdTrakt,
+    mediaId: MediaId,
     removeLocalData: Boolean,
   ) = withContext(dispatchers.IO) {
-    val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(traktId))
+    val show = Show.EMPTY.copy(ids = Ids.EMPTY.copy(mediaId))
     transactions.withTransaction {
-      showsRepository.myShows.delete(show.ids.trakt)
+      showsRepository.myShows.delete(show.ids.media)
 
       if (removeLocalData) {
-        localSource.episodes.deleteAllUnwatchedForShow(show.traktId)
-        val seasons = localSource.seasons.getAllByShowId(show.traktId)
-        val episodes = localSource.episodes.getAllByShowId(show.traktId)
+        localSource.episodes.deleteAllUnwatchedForShow(show.mediaId.key)
+        val seasons = localSource.seasons.getAllByShowId(show.mediaId.key)
+        val episodes = localSource.episodes.getAllByShowId(show.mediaId.key)
         val toDelete = mutableListOf<SeasonDb>()
         seasons.forEach { season ->
-          if (episodes.none { it.idSeason == season.idTrakt }) {
+          if (episodes.none { it.idSeason == season.mediaId }) {
             toDelete.add(season)
           }
         }

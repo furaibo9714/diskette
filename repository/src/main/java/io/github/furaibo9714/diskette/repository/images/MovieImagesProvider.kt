@@ -8,7 +8,7 @@ import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbImages
 import io.github.furaibo9714.diskette.repository.TranslationsRepository
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.IdTvdb
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageFamily.MOVIE
@@ -34,7 +34,7 @@ class MovieImagesProvider @Inject constructor(
   private var translationsRepository: TranslationsRepository,
 ) {
 
-  private val unavailableCache = mutableSetOf<IdTrakt>()
+  private val unavailableCache = mutableSetOf<MediaId>()
 
   suspend fun findCachedImage(
     movie: Movie,
@@ -44,7 +44,7 @@ class MovieImagesProvider @Inject constructor(
       val image = localSource.movieImages.getByMovieId(movie.ids.tmdb.id, type.key)
       when (image) {
         null -> {
-          if (unavailableCache.contains(movie.ids.trakt)) {
+          if (unavailableCache.contains(movie.ids.media)) {
             Image.createUnavailable(type, MOVIE, TMDB)
           } else {
             Image.createUnknown(type, MOVIE, TMDB)
@@ -86,7 +86,7 @@ class MovieImagesProvider @Inject constructor(
 
       when (image.status) {
         UNAVAILABLE -> {
-          unavailableCache.add(movie.ids.trakt)
+          unavailableCache.add(movie.ids.media)
           localSource.movieImages.deleteByMovieId(tmdbId.id, image.type.key)
         }
         else -> {

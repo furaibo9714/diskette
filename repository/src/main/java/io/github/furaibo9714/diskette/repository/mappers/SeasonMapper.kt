@@ -3,7 +3,7 @@ package io.github.furaibo9714.diskette.repository.mappers
 import io.github.furaibo9714.diskette.data_local.database.model.Episode
 import io.github.furaibo9714.diskette.data_local.database.model.Season as SeasonDb
 import io.github.furaibo9714.diskette.data_remote.media.model.Season as SeasonNetwork
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Season
 import java.time.ZonedDateTime
@@ -44,7 +44,7 @@ class SeasonMapper @Inject constructor(
     seasonDb: SeasonDb,
     episodes: List<Episode> = emptyList(),
   ) = Season(
-    Ids.EMPTY.copy(trakt = IdTrakt(seasonDb.idTrakt)),
+    Ids.EMPTY.copy(media = MediaId.parse(seasonDb.mediaId)),
     seasonDb.seasonNumber,
     seasonDb.episodesCount,
     seasonDb.episodesAiredCount,
@@ -57,12 +57,12 @@ class SeasonMapper @Inject constructor(
 
   fun toDatabase(
     season: Season,
-    showId: IdTrakt,
+    showId: MediaId,
     isWatched: Boolean,
   ): SeasonDb =
     SeasonDb(
-      season.ids.trakt.id,
-      showId.id,
+      season.ids.media.key,
+      showId.key,
       season.number,
       season.title,
       season.overview,

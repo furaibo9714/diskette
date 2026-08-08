@@ -6,7 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.ui_base.utilities.events.MessageEvent
 import io.github.furaibo9714.diskette.ui_model.Genre
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Image
 import io.github.furaibo9714.diskette.ui_model.ImageType
@@ -90,9 +90,9 @@ class StatisticsMoviesViewModelTest : BaseMockTest() {
   internal fun `Should load statistics properly`() =
     runTest {
       val movies = listOf(
-        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = IdTrakt(1)), runtime = 1, genres = listOf("war", "drama")),
-        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = IdTrakt(2)), runtime = 2, genres = listOf("war", "animation")),
-        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(trakt = IdTrakt(3)), runtime = 3, genres = listOf("war", "animation")),
+        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(1)), runtime = 1, genres = listOf("war", "drama")),
+        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(2)), runtime = 2, genres = listOf("war", "animation")),
+        Movie.EMPTY.copy(ids = Ids.EMPTY.copy(media = MediaId.tmdb(3)), runtime = 3, genres = listOf("war", "animation")),
       )
 
       coEvery { moviesRepository.myMovies.loadAll() } returns movies

@@ -9,7 +9,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.findReplace
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.rethrowCancellation
 import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_movie.sections.collections.details.cases.MovieDetailsCollectionDetailsCase
 import io.github.furaibo9714.diskette.ui_movie.sections.collections.details.cases.MovieDetailsCollectionImagesCase
 import io.github.furaibo9714.diskette.ui_movie.sections.collections.details.cases.MovieDetailsCollectionMoviesCase
@@ -42,7 +42,7 @@ class MovieDetailsCollectionViewModel @Inject constructor(
   private var imagesJobs = mutableMapOf<String, Boolean>()
   private var translationsJobs = mutableMapOf<String, Boolean>()
 
-  fun loadCollection(collectionId: IdTrakt) {
+  fun loadCollection(collectionId: MediaId) {
     viewModelScope.launch {
       try {
         val headerItem = collectionDetailsCase.loadCollection(collectionId)
@@ -55,7 +55,7 @@ class MovieDetailsCollectionViewModel @Inject constructor(
     }
   }
 
-  private fun loadCollectionMovies(collectionId: IdTrakt) {
+  private fun loadCollectionMovies(collectionId: MediaId) {
     viewModelScope.launch {
       val loadingJob = launch {
         delay(500)

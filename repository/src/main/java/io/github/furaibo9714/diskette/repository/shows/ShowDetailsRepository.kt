@@ -9,7 +9,7 @@ import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.IdImdb
 import io.github.furaibo9714.diskette.ui_model.IdSlug
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Show
 import javax.inject.Inject
 
@@ -21,13 +21,26 @@ class ShowDetailsRepository @Inject constructor(
 ) {
 
   suspend fun load(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     force: Boolean = false,
   ): Show {
-    val localShow = localSource.shows.getById(idTrakt.id)
+    val localShow = localSource.shows.getById(mediaId.key)
+
+    /**
+     * TMDB is the only metadata provider, so an item it doesn't know - a Floppy manual entry -
+     * has nothing to refresh from, and what the import wrote is all there is. Returning early
+     * also keeps the incomplete check below from re-fetching forever: a manual entry's runtime
+     * is always -1, so it always looks incomplete.
+     */
+    val tmdbId = localShow?.idTmdb?.takeIf { it > 0 } ?: mediaId.tmdbIdOrNull
+    if (tmdbId == null) {
+      val cached = localShow ?: error("No local row and no TMDB id for $mediaId. Nothing to load.")
+      return mappers.show.fromDatabase(cached)
+    }
+
     val isIncomplete = localShow != null && localShow.runtime <= 0
     if (force || localShow == null || isIncomplete || nowUtcMillis() - localShow.updatedAt > Config.SHOW_DETAILS_CACHE_DURATION) {
-      val remoteShow = remoteSource.media.fetchShow(idTrakt.id, localShow?.idTmdb)
+      val remoteShow = remoteSource.media.fetchShow(tmdbId)
       val show = mappers.show.fromNetwork(remoteShow)
       localSource.shows.upsert(listOf(mappers.show.toDatabase(show)))
       return show
@@ -59,12 +72,12 @@ class ShowDetailsRepository @Inject constructor(
     return null
   }
 
-  suspend fun delete(idTrakt: IdTrakt) {
+  suspend fun delete(mediaId: MediaId) {
     with(localSource) {
       transactions.withTransaction {
-        shows.deleteById(idTrakt.id)
-        seasons.deleteAllForShow(idTrakt.id)
-        episodes.deleteAllForShow(idTrakt.id)
+        shows.deleteById(mediaId.key)
+        seasons.deleteAllForShow(mediaId.key)
+        episodes.deleteAllForShow(mediaId.key)
       }
     }
   }

@@ -9,7 +9,7 @@ import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.ui_model.IdImdb
 import io.github.furaibo9714.diskette.ui_model.IdSlug
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import javax.inject.Inject
 
@@ -20,16 +20,29 @@ class MovieDetailsRepository @Inject constructor(
 ) {
 
   suspend fun load(
-    idTrakt: IdTrakt,
+    mediaId: MediaId,
     force: Boolean = false,
   ): Movie {
-    val local = localSource.movies.getById(idTrakt.id)
+    val local = localSource.movies.getById(mediaId.key)
+
+    /**
+     * TMDB is the only metadata provider, so an item it doesn't know - a Floppy manual entry -
+     * has nothing to refresh from, and what the import wrote is all there is. Returning early
+     * also keeps the incomplete check below from re-fetching forever: a manual entry's runtime
+     * is always -1, so it always looks incomplete.
+     */
+    val tmdbId = local?.idTmdb?.takeIf { it > 0 } ?: mediaId.tmdbIdOrNull
+    if (tmdbId == null) {
+      val cached = local ?: error("No local row and no TMDB id for $mediaId. Nothing to load.")
+      return mappers.movie.fromDatabase(cached)
+    }
+
     val isIncomplete = local != null && local.runtime <= 0
     if (force || local == null || isIncomplete || nowUtcMillis() - local.updatedAt > Config.MOVIE_DETAILS_CACHE_DURATION) {
-      val remote = remoteSource.media.fetchMovie(idTrakt.id, local?.idTmdb)
+      val remote = remoteSource.media.fetchMovie(tmdbId)
       val movie = mappers.movie.fromNetwork(remote)
       localSource.movies.upsert(listOf(mappers.movie.toDatabase(movie)))
-      localSource.moviesSyncLog.upsert(MoviesSyncLog(movie.traktId, nowUtcMillis()))
+      localSource.moviesSyncLog.upsert(MoviesSyncLog(movie.mediaId.key, nowUtcMillis()))
       return movie
     }
     return mappers.movie.fromDatabase(local)
@@ -59,5 +72,5 @@ class MovieDetailsRepository @Inject constructor(
     return null
   }
 
-  suspend fun delete(idTrakt: IdTrakt) = localSource.movies.deleteById(idTrakt.id)
+  suspend fun delete(mediaId: MediaId) = localSource.movies.deleteById(mediaId.key)
 }

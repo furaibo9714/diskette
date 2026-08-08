@@ -8,19 +8,19 @@ import androidx.room.PrimaryKey
 
 @Entity(
   tableName = "movies_translations",
-  indices = [Index(value = ["id_trakt"], unique = true)],
+  indices = [Index(value = ["media_id"], unique = true)],
   foreignKeys = [
     ForeignKey(
       entity = Movie::class,
-      parentColumns = arrayOf("id_trakt"),
-      childColumns = arrayOf("id_trakt"),
+      parentColumns = arrayOf("media_id"),
+      childColumns = arrayOf("media_id"),
       onDelete = ForeignKey.CASCADE,
     ),
   ],
 )
 data class MovieTranslation(
   @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
-  @ColumnInfo(name = "id_trakt") val idTrakt: Long,
+  @ColumnInfo(name = "media_id") val mediaId: String,
   @ColumnInfo(name = "title") val title: String,
   @ColumnInfo(name = "language") val language: String,
   @ColumnInfo(name = "overview") val overview: String,
@@ -29,14 +29,14 @@ data class MovieTranslation(
 ) {
 
   companion object {
-    fun fromTraktId(
-      traktId: Long,
+    fun fromMediaId(
+      mediaId: String,
       title: String,
       language: String,
       overview: String,
       createdAt: Long,
     ) = MovieTranslation(
-      idTrakt = traktId,
+      mediaId = mediaId,
       title = title,
       language = language,
       overview = overview,

@@ -3,7 +3,6 @@ package io.github.furaibo9714.diskette.ui.main.cases.deeplink
 import io.github.furaibo9714.diskette.data_local.sources.MoviesLocalDataSource
 import io.github.furaibo9714.diskette.data_local.sources.ShowsLocalDataSource
 import io.github.furaibo9714.diskette.data_remote.media.MediaRemoteDataSource
-import io.github.furaibo9714.diskette.data_remote.tmdb.TmdbSyntheticIds
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.repository.movies.MovieDetailsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowDetailsRepository
@@ -33,7 +32,7 @@ class TmdbDeepLinkCase @Inject constructor(
     if (type == TMDB_TYPE_TV) {
       showDetailsRepository.find(tmdbId)?.let { return DeepLinkBundle(show = it) }
 
-      val show = mediaRemoteSource.fetchShow(TmdbSyntheticIds.toSyntheticTraktId(tmdbId.id), tmdbId.id)
+      val show = mediaRemoteSource.fetchShow(tmdbId.id)
       val uiShow = mappers.show.fromNetwork(show)
       showsLocalSource.upsert(listOf(mappers.show.toDatabase(uiShow)))
       return DeepLinkBundle(show = uiShow)
@@ -42,7 +41,7 @@ class TmdbDeepLinkCase @Inject constructor(
     if (type == TMDB_TYPE_MOVIE) {
       movieDetailsRepository.find(tmdbId)?.let { return DeepLinkBundle(movie = it) }
 
-      val movie = mediaRemoteSource.fetchMovie(TmdbSyntheticIds.toSyntheticTraktId(tmdbId.id), tmdbId.id)
+      val movie = mediaRemoteSource.fetchMovie(tmdbId.id)
       val uiMovie = mappers.movie.fromNetwork(movie)
       moviesLocalSource.upsert(listOf(mappers.movie.toDatabase(uiMovie)))
       return DeepLinkBundle(movie = uiMovie)

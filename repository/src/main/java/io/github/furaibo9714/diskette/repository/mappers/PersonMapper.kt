@@ -4,7 +4,7 @@ import io.github.furaibo9714.diskette.common.extensions.nowUtc
 import io.github.furaibo9714.diskette.data_remote.tmdb.model.TmdbPerson
 import io.github.furaibo9714.diskette.ui_model.IdImdb
 import io.github.furaibo9714.diskette.ui_model.IdTmdb
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Person
 import java.time.LocalDate
@@ -40,7 +40,6 @@ class PersonMapper @Inject constructor() {
     characters: List<String> = emptyList(),
   ) = Person(
     ids = Ids.EMPTY.copy(
-      trakt = IdTrakt(personDb.idTrakt ?: -1),
       tmdb = IdTmdb(personDb.idTmdb),
       imdb = IdImdb(personDb.idImdb ?: ""),
     ),
@@ -62,7 +61,6 @@ class PersonMapper @Inject constructor() {
     person: Person,
     detailsTimestamp: ZonedDateTime?,
   ): PersonDb {
-    val idTrakt = if (person.ids.trakt.id != -1L) person.ids.trakt.id else null
     val idImdb = if (person.ids.imdb.id
         .isNotBlank()
     ) {
@@ -72,7 +70,6 @@ class PersonMapper @Inject constructor() {
     }
     return PersonDb(
       idTmdb = person.ids.tmdb.id,
-      idTrakt = idTrakt,
       idImdb = idImdb,
       name = person.name,
       department = person.department.slug,

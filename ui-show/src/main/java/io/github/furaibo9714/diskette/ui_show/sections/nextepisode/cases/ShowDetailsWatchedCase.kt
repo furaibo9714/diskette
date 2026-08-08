@@ -20,8 +20,8 @@ class ShowDetailsWatchedCase @Inject constructor(
   ): Boolean =
     withContext(dispatchers.IO) {
       return@withContext episodesLocalDataSource.isEpisodeWatched(
-        showTraktId = show.traktId,
-        episodeTraktId = episode.ids.trakt.id,
+        showMediaId = show.mediaId.key,
+        episodeMediaId = episode.ids.media.key,
       )
     }
 }

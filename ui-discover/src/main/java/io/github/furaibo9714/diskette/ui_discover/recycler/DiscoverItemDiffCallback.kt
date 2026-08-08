@@ -7,7 +7,7 @@ class DiscoverItemDiffCallback : DiffUtil.ItemCallback<DiscoverListItem>() {
   override fun areItemsTheSame(
     oldItem: DiscoverListItem,
     newItem: DiscoverListItem,
-  ) = oldItem.show.ids.trakt == newItem.show.ids.trakt
+  ) = oldItem.show.ids.media == newItem.show.ids.media
 
   override fun areContentsTheSame(
     oldItem: DiscoverListItem,

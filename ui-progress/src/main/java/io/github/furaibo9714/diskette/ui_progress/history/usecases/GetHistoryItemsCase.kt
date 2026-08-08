@@ -83,7 +83,7 @@ internal class GetHistoryItemsCase @Inject constructor(
         offset = offset,
       )
 
-      val showIds = pageEpisodes.map { it.idShowTrakt }.distinct()
+      val showIds = pageEpisodes.map { it.showMediaId }.distinct()
 
       val shows = coroutineScope {
         val async1 = async { showsRepository.myShows.loadAll() }
@@ -99,23 +99,23 @@ internal class GetHistoryItemsCase @Inject constructor(
       val language = translationsRepository.getLanguage()
       val dateFormat = dateFormatProvider.loadFullHourFormat()
 
-      val showsById = shows.associateBy { it.traktId }
-      val seasonsByShowAndNumber = localSeasons.associateBy { it.idShowTrakt to it.seasonNumber }
-      val episodesByShowAndSeason = pageEpisodes.groupBy { it.idShowTrakt to it.seasonNumber }
+      val showsById = shows.associateBy { it.mediaId.key }
+      val seasonsByShowAndNumber = localSeasons.associateBy { it.showMediaId to it.seasonNumber }
+      val episodesByShowAndSeason = pageEpisodes.groupBy { it.showMediaId to it.seasonNumber }
 
       val items = pageEpisodes
         .chunked(LOAD_CHUNK_SIZE)
         .flatMap { chunk ->
           chunk.map { episode ->
             async {
-              val show = showsById[episode.idShowTrakt]
-              val season = seasonsByShowAndNumber[episode.idShowTrakt to episode.seasonNumber]
+              val show = showsById[episode.showMediaId]
+              val season = seasonsByShowAndNumber[episode.showMediaId to episode.seasonNumber]
 
               if (show == null || season == null) {
                 return@async null
               }
 
-              val seasonEpisodes = episodesByShowAndSeason[season.idShowTrakt to season.seasonNumber].orEmpty()
+              val seasonEpisodes = episodesByShowAndSeason[season.showMediaId to season.seasonNumber].orEmpty()
 
               val episodeUi = mappers.episode.fromDatabase(episode)
               val seasonUi = mappers.season.fromDatabase(season, seasonEpisodes)
@@ -184,7 +184,7 @@ internal class GetHistoryItemsCase @Inject constructor(
     return TranslationsBundle(
       episode = translationsRepository.loadTranslation(
         language = language,
-        showId = show.ids.trakt,
+        showId = show.ids.media,
         episode = episode,
         onlyLocal = true,
       ),

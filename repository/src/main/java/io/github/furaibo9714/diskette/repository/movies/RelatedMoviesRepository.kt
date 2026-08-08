@@ -7,7 +7,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.RelatedMovie
 import io.github.furaibo9714.diskette.data_local.utilities.TransactionsProvider
 import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import javax.inject.Inject
 import kotlin.math.min
@@ -20,36 +20,36 @@ class RelatedMoviesRepository @Inject constructor(
 ) {
 
   suspend fun loadAll(movie: Movie): List<Movie> {
-    val related = localSource.relatedMovies.getAllById(movie.ids.trakt.id)
+    val related = localSource.relatedMovies.getAllById(movie.ids.media.key)
     val latest = related.maxByOrNull { it.updatedAt }
 
     if (latest != null && nowUtcMillis() - latest.updatedAt < Config.RELATED_CACHE_DURATION) {
-      val relatedIds = related.map { it.idTrakt }
+      val relatedIds = related.map { it.mediaId }
       return localSource.movies
         .getAll(relatedIds)
         .map { mappers.movie.fromDatabase(it) }
     }
 
     val remote = remoteSource.media
-      .fetchRelatedMovies(movie.ids.trakt.id, min(0, 15), movie.ids.tmdb.id)
+      .fetchRelatedMovies(movie.ids.tmdb.id, min(0, 15))
       .map { mappers.movie.fromNetwork(it) }
 
-    cacheRelated(remote, movie.ids.trakt)
+    cacheRelated(remote, movie.ids.media)
 
     return remote
   }
 
   private suspend fun cacheRelated(
     movies: List<Movie>,
-    movieId: IdTrakt,
+    movieId: MediaId,
   ) {
     transactions.withTransaction {
       val timestamp = nowUtcMillis()
       localSource.movies.upsert(movies.map { mappers.movie.toDatabase(it) })
-      localSource.relatedMovies.deleteById(movieId.id)
+      localSource.relatedMovies.deleteById(movieId.key)
       localSource.relatedMovies.insert(
         movies.map {
-          RelatedMovie.fromTraktId(it.ids.trakt.id, movieId.id, timestamp)
+          RelatedMovie.fromMediaId(it.ids.media.key, movieId.key, timestamp)
         },
       )
     }

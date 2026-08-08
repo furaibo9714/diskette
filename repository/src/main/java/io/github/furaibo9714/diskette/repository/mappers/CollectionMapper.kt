@@ -3,7 +3,7 @@ package io.github.furaibo9714.diskette.repository.mappers
 import io.github.furaibo9714.diskette.common.extensions.nowUtc
 import io.github.furaibo9714.diskette.data_local.database.model.MovieCollection as MovieCollectionEntity
 import io.github.furaibo9714.diskette.data_remote.media.model.MovieCollection as MovieCollectionNetwork
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.MovieCollection
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class CollectionMapper @Inject constructor() {
 
   fun fromNetwork(input: MovieCollectionNetwork): MovieCollection =
     MovieCollection(
-      id = IdTrakt(input.ids.trakt!!),
+      id = input.ids.tmdb?.let { MediaId.tmdb(it) } ?: MediaId.EMPTY,
       name = input.name,
       description = input.description,
       itemCount = input.item_count,
@@ -20,21 +20,21 @@ class CollectionMapper @Inject constructor() {
 
   fun fromEntity(input: MovieCollectionEntity): MovieCollection =
     MovieCollection(
-      id = IdTrakt(input.idTrakt),
+      id = MediaId.parse(input.mediaId),
       name = input.name,
       description = input.description,
       itemCount = input.itemCount,
     )
 
   fun toEntity(
-    movieId: Long,
+    movieId: String,
     input: MovieCollection,
     updatedAt: ZonedDateTime = nowUtc(),
     createdAt: ZonedDateTime = nowUtc(),
   ): MovieCollectionEntity =
     MovieCollectionEntity(
-      idTrakt = input.id.id,
-      idTraktMovie = movieId,
+      mediaId = input.id.key,
+      movieMediaId = movieId,
       name = input.name,
       description = input.description,
       itemCount = input.itemCount,

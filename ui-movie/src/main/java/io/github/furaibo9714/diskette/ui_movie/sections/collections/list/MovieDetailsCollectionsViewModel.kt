@@ -7,7 +7,7 @@ import io.github.furaibo9714.diskette.ui_base.utilities.extensions.SUBSCRIBE_STO
 import io.github.furaibo9714.diskette.ui_base.utilities.extensions.rethrowCancellation
 import io.github.furaibo9714.diskette.ui_base.viewmodel.ChannelsDelegate
 import io.github.furaibo9714.diskette.ui_base.viewmodel.DefaultChannelsDelegate
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Movie
 import io.github.furaibo9714.diskette.ui_model.MovieCollection
 import io.github.furaibo9714.diskette.ui_movie.MovieDetailsEvent.OpenCollectionSheet
@@ -28,7 +28,7 @@ class MovieDetailsCollectionsViewModel @Inject constructor(
   ChannelsDelegate by DefaultChannelsDelegate() {
 
   private lateinit var movie: Movie
-  private var lastOpenedCollection: IdTrakt? = null
+  private var lastOpenedCollection: MediaId? = null
 
   private val loadingState = MutableStateFlow(true)
   private val movieCollectionState = MutableStateFlow<Pair<List<MovieCollection>, Source>?>(null)
@@ -68,7 +68,7 @@ class MovieDetailsCollectionsViewModel @Inject constructor(
     }
   }
 
-  fun saveLastOpenedCollection(collectionId: IdTrakt) {
+  fun saveLastOpenedCollection(collectionId: MediaId) {
     lastOpenedCollection = collectionId
   }
 

@@ -9,7 +9,7 @@ import io.github.furaibo9714.diskette.repository.images.ShowImagesProvider
 import io.github.furaibo9714.diskette.repository.settings.SettingsRepository
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_base.common.sheets.context_menu.show.helpers.ShowContextItem
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ImageType
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.async
@@ -28,9 +28,9 @@ class ShowContextMenuLoadItemCase @Inject constructor(
   private val settingsRepository: SettingsRepository,
 ) {
 
-  suspend fun loadItem(traktId: IdTrakt) =
+  suspend fun loadItem(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val show = showsRepository.detailsShow.load(traktId)
+      val show = showsRepository.detailsShow.load(mediaId)
       val language = translationsRepository.getLanguage()
       val spoilers = settingsRepository.spoilers.getAll()
 
@@ -39,9 +39,9 @@ class ShowContextMenuLoadItemCase @Inject constructor(
         async { translationsRepository.loadTranslation(show, language = language, onlyLocal = true) }
       val ratingAsync = async { ratingsRepository.shows.loadRatings(listOf(show)) }
 
-      val isMyShowAsync = async { showsRepository.myShows.exists(traktId) }
-      val isWatchlistAsync = async { showsRepository.watchlistShows.exists(traktId) }
-      val isHiddenAsync = async { showsRepository.hiddenShows.exists(traktId) }
+      val isMyShowAsync = async { showsRepository.myShows.exists(mediaId) }
+      val isWatchlistAsync = async { showsRepository.watchlistShows.exists(mediaId) }
+      val isHiddenAsync = async { showsRepository.hiddenShows.exists(mediaId) }
 
       val isPinnedAsync = async { pinnedItemsRepository.isItemPinned(show) }
       val isOnHoldAsync = async { onHoldItemsRepository.isOnHold(show) }

@@ -240,7 +240,7 @@ class ProgressMainFragment :
       progressMainRoot
         .fadeOut(150) {
           if (findNavControl()?.currentDestination?.id == R.id.progressMainFragment) {
-            val bundle = Bundle().apply { putLong(ARG_SHOW_ID, show.traktId) }
+            val bundle = Bundle().apply { putString(ARG_SHOW_ID, show.mediaId.key) }
             navigateToSafe(R.id.actionProgressFragmentToShowDetailsFragment, bundle)
             exitSearch()
           } else {
@@ -258,7 +258,7 @@ class ProgressMainFragment :
       }
       clearFragmentResultListener(REQUEST_ITEM_MENU)
     }
-    val bundle = ContextMenuBottomSheet.createBundle(show.ids.trakt, showPinButtons = true)
+    val bundle = ContextMenuBottomSheet.createBundle(show.ids.media, showPinButtons = true)
     navigateToSafe(R.id.actionProgressFragmentToItemMenu, bundle)
   }
 

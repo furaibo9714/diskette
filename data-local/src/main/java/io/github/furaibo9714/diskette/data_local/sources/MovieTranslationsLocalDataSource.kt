@@ -5,7 +5,7 @@ import io.github.furaibo9714.diskette.data_local.database.model.MovieTranslation
 interface MovieTranslationsLocalDataSource {
 
   suspend fun getById(
-    traktId: Long,
+    mediaId: String,
     language: String,
   ): MovieTranslation?
 

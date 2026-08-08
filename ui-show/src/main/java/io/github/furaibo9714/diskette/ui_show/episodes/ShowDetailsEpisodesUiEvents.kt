@@ -5,7 +5,7 @@ package io.github.furaibo9714.diskette.ui_show.episodes
 import io.github.furaibo9714.diskette.ui_base.utilities.events.Event
 import io.github.furaibo9714.diskette.ui_model.Episode
 import io.github.furaibo9714.diskette.ui_model.EpisodeBundle
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Season
 import io.github.furaibo9714.diskette.ui_show.sections.seasons.recycler.SeasonListItem
 

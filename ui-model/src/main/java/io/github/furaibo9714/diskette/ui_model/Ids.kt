@@ -3,35 +3,34 @@ package io.github.furaibo9714.diskette.ui_model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+/**
+ * [media] is the item's identity - everything else is a cross-reference kept for links, images
+ * and lookups.
+ */
 @Parcelize
 data class Ids(
-  val trakt: IdTrakt,
+  val media: MediaId,
   val slug: IdSlug,
   val tvdb: IdTvdb,
   val imdb: IdImdb,
   val tmdb: IdTmdb,
-  val tvrage: IdTvRage,
 ) : Parcelable {
 
   companion object {
     val EMPTY = Ids(
-      IdTrakt(),
+      MediaId.EMPTY,
       IdSlug(),
       IdTvdb(),
       IdImdb(),
       IdTmdb(),
-      IdTvRage(),
     )
+
+    /** Builds the ids of a TMDB-backed item, whose identity and TMDB cross-reference match. */
+    fun tmdb(tmdbId: Long) = EMPTY.copy(media = MediaId.tmdb(tmdbId), tmdb = IdTmdb(tmdbId))
   }
 }
 
 sealed interface Id : Parcelable
-
-@JvmInline
-@Parcelize
-value class IdTrakt(
-  val id: Long = -1,
-) : Id
 
 @JvmInline
 @Parcelize
@@ -48,12 +47,6 @@ value class IdImdb(
 @JvmInline
 @Parcelize
 value class IdTmdb(
-  val id: Long = -1,
-) : Id
-
-@JvmInline
-@Parcelize
-value class IdTvRage(
   val id: Long = -1,
 ) : Id
 

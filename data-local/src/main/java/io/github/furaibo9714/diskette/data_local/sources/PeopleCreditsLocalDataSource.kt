@@ -6,16 +6,16 @@ import io.github.furaibo9714.diskette.data_local.database.model.Show
 
 interface PeopleCreditsLocalDataSource {
 
-  suspend fun getAllShowsForPerson(personTraktId: Long): List<Show>
+  suspend fun getAllShowsForPerson(personTmdbId: Long): List<Show>
 
-  suspend fun getAllMoviesForPerson(personTraktId: Long): List<Movie>
+  suspend fun getAllMoviesForPerson(personTmdbId: Long): List<Movie>
 
-  suspend fun getTimestampForPerson(personTraktId: Long): Long?
+  suspend fun getTimestampForPerson(personTmdbId: Long): Long?
 
-  suspend fun deleteAllForPerson(personTraktId: Long)
+  suspend fun deleteAllForPerson(personTmdbId: Long)
 
   suspend fun insertSingle(
-    personTraktId: Long,
+    personTmdbId: Long,
     credits: List<PersonCredits>,
   )
 }

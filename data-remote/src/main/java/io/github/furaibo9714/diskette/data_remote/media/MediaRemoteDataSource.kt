@@ -19,8 +19,7 @@ interface MediaRemoteDataSource {
   // Shows
 
   suspend fun fetchShow(
-    mediaId: Long,
-    tmdbId: Long? = null,
+    tmdbId: Long,
   ): Show
 
   suspend fun fetchPopularShows(
@@ -42,26 +41,23 @@ interface MediaRemoteDataSource {
   ): List<Show>
 
   suspend fun fetchRelatedShows(
-    mediaId: Long,
+    tmdbId: Long,
     addToLimit: Int,
-    tmdbId: Long? = null,
   ): List<Show>
 
   suspend fun fetchShowTranslations(
-    mediaId: Long,
+    tmdbId: Long,
     code: String,
-    tmdbId: Long? = null,
   ): List<Translation>
 
-  suspend fun fetchNextEpisode(mediaId: Long): Episode?
+  suspend fun fetchNextEpisode(tmdbId: Long): Episode?
 
   suspend fun fetchSeasons(
-    mediaId: Long,
-    tmdbId: Long? = null,
+    tmdbId: Long,
   ): List<Season>
 
   suspend fun fetchSeasonTranslations(
-    showMediaId: Long,
+    showTmdbId: Long,
     seasonNumber: Int,
     code: String,
   ): List<SeasonTranslation>
@@ -69,8 +65,7 @@ interface MediaRemoteDataSource {
   // Movies
 
   suspend fun fetchMovie(
-    mediaId: Long,
-    tmdbId: Long? = null,
+    tmdbId: Long,
   ): Movie
 
   suspend fun fetchPopularMovies(
@@ -89,33 +84,29 @@ interface MediaRemoteDataSource {
   ): List<Movie>
 
   suspend fun fetchRelatedMovies(
-    mediaId: Long,
+    tmdbId: Long,
     addToLimit: Int,
-    tmdbId: Long? = null,
   ): List<Movie>
 
   suspend fun fetchMovieTranslations(
-    mediaId: Long,
+    tmdbId: Long,
     code: String,
-    tmdbId: Long? = null,
   ): List<Translation>
 
-  suspend fun fetchMovieCollections(mediaId: Long): List<MovieCollection>
+  suspend fun fetchMovieCollections(tmdbId: Long): List<MovieCollection>
 
   suspend fun fetchMovieCollectionItems(collectionId: Long): List<Movie>
 
   // People
 
   suspend fun fetchPersonShowsCredits(
-    mediaId: Long,
+    tmdbId: Long,
     type: TmdbPerson.Type,
-    tmdbId: Long? = null,
   ): List<PersonCredit>
 
   suspend fun fetchPersonMoviesCredits(
-    mediaId: Long,
+    tmdbId: Long,
     type: TmdbPerson.Type,
-    tmdbId: Long? = null,
   ): List<PersonCredit>
 
   // Search

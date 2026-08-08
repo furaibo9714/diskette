@@ -31,7 +31,7 @@ import org.junit.Test
 class SearchQueryCaseTest : BaseMockTest() {
 
   @RelaxedMockK lateinit var cloud: RemoteDataSource
-  @RelaxedMockK lateinit var traktApi: MediaRemoteDataSource
+  @RelaxedMockK lateinit var mediaRemoteSource: MediaRemoteDataSource
   @RelaxedMockK lateinit var mappers: Mappers
   @RelaxedMockK lateinit var settingsRepository: SettingsRepository
   @RelaxedMockK lateinit var showsRepository: ShowsRepository
@@ -46,7 +46,7 @@ class SearchQueryCaseTest : BaseMockTest() {
   override fun setUp() {
     super.setUp()
 
-    coEvery { cloud.media } returns traktApi
+    coEvery { cloud.media } returns mediaRemoteSource
     coEvery { settingsRepository.isMoviesEnabled } returns true
     coEvery { translationsRepository.getLanguage() } returns "en"
 
@@ -86,7 +86,7 @@ class SearchQueryCaseTest : BaseMockTest() {
       val item2 = SearchResult(order = 2, score = 2F, show = show, movie = null)
       val item3 = SearchResult(order = 1, score = 3F, show = show, movie = null)
 
-      coEvery { traktApi.fetchSearch(any(), any()) } returns listOf(item1, item2, item3)
+      coEvery { mediaRemoteSource.fetchSearch(any(), any()) } returns listOf(item1, item2, item3)
 
       val result = SUT.searchByQuery("test")
 
@@ -94,7 +94,7 @@ class SearchQueryCaseTest : BaseMockTest() {
       assertThat(result[0].order).isEqualTo(1)
       assertThat(result[1].order).isEqualTo(2)
       assertThat(result[2].order).isEqualTo(3)
-      coVerify(exactly = 1) { traktApi.fetchSearch("test", any()) }
+      coVerify(exactly = 1) { mediaRemoteSource.fetchSearch("test", any()) }
       coVerify(exactly = 3) { showImagesProvider.findCachedImage(any(), any()) }
       coVerify(exactly = 0) { movieImagesProvider.findCachedImage(any(), any()) }
     }

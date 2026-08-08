@@ -52,8 +52,8 @@ class ShowDetailsRelatedViewModel @Inject constructor(
           RelatedListItem(
             show = it,
             image = image,
-            isFollowed = it.traktId in myShows,
-            isWatchlist = it.traktId in watchlistShows,
+            isFollowed = it.mediaId in myShows,
+            isWatchlist = it.mediaId in watchlistShows,
           )
         }
         relatedItemsState.value = related

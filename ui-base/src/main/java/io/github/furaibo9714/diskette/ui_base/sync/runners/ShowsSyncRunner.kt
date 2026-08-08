@@ -8,6 +8,7 @@ import io.github.furaibo9714.diskette.data_remote.RemoteDataSource
 import io.github.furaibo9714.diskette.repository.EpisodesManager
 import io.github.furaibo9714.diskette.repository.mappers.Mappers
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.ShowStatus.CANCELED
 import io.github.furaibo9714.diskette.ui_model.ShowStatus.ENDED
 import javax.inject.Inject
@@ -38,10 +39,10 @@ class ShowsSyncRunner @Inject constructor(
 
     val myShows = showsRepository.myShows.loadAll()
     val watchlistShows = showsRepository.watchlistShows.loadAll()
-    val watchlistShowsIds = watchlistShows.map { it.traktId }
+    val watchlistShowsIds = watchlistShows.map { it.mediaId }
     val syncLog = localSource.episodesSyncLog.getAll()
 
-    fun lastSyncOf(traktId: Long) = syncLog.find { it.idTrakt == traktId }?.syncedAt ?: 0
+    fun lastSyncOf(mediaId: MediaId) = syncLog.find { it.mediaId == mediaId.key }?.syncedAt ?: 0
 
     /**
      * UNKNOWN is deliberately not excluded here: it's what a Floppy-imported thin show row reads
@@ -50,8 +51,8 @@ class ShowsSyncRunner @Inject constructor(
      */
     val showsToSync = (myShows + watchlistShows)
       .filter { it.status !in arrayOf(ENDED, CANCELED) }
-      .filter { nowUtcMillis() - lastSyncOf(it.traktId) >= SHOW_SYNC_COOLDOWN }
-      .sortedBy { lastSyncOf(it.traktId) } // never-synced (0) and longest-stale shows first
+      .filter { nowUtcMillis() - lastSyncOf(it.mediaId) >= SHOW_SYNC_COOLDOWN }
+      .sortedBy { lastSyncOf(it.mediaId) } // never-synced (0) and longest-stale shows first
 
     Timber.i("Shows to sync: ${showsToSync.size}.")
     if (showsToSync.isEmpty()) {
@@ -62,32 +63,38 @@ class ShowsSyncRunner @Inject constructor(
     var syncCount = 0
     showsToSync.forEachIndexed { index, show ->
       progressListener?.invoke(index + 1, showsToSync.size)
-      val isInWatchlist = show.traktId in watchlistShowsIds
+      val isInWatchlist = show.mediaId in watchlistShowsIds
 
       try {
-        Timber.i("Syncing ${show.title}(${show.ids.trakt}) details...")
-        showsRepository.detailsShow.load(show.ids.trakt, force = true)
+        Timber.i("Syncing ${show.title}(${show.ids.media}) details...")
+        showsRepository.detailsShow.load(show.ids.media, force = true)
         syncCount++
-        Timber.i("${show.title}(${show.ids.trakt}) show synced.")
+        Timber.i("${show.title}(${show.ids.media}) show synced.")
       } catch (t: Throwable) {
-        Timber.e("${show.title}(${show.ids.trakt}) show sync error. Skipping... \n$t")
+        Timber.e("${show.title}(${show.ids.media}) show sync error. Skipping... \n$t")
       }
 
-      if (isInWatchlist) {
-        localSource.episodesSyncLog.upsert(EpisodesSyncLog(show.traktId, nowUtcMillis()))
+      /**
+       * A show with no TMDB id is a Floppy manual entry, which has no seasons to fetch. It is
+       * logged as synced rather than reconciled: [EpisodesManager.invalidateSeasons] against an
+       * empty list would delete the episodes the Floppy import created.
+       */
+      val showTmdbId = show.mediaId.tmdbIdOrNull
+      if (isInWatchlist || showTmdbId == null) {
+        localSource.episodesSyncLog.upsert(EpisodesSyncLog(show.mediaId.key, nowUtcMillis()))
       } else {
         try {
-          Timber.i("Syncing ${show.title}(${show.ids.trakt}) episodes...")
+          Timber.i("Syncing ${show.title}(${show.ids.media}) episodes...")
 
           val remoteSeasons = remoteSource.media
-            .fetchSeasons(show.traktId)
+            .fetchSeasons(showTmdbId)
             .map { mappers.season.fromNetwork(it) }
           episodesManager.invalidateSeasons(show, remoteSeasons)
           syncCount++
 
-          Timber.i("${show.title}(${show.ids.trakt}) episodes synced.")
+          Timber.i("${show.title}(${show.ids.media}) episodes synced.")
         } catch (t: Throwable) {
-          Timber.e("${show.title}(${show.ids.trakt}) episodes sync error. Skipping... \n$t")
+          Timber.e("${show.title}(${show.ids.media}) episodes sync error. Skipping... \n$t")
         } finally {
           delay(DELAY_MS)
         }

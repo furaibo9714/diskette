@@ -3,7 +3,7 @@ package io.github.furaibo9714.diskette.ui_episodes.details.cases
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.data_local.sources.EpisodesLocalDataSource
 import io.github.furaibo9714.diskette.ui_model.Episode
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
@@ -16,10 +16,10 @@ class EpisodeDetailsWatchedCase @Inject constructor(
 ) {
 
   suspend fun getLastWatchedAt(
-    showId: IdTrakt,
+    showId: MediaId,
     episode: Episode,
   ): ZonedDateTime? =
     withContext(dispatchers.IO) {
-      episodesDataSource.getById(showId.id, episode.ids.trakt.id)?.lastWatchedAt
+      episodesDataSource.getById(showId.key, episode.ids.media.key)?.lastWatchedAt
     }
 }

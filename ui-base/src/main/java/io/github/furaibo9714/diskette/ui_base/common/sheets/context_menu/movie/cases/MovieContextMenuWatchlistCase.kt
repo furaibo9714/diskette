@@ -6,7 +6,7 @@ import io.github.furaibo9714.diskette.repository.PinnedItemsRepository
 import io.github.furaibo9714.diskette.repository.movies.MoviesRepository
 import io.github.furaibo9714.diskette.ui_base.floppy.FloppySyncManager
 import io.github.furaibo9714.diskette.ui_base.notifications.AnnouncementManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import io.github.furaibo9714.diskette.ui_model.Ids
 import io.github.furaibo9714.diskette.ui_model.Movie
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -22,20 +22,20 @@ class MovieContextMenuWatchlistCase @Inject constructor(
   private val floppySyncManager: FloppySyncManager,
 ) {
 
-  suspend fun moveToWatchlist(traktId: IdTrakt) =
+  suspend fun moveToWatchlist(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(traktId))
+      val movie = Movie.EMPTY.copy(ids = Ids.EMPTY.copy(mediaId))
 
-      moviesRepository.watchlistMovies.insert(movie.ids.trakt)
+      moviesRepository.watchlistMovies.insert(movie.ids.media)
       pinnedItemsRepository.removePinnedItem(movie)
       announcementManager.refreshMoviesAnnouncements()
 
-      floppySyncManager.scheduleMovieWatchlist(traktId, Operation.ADD)
+      floppySyncManager.scheduleMovieWatchlist(mediaId, Operation.ADD)
     }
 
-  suspend fun removeFromWatchlist(traktId: IdTrakt) =
+  suspend fun removeFromWatchlist(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      moviesRepository.watchlistMovies.delete(traktId)
-      floppySyncManager.scheduleMovieWatchlist(traktId, Operation.REMOVE)
+      moviesRepository.watchlistMovies.delete(mediaId)
+      floppySyncManager.scheduleMovieWatchlist(mediaId, Operation.REMOVE)
     }
 }

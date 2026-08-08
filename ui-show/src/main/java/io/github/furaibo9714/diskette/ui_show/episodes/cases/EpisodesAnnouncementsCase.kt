@@ -3,7 +3,7 @@ package io.github.furaibo9714.diskette.ui_show.episodes.cases
 import io.github.furaibo9714.diskette.common.dispatchers.CoroutineDispatchers
 import io.github.furaibo9714.diskette.repository.shows.ShowsRepository
 import io.github.furaibo9714.diskette.ui_base.notifications.AnnouncementManager
-import io.github.furaibo9714.diskette.ui_model.IdTrakt
+import io.github.furaibo9714.diskette.ui_model.MediaId
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,9 +15,9 @@ class EpisodesAnnouncementsCase @Inject constructor(
   private val announcementManager: AnnouncementManager,
 ) {
 
-  suspend fun refreshAnnouncements(idTrakt: IdTrakt) =
+  suspend fun refreshAnnouncements(mediaId: MediaId) =
     withContext(dispatchers.IO) {
-      val isMyShow = showsRepository.myShows.exists(idTrakt)
+      val isMyShow = showsRepository.myShows.exists(mediaId)
       if (isMyShow) {
         announcementManager.refreshShowsAnnouncements()
       }
