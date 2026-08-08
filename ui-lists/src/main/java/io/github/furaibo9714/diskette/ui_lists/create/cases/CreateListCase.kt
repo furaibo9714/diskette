@@ -31,7 +31,13 @@ class CreateListCase @Inject constructor(
         Timber.w(error, "Failed to update list on Floppy. Local update proceeds regardless.")
       }
     }
-    return listsRepository.updateList(list.id, idFloppy = idFloppy, idSlug = null, name = list.name, description = list.description)
+    return listsRepository.updateList(
+      id = list.id,
+      idFloppy = idFloppy,
+      idSlug = null,
+      name = list.name,
+      description = list.description,
+    )
   }
 
   private suspend fun createFloppyList(

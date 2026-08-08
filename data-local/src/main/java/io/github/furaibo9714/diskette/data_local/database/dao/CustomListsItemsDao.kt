@@ -25,7 +25,7 @@ interface CustomListsItemsDao : CustomListsItemsLocalDataSource {
   ): List<Long>
 
   @Query("SELECT * FROM custom_list_item WHERE id_list = :idList AND media_id = :mediaId AND type = :type")
-  override suspend fun getByIdTrakt(
+  override suspend fun getByMediaId(
     idList: Long,
     mediaId: String,
     type: String,
@@ -45,7 +45,7 @@ interface CustomListsItemsDao : CustomListsItemsLocalDataSource {
 
   @Transaction
   override suspend fun insertItem(item: CustomListItem) {
-    val localItem = getByIdTrakt(item.idList, item.mediaId, item.type)
+    val localItem = getByMediaId(item.idList, item.mediaId, item.type)
     if (localItem != null) return
     val rank = getRankForList(item.idList) ?: 0L
     val rankedItem = item.copy(rank = rank + 1L)

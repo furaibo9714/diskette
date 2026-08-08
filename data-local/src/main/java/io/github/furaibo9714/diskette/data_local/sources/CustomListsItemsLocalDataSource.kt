@@ -11,7 +11,7 @@ interface CustomListsItemsLocalDataSource {
     type: String,
   ): List<Long>
 
-  suspend fun getByIdTrakt(
+  suspend fun getByMediaId(
     idList: Long,
     mediaId: String,
     type: String,

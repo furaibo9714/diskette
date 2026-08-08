@@ -70,7 +70,12 @@ class ProgressWidgetEpisodeCheckService :
       episodesManager.setEpisodeWatched(episodeId, seasonId, MediaId.parse(showId), null)
       val episode = localSource.episodes.getById(showId, episodeId)
       if (episode != null) {
-        floppySyncManager.scheduleEpisodeWatched(MediaId.parse(showId), episode.seasonNumber, episode.episodeNumber, Operation.ADD)
+        floppySyncManager.scheduleEpisodeWatched(
+          MediaId.parse(showId),
+          episode.seasonNumber,
+          episode.episodeNumber,
+          Operation.ADD,
+        )
       }
       (applicationContext as WidgetsProvider).requestShowsWidgetsUpdate()
     }

@@ -15,14 +15,7 @@ fun Fragment.requireString(
 /** Ids travel through a Bundle as their [MediaId.key], so every read parses that one shape. */
 fun Fragment.requireMediaId(key: String?) = MediaId.parse(requireString(key))
 
-fun Fragment.optionalMediaId(key: String?) =
-  requireArguments().getString(key)?.let { MediaId.parse(it) }
-
 fun Fragment.requireStringArray(key: String?) = requireArguments().getStringArrayList(key)!!
-
-fun Fragment.requireLong(key: String?) = requireArguments().getLong(key)
-
-fun Fragment.requireLongArray(key: String?) = requireArguments().getLongArray(key)!!
 
 fun Fragment.requireBoolean(key: String?) = requireArguments().getBoolean(key)
 
