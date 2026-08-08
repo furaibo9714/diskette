@@ -70,7 +70,7 @@ internal class BackupImportListsRunner @Inject constructor(
       importDetails(item)
       listsRepository.addToList(
         listId = listId,
-        itemTraktId = MediaId.parse(item.mediaId),
+        itemId = MediaId.parse(item.mediaId),
         itemType = item.type,
         listedAt = item.listedAt.toUtcDateTime()?.toMillis() ?: nowUtcMillis(),
         createdAt = item.createdAt.toUtcDateTime()?.toMillis() ?: nowUtcMillis(),
@@ -93,7 +93,7 @@ internal class BackupImportListsRunner @Inject constructor(
 
       listsRepository.addToList(
         listId = localList.id,
-        itemTraktId = MediaId.parse(backupItem.mediaId),
+        itemId = MediaId.parse(backupItem.mediaId),
         itemType = backupItem.type,
         listedAt = backupItem.listedAt.toUtcDateTime()?.toMillis() ?: nowUtcMillis(),
         createdAt = backupItem.createdAt.toUtcDateTime()?.toMillis() ?: nowUtcMillis(),

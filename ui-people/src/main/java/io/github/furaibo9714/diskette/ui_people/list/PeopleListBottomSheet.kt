@@ -38,12 +38,12 @@ class PeopleListBottomSheet : BaseBottomSheetFragment(R.layout.view_people_list)
 
   companion object {
     fun createBundle(
-      mediaIdTrakt: MediaId,
+      mediaId: MediaId,
       mediaTitle: String,
       mode: Mode,
       department: Person.Department,
     ) = bundleOf(
-      ARG_ID to mediaIdTrakt.key,
+      ARG_ID to mediaId.key,
       ARG_TITLE to mediaTitle,
       ARG_TYPE to mode.type,
       ARG_DEPARTMENT to department,
@@ -53,7 +53,7 @@ class PeopleListBottomSheet : BaseBottomSheetFragment(R.layout.view_people_list)
   private val viewModel by viewModels<PeopleListViewModel>()
   private val binding by viewBinding(ViewPeopleListBinding::bind)
 
-  private val mediaIdTrakt by lazy { requireMediaId(ARG_ID) }
+  private val mediaId by lazy { requireMediaId(ARG_ID) }
   private val mediaTitle by lazy { requireString(ARG_TITLE) }
   private val mode by lazy { Mode.fromType(requireString(ARG_TYPE)) }
   private val department by lazy { requireSerializable<Person.Department>(ARG_DEPARTMENT) }
@@ -74,7 +74,7 @@ class PeopleListBottomSheet : BaseBottomSheetFragment(R.layout.view_people_list)
       { viewModel.uiState.collect { render(it) } },
       doAfterLaunch = {
         viewModel.loadPeople(
-          mediaIdTrakt,
+          mediaId,
           mediaTitle,
           mode,
           department,
@@ -106,7 +106,7 @@ class PeopleListBottomSheet : BaseBottomSheetFragment(R.layout.view_people_list)
 
   private fun openDetails(item: Person) {
     setFragmentResult(REQUEST_DETAILS, bundleOf(ARG_PERSON to item))
-    val bundle = PersonDetailsBottomSheet.createBundle(item, mediaIdTrakt, null)
+    val bundle = PersonDetailsBottomSheet.createBundle(item, mediaId, null)
     findNavController().navigate(R.id.actionPeopleListDialogToDetails, bundle)
   }
 

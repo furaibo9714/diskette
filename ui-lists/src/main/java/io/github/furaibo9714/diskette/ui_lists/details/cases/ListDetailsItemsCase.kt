@@ -261,11 +261,11 @@ class ListDetailsItemsCase @Inject constructor(
 
   suspend fun deleteListItem(
     listId: Long,
-    itemTraktId: MediaId,
+    itemId: MediaId,
     itemType: Mode,
   ) = withContext(dispatchers.IO) {
     val list = listsRepository.loadById(listId)
-    listsRepository.removeFromList(listId, itemTraktId, itemType.type)
-    floppySyncManager.scheduleListItemRemove(itemTraktId, itemType, list.idFloppy)
+    listsRepository.removeFromList(listId, itemId, itemType.type)
+    floppySyncManager.scheduleListItemRemove(itemId, itemType, list.idFloppy)
   }
 }

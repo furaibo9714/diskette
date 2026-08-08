@@ -57,7 +57,7 @@ class ListsRepository @Inject constructor(
 
   suspend fun addToList(
     listId: Long,
-    itemTraktId: MediaId,
+    itemId: MediaId,
     itemType: String,
     listedAt: Long = nowUtcMillis(),
     createdAt: Long = nowUtcMillis(),
@@ -66,7 +66,7 @@ class ListsRepository @Inject constructor(
     val itemDb = CustomListItem(
       rank = 0,
       idList = listId,
-      mediaId = itemTraktId.key,
+      mediaId = itemId.key,
       type = itemType,
       listedAt = listedAt,
       createdAt = createdAt,
@@ -80,19 +80,19 @@ class ListsRepository @Inject constructor(
 
   suspend fun removeFromList(
     listId: Long,
-    itemTraktId: MediaId,
+    itemId: MediaId,
     itemType: String,
   ) {
     transactions.withTransaction {
-      localSource.customListsItems.deleteItem(listId, itemTraktId.key, itemType)
+      localSource.customListsItems.deleteItem(listId, itemId.key, itemType)
       localSource.customLists.updateTimestamp(listId, nowUtcMillis())
     }
   }
 
   suspend fun loadListIdsForItem(
-    itemTraktId: MediaId,
+    itemId: MediaId,
     itemType: String,
-  ) = localSource.customListsItems.getListsForItem(itemTraktId.key, itemType)
+  ) = localSource.customListsItems.getListsForItem(itemId.key, itemType)
 
   suspend fun loadListItemsForId(listId: Long) = localSource.customListsItems.getItemsById(listId)
 
